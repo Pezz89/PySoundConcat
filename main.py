@@ -1,12 +1,8 @@
 #!/usr/bin/python
 
-from wave_gen import gen_wave
 import numpy as np
 import argparse as ap
 import os
-from zerox import find_zerox_pysndfile
-from time_stretch import cheat_granulate_audio
-from audio_graph import plot_audio
 import audio_funcs as af
 
 def check_args(args):
