@@ -48,8 +48,8 @@ def main():
     check_args(main_args)
 
     #Create audio file instances
-    input_audio = af.AudioFile(main_args.input_file, mode = 'r')
-    output_audio = af.AudioFile(
+    input_audio = af.AnalysedAudioFile(main_args.input_file, mode = 'r')
+    output_audio = af.AnalysedAudioFile(
         main_args.output_file, 
         mode = 'w', 
         format = input_audio.format(),
@@ -60,10 +60,10 @@ def main():
     if main_args.verbose > 1:
         input_audio.audio_file_info()
         output_audio.audio_file_info()
-
+    
     #----------
     #Begin processing audio files here:
     #----------
-    
+    print input_audio.ms_to_samps(250)
 if __name__ == "__main__":
     main()
