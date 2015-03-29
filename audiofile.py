@@ -4,6 +4,7 @@ import numpy as np
 from pysndfile import *
 
 class AudioFile(PySndfile):
+    """Object for storing and accessing basic information for an audio file"""
     def __init__(self, filepath, mode, format=None, channels=None, samplerate=None):
         super(AudioFile, self).__init__(
                     filepath, 
@@ -56,6 +57,9 @@ class AudioFile(PySndfile):
     def get_seek_position():
         """Returns the current seeker position in the file"""
         return self.seek(0, 1)
+
+class AnalysedAudioFile(AudioFile):
+    """Generates and stores analysis information for an audio file"""
 
 def gen_window(window_type, window_size, sym=True):
     """

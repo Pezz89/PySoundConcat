@@ -3,7 +3,7 @@
 import numpy as np
 import argparse as ap
 import os
-import audio_funcs as af
+import audiofile as af
 
 def check_args(args):
     """
