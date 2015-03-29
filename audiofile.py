@@ -1,7 +1,8 @@
 import os
+import shutil
 from scipy import signal
 import numpy as np
-from pysndfile import *
+from pysndfile import PySndfile
 
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
@@ -125,9 +126,16 @@ def init_database(audio_dir, db_dir=None):
             #the rms file (.lab)
         #move wav file to wav directory
     
-    #Create database location string from name and location provided
+    #Create a dictionary to store reference to the content of the database
+    db_content = {
+            "wav" : [], 
+            "rms" : []
+            }
+
+    #If the database directory isnt specified then the directory where the audio files are stored will be used
     if not db_dir:
         db_dir = audio_dir
+    
     try:
         os.mkdir(db_dir)
     except OSError as err:
@@ -137,8 +145,10 @@ def init_database(audio_dir, db_dir=None):
             raise err
 
     #Make sure wav directory exists
+    wav_dir = os.path.join(db_dir, "wav")
     try:
-        os.mkdir(os.path.join(db_dir, "wav"))
+        os.mkdir(wav_dir)
+        print "Created directory: ", wav_dir
     except OSError as err:
         if os.path.exists(os.path.join(db_dir, "wav")):
             print "wav directory already exists"
@@ -146,15 +156,21 @@ def init_database(audio_dir, db_dir=None):
             raise err
 
     #Make sure rms directory exists
+    rms_dir = os.path.join(db_dir, "rms")
     try:
-        os.mkdir(os.path.join(db_dir, "rms"))
+        os.mkdir(rms_dir)
+        print "Created directory: ", rms_dir
     except OSError as err:
         if os.path.exists(os.path.join(db_dir, "rms")):
             print "rms directory already exists"
         else:
             raise err
 
-    #
+    #Move audio files from directory to database
     if os.path.exists(audio_dir):
-        for wav in os.listdir(audio_dir):
-            print wav
+        for item in os.listdir(audio_dir):
+            if os.path.splitext(item)[1] == ".wav":
+                wavpath = os.path.join(audio_dir, item)
+                shutil.move(wavpath, wav_dir)
+                print "Moved: ", item, "\nTo directory: ", wav_dir
+                db_content["wav"].append(wavpath)

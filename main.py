@@ -22,7 +22,7 @@ def parse_arguments():
     parser = ap.ArgumentParser(description = "Prosess audio files")
     
     parser.add_argument(
-        'input_file', 
+        'database', 
         metavar='', 
         help = "Sound file to process"
     )
@@ -45,8 +45,14 @@ def parse_arguments():
 def main():
     #Parse arguments
     main_args = parse_arguments()
-    check_args(main_args)
+    #check_args(main_args)
+    
+    #----------
+    #Begin processing audio files here:
+    #----------
+    print af.init_database("/Users/samperry/Python_Projects/sp.py_sound/TestAudio")
 
+    """
     #Create audio file instances
     input_audio = af.AnalysedAudioFile(main_args.input_file, mode = 'r')
     output_audio = af.AnalysedAudioFile(
@@ -60,10 +66,6 @@ def main():
     if main_args.verbose > 1:
         input_audio.audio_file_info()
         output_audio.audio_file_info()
-    
-    #----------
-    #Begin processing audio files here:
-    #----------
-    print af.init_database("/Users/samperry/Python_Projects/sp.py_sound/TestAudio")
+    """    
 if __name__ == "__main__":
     main()
