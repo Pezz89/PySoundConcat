@@ -64,6 +64,6 @@ def main():
     #----------
     #Begin processing audio files here:
     #----------
-    print input_audio.ms_to_samps(250)
+    print af.init_database("/Users/samperry/Python_Projects/sp.py_sound/TestAudio")
 if __name__ == "__main__":
     main()

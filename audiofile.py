@@ -82,15 +82,6 @@ class AnalysedAudioFile(AudioFile):
             #Calculate the RMS value of the current window of frames
             rms = np.sqrt(np.mean(frames*frames))
 
-    def init_database(location):
-        """Creates the folder hierachy for the database of files to be stored in"""
-        #Check if database already exists in the location
-        #if it does then great
-        #else create a new one
-        #create main directory with the name of the audio file (minus extension)
-        #create sub-directories for:
-        #the wav file (.wav)
-        #the rms file (.lab)
 
     def gen_window(window_type, window_size, sym=True):
         """
@@ -120,3 +111,50 @@ class AnalysedAudioFile(AudioFile):
         return int(round(seconds*self.samplerate()))
 
 
+def init_database(audio_dir, db_dir=None):
+    """Creates the folder hierachy for the database of files to be stored in"""
+    #Check if database already exists in the location
+        #if directory exists with name of audio file:
+            #check wav directory exists, if not create
+            #check rms directory exists, if not create
+            #check wav file is in wav directory, if not error missing wav
+    #else create a new one
+        #create main directory with the name of the audio file (minus extension)
+        #create sub-directories for:
+            #the wav file (.wav)
+            #the rms file (.lab)
+        #move wav file to wav directory
+    
+    #Create database location string from name and location provided
+    if not db_dir:
+        db_dir = audio_dir
+    try:
+        os.mkdir(db_dir)
+    except OSError as err:
+        if os.path.exists(db_dir):
+            print "database directory already exists"
+        else:
+            raise err
+
+    #Make sure wav directory exists
+    try:
+        os.mkdir(os.path.join(db_dir, "wav"))
+    except OSError as err:
+        if os.path.exists(os.path.join(db_dir, "wav")):
+            print "wav directory already exists"
+        else:
+            raise err
+
+    #Make sure rms directory exists
+    try:
+        os.mkdir(os.path.join(db_dir, "rms"))
+    except OSError as err:
+        if os.path.exists(os.path.join(db_dir, "rms")):
+            print "rms directory already exists"
+        else:
+            raise err
+
+    #
+    if os.path.exists(audio_dir):
+        for wav in os.listdir(audio_dir):
+            print wav
