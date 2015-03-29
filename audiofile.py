@@ -30,13 +30,13 @@ class AudioFile(PySndfile):
         print "Errors?:                 ", self.error()
         print "*************************************************"
 
-    def read_grain(start_index, grain_size):
+    def read_grain(self, start_index, grain_size):
         """
         Read a grain of audio from the file. if grain ends after the end of
         the file, the grain is padded with zeros.
         Audio object seeker is not changed
         """
-        position = self.get_seek_position(audio)
+        position = self.get_seek_position()
         #Read grain
         index = self.seek(start_index, 0)
         if index + grain_size > self.frames():
@@ -55,20 +55,30 @@ class AudioFile(PySndfile):
         self.seek(position, 0)
         return grain
 
-    def get_seek_position():
+    def get_seek_position(self):
         """Returns the current seeker position in the file"""
         return self.seek(0, 1)
 
 class AnalysedAudioFile(AudioFile):
     """Generates and stores analysis information for an audio file"""
-    def __init__(self, filepath, mode, format=None, channels=None, samplerate=None):
+    def __init__(
+            self, 
+            audiopath, 
+            mode, 
+            format=None, 
+            channels=None, 
+            samplerate=None,
+            rmspath=None
+        ):
         super(AnalysedAudioFile, self).__init__(
-                    filepath, 
+                    audiopath, 
                     mode = mode, 
                     format = format,
                     channels = channels,
                     samplerate = samplerate
                 )
+        if rmspath:
+            self.rmspath = rmspath
 
     def create_rms_analysis(self, window_size=100, window_type="triangle"):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
@@ -152,6 +162,7 @@ def init_database(audio_dir, db_dir=None):
     except OSError as err:
         if os.path.exists(os.path.join(db_dir, "wav")):
             print "wav directory already exists"
+            db_content["wav"].extend(os.listdir(wav_dir))
         else:
             raise err
 
@@ -161,8 +172,9 @@ def init_database(audio_dir, db_dir=None):
         os.mkdir(rms_dir)
         print "Created directory: ", rms_dir
     except OSError as err:
-        if os.path.exists(os.path.join(db_dir, "rms")):
+        if os.path.exists(os.path.join(rms_dir)):
             print "rms directory already exists"
+            db_content["rms"].extend(os.listdir(rms_dir))
         else:
             raise err
 
@@ -174,3 +186,4 @@ def init_database(audio_dir, db_dir=None):
                 shutil.move(wavpath, wav_dir)
                 print "Moved: ", item, "\nTo directory: ", wav_dir
                 db_content["wav"].append(wavpath)
+    print db_content
