@@ -50,8 +50,10 @@ def main():
     #----------
     #Begin processing audio files here:
     #----------
-    print af.init_database("/Users/samperry/Python_Projects/sp.py_sound/TestAudio")
-
+    #Creates a database structure at the location given and returns a list of
+    #AnalysedAudioObjects for each item in the database
+    database = af.AudioDatabase(main_args.database)
+    database.generate_analyses()
     """
     #Create audio file instances
     input_audio = af.AnalysedAudioFile(main_args.input_file, mode = 'r')
