@@ -117,7 +117,7 @@ class AnalysedAudioFile(AudioFile):
             self, 
             window_size=25, 
             window_type="triangle",
-            window_overlap=2
+            window_overlap=8
         ):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
         window_size = self.ms_to_samps(window_size) 
@@ -142,7 +142,7 @@ class AnalysedAudioFile(AudioFile):
                     rms = np.sqrt(np.mean(np.square(frames)))
                     #Write data to RMS .lab file
                     rms_file.write("{0} {1:6f}\n".format(
-                        i+int(round(window_size/window_overlap)), rms)
+                        i+int(round(window_size/2.0)), rms)
                     )
                     #Iterate frame
                     i+=int(round(window_size/window_overlap))
@@ -178,7 +178,27 @@ class AnalysedAudioFile(AudioFile):
         """Converts milliseconds to samples based on the sample rate of the audio file"""
         seconds = ms / 1000.0
         return int(round(seconds*self.samplerate()))
-    
+
+    def get_rms_from_file(self, start=0, end=-1):
+        """Read values from RMS file between start and end points provided"""
+        if end == -1:
+            end = self.rms_window_count
+        rms_array = np.empty((2, self.rms_window_count))
+        with open(self.rmspath, 'r') as rmsfile:
+            i = 0
+            for ind, line in enumerate(rmsfile.xreadlines()):
+                time, value=line.split()
+                time = int(time)
+                value = float(value)
+                if time >= start and time <= end:
+                    if i == 0:
+                        time = start
+                    rms_array[0][i] = time
+                    rms_array[1][i] = value
+                    i+=1
+                rms_array[0][i] = end
+        return rms_array[:, 0:i] 
+
     def plot_rms_to_graph(self):
         """
         Uses matplotlib to create a graph of the audio file and the generated
@@ -189,9 +209,7 @@ class AnalysedAudioFile(AudioFile):
         #Create an empty array which will contain rms frame number and value
         #pairs
         rms_array = np.empty((2, self.rms_window_count))
-        with open(self.rmspath, 'r') as rmsfile:
-            for ind, line in enumerate(rmsfile.xreadlines()):
-                rms_array[0][ind], rms_array[1][ind]=line.split()
+        rms_array = self.get_rms_from_file(start = 0, end = (44100*5))
         rms_contour = np.interp(
             np.arange(audio_array.size),
             rms_array[0],
@@ -201,6 +219,17 @@ class AnalysedAudioFile(AudioFile):
         plt.xlabel("Time (samples)")
         plt.ylabel("sample value")
         plt.show()
+
+    def estimate_attack(self):
+        """
+        Estimate the start and end of the attack of the audio
+        Adaptive threshold method (weakest effort method) described here:
+        http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
+
+        """
+        #Make sure RMS has been calculated
+        if not self.rmspath:
+            raise IOError("RMS analysis is required to estimate attack")
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
