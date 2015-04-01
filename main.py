@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import numpy as np
 import argparse as ap
 import os
 import audiofile as af

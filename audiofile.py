@@ -94,9 +94,15 @@ class AnalysedAudioFile(AudioFile):
             with open(self.rmspath, 'r') as rmsfile:
                 self.rms_window_count = sum(1 for line in rmsfile)
 
+        #---------------
+        #Initialise Attack estimation variables
+        self.attackpath = kwargs.pop('atkpath', None)
+
         #Initialise the AudioFile parent class
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
+    #-------------------------------------------------------------------------
+    #RMS ESTIMATION METHODS
     def create_rms_analysis(self,
                             window_size=25,
                             window_type="triangle",
@@ -131,6 +137,79 @@ class AnalysedAudioFile(AudioFile):
         except IOError:
             return False
 
+
+    def get_rms_from_file(self, start=0, end=-1):
+        """
+        Read values from RMS file between start and end points provided (in
+        samples)
+        """
+        #Convert -1 index to final window index
+        if end == -1:
+            end = self.rms_window_count
+        #Create empty array with a size equal to the maximum possible RMS values
+        rms_array = np.empty((2, self.rms_window_count))
+        #Open the RMS file
+        with open(self.rmspath, 'r') as rmsfile:
+            i = 0
+            for line in rmsfile.xreadlines():
+                #Split the values and convert to their correct types
+                time, value = line.split()
+                time = int(time)
+                value = float(value)
+                #If the values are within the desired range, add them to the
+                #array
+                if time >= start and time <= end:
+                    #The first value will be rounded down to the start
+                    if i == 0:
+                        time = start
+                    rms_array[0][i] = time
+                    rms_array[1][i] = value
+                    i += 1
+            #The last value will be rounded up to the end
+            rms_array[0][i] = end
+        rms_array = rms_array[:, start:start+i]
+        print rms_array[0]
+        print rms_array[1]
+        rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
+        return rms_contour
+
+    def plot_rms_to_graph(self):
+        """
+        Uses matplotlib to create a graph of the audio file and the generated
+        RMS values
+        """
+        #Get all audio samples from the audio file
+        audio_array = self.read_frames()[:(44100 * 5)]
+        #Create an empty array which will contain rms frame number and value
+        #pairs
+        rms_contour = self.get_rms_from_file(start=0, end=(44100 * 5))
+        plt.plot(audio_array, 'b', rms_contour, 'r')
+        plt.xlabel("Time (samples)")
+        plt.ylabel("sample value")
+        plt.show()
+
+    #-------------------------------------------------------------------------
+    #ATTACK ESTIMATION METHODS
+    def estimate_attack(self):
+        """
+        Estimate the start and end of the attack of the audio
+        Adaptive threshold method (weakest effort method) described here:
+        http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
+
+        """
+        #Make sure RMS has been calculated
+        if not self.rmspath:
+            raise IOError("RMS analysis is required to estimate attack")
+        if not self.attackpath:
+            if not self.db_dir:
+                raise IOError("Analysed Audio object must have an atk file path"
+                              "or be part of a database")
+            self.attackpath = os.path.join(self.db_dir, "atk", self.name + ".mrk")
+        with open(self.attackpath, 'w') as attackfile:
+            print "opened"
+    
+    #-------------------------------------------------------------------------
+    #GENERAL ANALYSIS METHODS
     def gen_window(self, window_type, window_size, sym=True):
         """
         Generates a window function of given size and type
@@ -159,55 +238,6 @@ class AnalysedAudioFile(AudioFile):
         seconds = ms / 1000.0
         return int(round(seconds * self.samplerate()))
 
-    def get_rms_from_file(self, start=0, end=-1):
-        """Read values from RMS file between start and end points provided"""
-        if end == -1:
-            end = self.rms_window_count
-        rms_array = np.empty((2, self.rms_window_count))
-        with open(self.rmspath, 'r') as rmsfile:
-            i = 0
-            for ind, line in enumerate(rmsfile.xreadlines()):
-                time, value = line.split()
-                time = int(time)
-                value = float(value)
-                if time >= start and time <= end:
-                    if i == 0:
-                        time = start
-                    rms_array[0][i] = time
-                    rms_array[1][i] = value
-                    i += 1
-                rms_array[0][i] = end
-        return rms_array[:, 0:i]
-
-    def plot_rms_to_graph(self):
-        """
-        Uses matplotlib to create a graph of the audio file and the generated
-        RMS values
-        """
-        #Get all audio samples from the audio file
-        audio_array = self.read_frames()[:(44100 * 5)]
-        #Create an empty array which will contain rms frame number and value
-        #pairs
-        rms_array = np.empty((2, self.rms_window_count))
-        rms_array = self.get_rms_from_file(start=0, end=(44100 * 5))
-        rms_contour = np.interp(np.arange(audio_array.size), rms_array[0],
-                                rms_array[1])
-        plt.plot(audio_array, 'b', rms_contour, 'r')
-        plt.xlabel("Time (samples)")
-        plt.ylabel("sample value")
-        plt.show()
-
-    def estimate_attack(self):
-        """
-        Estimate the start and end of the attack of the audio
-        Adaptive threshold method (weakest effort method) described here:
-        http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
-
-        """
-        #Make sure RMS has been calculated
-        if not self.rmspath:
-            raise IOError("RMS analysis is required to estimate attack")
-
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
                 'rms={2})'.format(self.name, self.wavpath, self.rmspath))
@@ -220,7 +250,8 @@ class AudioDatabase:
         """Creates the folder hierachy for the database of files to be stored in"""
 
         #Create a dictionary to store reference to the content of the database
-        db_content = collections.defaultdict(lambda: {"wav": None, "rms": None})
+        db_content = collections.defaultdict(lambda: {"wav": None, "rms": None,
+            "atk": None})
 
         #If the database directory isnt specified then the directory where the audio files are stored will be used
         if not db_dir:
@@ -264,6 +295,21 @@ class AudioDatabase:
             else:
                 raise err
 
+        #Make sure rms directory exists
+        atk_dir = os.path.join(db_dir, "atk")
+        try:
+            os.mkdir(atk_dir)
+            print "Created directory: ", atk_dir
+        except OSError as err:
+            if os.path.exists(os.path.join(atk_dir)):
+                print "atk directory already exists"
+                for item in os.listdir(atk_dir):
+                    db_content[os.path.splitext(item)[0]]["atk"] = (
+                        os.path.join(atk_dir, item)
+                    )
+            else:
+                raise err
+        
         #Move audio files from directory to database
         if os.path.exists(audio_dir):
             for item in os.listdir(audio_dir):
@@ -289,3 +335,4 @@ class AudioDatabase:
         for audiofile in self.analysed_audio_list:
             audiofile.create_rms_analysis()
             audiofile.plot_rms_to_graph()
+            audiofile.estimate_attack()
