@@ -1,3 +1,4 @@
+
 import os
 import shutil
 import collections
@@ -7,38 +8,31 @@ from pysndfile import PySndfile
 
 import matplotlib.pyplot as plt
 
+
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
-    
+
     def __new__(cls, filename, mode, **kwargs):
         inst = PySndfile.__new__(cls, filename, mode)
         return inst
 
-    def __init__(
-            self, 
-            wavpath, 
-            mode, 
-            format=None, 
-            channels=None,
-            samplerate=None,
-            name=None,
-            *args, 
-            **kwargs
-            ):
-        super(AudioFile, self).__init__(
-                    wavpath, 
-                    mode = mode, 
-                    format = format,
-                    channels = channels,
-                    samplerate = samplerate
-                )
+    def __init__(self, wavpath, mode,
+                 format=None,
+                 channels=None,
+                 samplerate=None,
+                 name=None, *args, **kwargs):
+        super(AudioFile, self).__init__(wavpath,
+                                        mode=mode,
+                                        format=format,
+                                        channels=channels,
+                                        samplerate=samplerate)
         self.wavpath = wavpath
         self.name = name
 
-    def audio_file_info(self): 
+    def audio_file_info(self):
         """ Prints audio information """
         print "*************************************************"
-        print "File:                    ", os.path.relpath(self.wavpath)  
+        print "File:                    ", os.path.relpath(self.wavpath)
         print "No. channels:            ", self.channels()
         print "Samplerate:              ", self.samplerate()
         print "Format:                  ", self.format()
@@ -59,15 +53,10 @@ class AudioFile(PySndfile):
         #Read grain
         index = self.seek(start_index, 0)
         if index + grain_size > self.frames():
-            grain = self.read_frames(
-                self.frames() - index
-            )
-            grain = np.pad(
-                grain, 
-                (0, index+grain_size-self.frames()), 
-                'constant', 
-                constant_values=(0,0)
-            )
+            grain = self.read_frames(self.frames() - index)
+            grain = np.pad(grain, (0, index + grain_size - self.frames()),
+                           'constant',
+                           constant_values=(0, 0))
 
         else:
             grain = self.read_frames(grain_size)
@@ -78,18 +67,16 @@ class AudioFile(PySndfile):
         """Returns the current seeker position in the file"""
         return self.seek(0, 1)
 
+
 class AnalysedAudioFile(AudioFile):
     """Generates and stores analysis information for an audio file"""
-    def __init__(
-            self, 
-            *args,
-            **kwargs
-        ):
+
+    def __init__(self, *args, **kwargs):
         #---------------
         #Initialise database variables
         #Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
-        
+
         #---------------
         #Initialise f0 variables
         #Stores the path to the f0 file
@@ -108,26 +95,20 @@ class AnalysedAudioFile(AudioFile):
                 self.rms_window_count = sum(1 for line in rmsfile)
 
         #Initialise the AudioFile parent class
-        super(AnalysedAudioFile, self).__init__(
-            *args,
-            **kwargs
-                )
+        super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
-    def create_rms_analysis(
-            self, 
-            window_size=25, 
-            window_type="triangle",
-            window_overlap=8
-        ):
+    def create_rms_analysis(self,
+                            window_size=25,
+                            window_type="triangle",
+                            window_overlap=8):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
-        window_size = self.ms_to_samps(window_size) 
-        window_function = self.gen_window(window_type, window_size) 
+        window_size = self.ms_to_samps(window_size)
+        window_function = self.gen_window(window_type, window_size)
         if not self.rmspath:
             if not self.db_dir:
                 raise IOError("Analysed Audio object must have an RMS file path"
-                        "or be part of a database"
-                        )
-            self.rmspath =  os.path.join(self.db_dir, "rms", self.name + ".lab")
+                              "or be part of a database")
+            self.rmspath = os.path.join(self.db_dir, "rms", self.name + ".lab")
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
@@ -142,10 +123,9 @@ class AnalysedAudioFile(AudioFile):
                     rms = np.sqrt(np.mean(np.square(frames)))
                     #Write data to RMS .lab file
                     rms_file.write("{0} {1:6f}\n".format(
-                        i+int(round(window_size/2.0)), rms)
-                    )
+                        i + int(round(window_size / 2.0)), rms))
                     #Iterate frame
-                    i+=int(round(window_size/window_overlap))
+                    i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
             return self.rmspath
         except IOError:
@@ -172,12 +152,12 @@ class AnalysedAudioFile(AudioFile):
             return signal.triang(window_size, sym=sym)
         else:
             raise ValueError("'{0}' is not a valid window"
-                    " type".format(window_type))
-    
+                             " type".format(window_type))
+
     def ms_to_samps(self, ms):
         """Converts milliseconds to samples based on the sample rate of the audio file"""
         seconds = ms / 1000.0
-        return int(round(seconds*self.samplerate()))
+        return int(round(seconds * self.samplerate()))
 
     def get_rms_from_file(self, start=0, end=-1):
         """Read values from RMS file between start and end points provided"""
@@ -187,7 +167,7 @@ class AnalysedAudioFile(AudioFile):
         with open(self.rmspath, 'r') as rmsfile:
             i = 0
             for ind, line in enumerate(rmsfile.xreadlines()):
-                time, value=line.split()
+                time, value = line.split()
                 time = int(time)
                 value = float(value)
                 if time >= start and time <= end:
@@ -195,9 +175,9 @@ class AnalysedAudioFile(AudioFile):
                         time = start
                     rms_array[0][i] = time
                     rms_array[1][i] = value
-                    i+=1
+                    i += 1
                 rms_array[0][i] = end
-        return rms_array[:, 0:i] 
+        return rms_array[:, 0:i]
 
     def plot_rms_to_graph(self):
         """
@@ -205,16 +185,13 @@ class AnalysedAudioFile(AudioFile):
         RMS values
         """
         #Get all audio samples from the audio file
-        audio_array = self.read_frames()[:(44100*5)]
+        audio_array = self.read_frames()[:(44100 * 5)]
         #Create an empty array which will contain rms frame number and value
         #pairs
         rms_array = np.empty((2, self.rms_window_count))
-        rms_array = self.get_rms_from_file(start = 0, end = (44100*5))
-        rms_contour = np.interp(
-            np.arange(audio_array.size),
-            rms_array[0],
-            rms_array[1]
-        )
+        rms_array = self.get_rms_from_file(start=0, end=(44100 * 5))
+        rms_contour = np.interp(np.arange(audio_array.size), rms_array[0],
+                                rms_array[1])
         plt.plot(audio_array, 'b', rms_contour, 'r')
         plt.xlabel("Time (samples)")
         plt.ylabel("sample value")
@@ -235,19 +212,20 @@ class AnalysedAudioFile(AudioFile):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
                 'rms={2})'.format(self.name, self.wavpath, self.rmspath))
 
+
 class AudioDatabase:
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
     def __init__(self, audio_dir, db_dir=None):
         """Creates the folder hierachy for the database of files to be stored in"""
-        
+
         #Create a dictionary to store reference to the content of the database
-        db_content = collections.defaultdict(lambda: {"wav" : None, "rms" : None})
+        db_content = collections.defaultdict(lambda: {"wav": None, "rms": None})
 
         #If the database directory isnt specified then the directory where the audio files are stored will be used
         if not db_dir:
             db_dir = audio_dir
-        
+
         try:
             os.mkdir(db_dir)
         except OSError as err:
@@ -265,9 +243,9 @@ class AudioDatabase:
             if os.path.exists(os.path.join(db_dir, "wav")):
                 print "wav directory already exists"
                 for item in os.listdir(wav_dir):
-                   db_content[os.path.splitext(item)[0]]["wav"] = (
-                           os.path.join(wav_dir, item)
-                   )
+                    db_content[os.path.splitext(item)[0]]["wav"] = (
+                        os.path.join(wav_dir, item)
+                    )
             else:
                 raise err
 
@@ -280,9 +258,9 @@ class AudioDatabase:
             if os.path.exists(os.path.join(rms_dir)):
                 print "rms directory already exists"
                 for item in os.listdir(rms_dir):
-                   db_content[os.path.splitext(item)[0]]["rms"] = (
-                           os.path.join(rms_dir, item)
-                   )
+                    db_content[os.path.splitext(item)[0]]["rms"] = (
+                        os.path.join(rms_dir, item)
+                    )
             else:
                 raise err
 
@@ -294,25 +272,20 @@ class AudioDatabase:
                     shutil.move(wavpath, wav_dir)
                     print "Moved: ", item, "\nTo directory: ", wav_dir
                     db_content[os.path.splitext(item)[0]]["wav"] = (
-                            os.path.join(wav_dir, item)
-                            )
+                        os.path.join(wav_dir, item)
+                    )
 
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
             if not db_content[key]["wav"]:
                 continue
             self.analysed_audio_list.append(
-                    AnalysedAudioFile(
-                        db_content[key]["wav"],
-                        'r',
-                        rmspath=db_content[key]["rms"],
-                        name=key,
-                        db_dir=db_dir
-                        )
-                    )
+                AnalysedAudioFile(db_content[key]["wav"], 'r',
+                                  rmspath=db_content[key]["rms"],
+                                  name=key,
+                                  db_dir=db_dir))
 
     def generate_analyses(self):
         for audiofile in self.analysed_audio_list:
             audiofile.create_rms_analysis()
             audiofile.plot_rms_to_graph()
-
