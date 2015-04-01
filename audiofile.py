@@ -168,8 +168,6 @@ class AnalysedAudioFile(AudioFile):
             #The last value will be rounded up to the end
             rms_array[0][i] = end
         rms_array = rms_array[:, start:start+i]
-        print rms_array[0]
-        print rms_array[1]
         rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
         return rms_contour
 
@@ -206,7 +204,10 @@ class AnalysedAudioFile(AudioFile):
                               "or be part of a database")
             self.attackpath = os.path.join(self.db_dir, "atk", self.name + ".mrk")
         with open(self.attackpath, 'w') as attackfile:
-            print "opened"
+            rms_contour = self.get_rms_from_file()
+            max_rms = np.max(rms_contour[1])
+            thresholds = np.arange(10, 0, step=-1) * (max_rms / 10.0) 
+            print thresholds
     
     #-------------------------------------------------------------------------
     #GENERAL ANALYSIS METHODS
@@ -334,5 +335,4 @@ class AudioDatabase:
     def generate_analyses(self):
         for audiofile in self.analysed_audio_list:
             audiofile.create_rms_analysis()
-            audiofile.plot_rms_to_graph()
             audiofile.estimate_attack()
