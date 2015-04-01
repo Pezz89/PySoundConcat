@@ -85,15 +85,40 @@ class AnalysedAudioFile(AudioFile):
             *args,
             **kwargs
         ):
-        self.rmspath = kwargs.pop('rmspath', None)
-        self.f0path = kwargs.pop('f0path', None)
+        #---------------
+        #Initialise database variables
+        #Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
+        
+        #---------------
+        #Initialise f0 variables
+        #Stores the path to the f0 file
+        self.f0path = kwargs.pop('f0path', None)
+
+        #---------------
+        #Initialise RMS variables
+        #Stores the path to the RMS lab file
+        self.rmspath = kwargs.pop('rmspath', None)
+        #Stores the number of RMS window values when calculating the RMS contour
+        self.rms_window_count = None
+        #If an RMS file is provided then count the number of lines (1 for each
+        #window)
+        if self.rmspath:
+            with open(self.rmspath, 'r') as rmsfile:
+                self.rms_window_count = sum(1 for line in rmsfile)
+
+        #Initialise the AudioFile parent class
         super(AnalysedAudioFile, self).__init__(
             *args,
             **kwargs
                 )
 
-    def create_rms_analysis(self, window_size=100, window_type="triangle"):
+    def create_rms_analysis(
+            self, 
+            window_size=25, 
+            window_type="triangle",
+            window_overlap=2
+        ):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
         window_size = self.ms_to_samps(window_size) 
         window_function = self.gen_window(window_type, window_size) 
@@ -106,16 +131,22 @@ class AnalysedAudioFile(AudioFile):
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
+                #Count the number of windows analysed
+                self.rms_window_count = 0
                 while i < self.frames():
                     #Read frames from audio file
                     frames = self.read_grain(i, window_size)
                     #Apply window function to frames
                     frames = frames * window_function
                     #Calculate the RMS value of the current window of frames
-                    rms = np.sqrt(np.mean(frames*frames))
+                    rms = np.sqrt(np.mean(np.square(frames)))
+                    #Write data to RMS .lab file
+                    rms_file.write("{0} {1:6f}\n".format(
+                        i+int(round(window_size/window_overlap)), rms)
+                    )
                     #Iterate frame
-                    rms_file.write("{0} {1:6f}\n".format(i+int(round(window_size/2.0)), rms))
-                    i+=int(round(window_size/2.0))
+                    i+=int(round(window_size/window_overlap))
+                    self.rms_window_count += 1
             return self.rmspath
         except IOError:
             return False
@@ -153,15 +184,23 @@ class AnalysedAudioFile(AudioFile):
         Uses matplotlib to create a graph of the audio file and the generated
         RMS values
         """
-        audio_array = self.read_frames()
-        rms_array = []
+        #Get all audio samples from the audio file
+        audio_array = self.read_frames()[:(44100*5)]
+        #Create an empty array which will contain rms frame number and value
+        #pairs
+        rms_array = np.empty((2, self.rms_window_count))
         with open(self.rmspath, 'r') as rmsfile:
-            for line in rmsfile:
-                rms_array.append(line[0], line[1])
-        #plt.plot(audio_array, 'b', , 'r')
-        #plt.xlabel("Time (samples)")
-        #plt.ylabel("sample value")
-        #plt.show()
+            for ind, line in enumerate(rmsfile.xreadlines()):
+                rms_array[0][ind], rms_array[1][ind]=line.split()
+        rms_contour = np.interp(
+            np.arange(audio_array.size),
+            rms_array[0],
+            rms_array[1]
+        )
+        plt.plot(audio_array, 'b', rms_contour, 'r')
+        plt.xlabel("Time (samples)")
+        plt.ylabel("sample value")
+        plt.show()
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
