@@ -236,6 +236,10 @@ class AnalysedAudioFile(AudioFile):
             #Find first index of rms that is over the threshold for each
             #thresholds
             threshold_inds =  np.argmax(rms_contour >= thresholds, axis = 1)
+
+            #Need to make sure rms does not return to a lower threshold after
+            #being > a threshold.
+
             #Calculate the time difference between each of the indexes
             ind_diffs = np.ediff1d(threshold_inds)
             #Find the average (mean?) time between thresholds
@@ -270,6 +274,16 @@ class AnalysedAudioFile(AudioFile):
             raise ValueError("Attack times must be calculated before calling" 
                     "the log attack time method")
         self.logattacktime = math.log10(self.attackend-self.attackstart)    
+
+    #-------------------------------------------------------------------------
+    #ZERO-CROSSING DETECTION METHODS
+    
+    def detect_zero_x(self, window_size = 25):
+        """Generate zero crossing detections for windows of the signal"""
+        i = 0
+
+        while i < self.frames():
+            zero_crossings = np.where(np.diff(np.sign(self.read_grain(i, window_size))))[0]
 
     #-------------------------------------------------------------------------
     #GENERAL ANALYSIS METHODS
@@ -321,9 +335,12 @@ class AudioDatabase:
     def __init__(self, audio_dir, db_dir=None):
         """Creates the folder hierachy for the database of files to be stored in"""
 
+        #define a list of sub-directory names for each of the analysis
+        #parameters
+        subdir_list = ["wav", "rms", "atk", "0x"]
+
         #Create a dictionary to store reference to the content of the database
-        db_content = collections.defaultdict(lambda: {"wav": None, "rms": None,
-            "atk": None})
+        db_content = collections.defaultdict(lambda: {i:None for i in subdir_list})
 
         #If the database directory isnt specified then the directory where the audio files are stored will be used
         if not db_dir:
@@ -337,62 +354,43 @@ class AudioDatabase:
             else:
                 raise err
 
-        #Make sure wav directory exists
-        wav_dir = os.path.join(db_dir, "wav")
-        try:
-            os.mkdir(wav_dir)
-            print "Created directory: ", wav_dir
-        except OSError as err:
-            if os.path.exists(os.path.join(db_dir, "wav")):
-                print "wav directory already exists"
-                for item in fileops.listdir_nohidden(wav_dir):
-                    db_content[os.path.splitext(item)[0]]["wav"] = (
-                        os.path.join(wav_dir, item)
-                    )
-            else:
-                raise err
+        def initialise_subdir(dirkey, db_dir):
+            """
+            Create a subdirectory in the database with the name of the key
+            provided.
+            """
+            #Make sure directory exists
+            directory = os.path.join(db_dir, dirkey)
+            try:
+                os.mkdir(directory)
+                print "Created directory: ",directory 
+            except OSError as err:
+                if os.path.exists(directory):
+                    print "{0} directory already exists".format(dirkey)
+                    for item in fileops.listdir_nohidden(directory):
+                        db_content[os.path.splitext(item)[0]][dirkey] = (
+                            os.path.join(directory, item)
+                        )
+                else:
+                    raise err
+            return directory 
 
-        #Make sure rms directory exists
-        rms_dir = os.path.join(db_dir, "rms")
-        try:
-            os.mkdir(rms_dir)
-            print "Created directory: ", rms_dir
-        except OSError as err:
-            if os.path.exists(os.path.join(rms_dir)):
-                print "rms directory already exists"
-                for item in fileops.listdir_nohidden(rms_dir):
-                    db_content[os.path.splitext(item)[0]]["rms"] = (
-                        os.path.join(rms_dir, item)
-                    )
-            else:
-                raise err
-
-        #Make sure attack estimation directory exists
-        atk_dir = os.path.join(db_dir, "atk")
-        try:
-            os.mkdir(atk_dir)
-            print "Created directory: ", atk_dir
-        except OSError as err:
-            if os.path.exists(os.path.join(atk_dir)):
-                print "atk directory already exists"
-                for item in fileops.listdir_nohidden(atk_dir):
-                    db_content[os.path.splitext(item)[0]]["atk"] = (
-                        os.path.join(atk_dir, item)
-                    )
-            else:
-                raise err
+        #create a sub directory for every key in the subdir list
+        #store reference to this in dictionary
+        subdir_paths = {key:initialise_subdir(key, db_dir) for key in subdir_list}
         
-        #Move audio files from directory to database
+        #Move audio files to database
         if os.path.exists(audio_dir):
             for item in fileops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == ".wav":
                     wavpath = os.path.join(audio_dir, item)
-                    shutil.move(wavpath, wav_dir)
-                    print "Moved: ", item, "\nTo directory: ", wav_dir
+                    shutil.move(wavpath, subdir_paths["wav"])
+                    print ("Moved: ", item, "\nTo directory: ",
+                    subdir_paths["wav"])
                     db_content[os.path.splitext(item)[0]]["wav"] = (
-                        os.path.join(wav_dir, item)
+                        os.path.join(subdir_paths["wav"], item)
                     )
-
+        
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
             if not db_content[key]["wav"]:
