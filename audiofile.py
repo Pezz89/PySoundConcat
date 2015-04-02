@@ -335,6 +335,7 @@ class AudioDatabase:
     def __init__(self, audio_dir, db_dir=None):
         """Creates the folder hierachy for the database of files to be stored in"""
 
+        print "\nInitialising Database..."
         #define a list of sub-directory names for each of the analysis
         #parameters
         subdir_list = ["wav", "rms", "atk", "0x"]
@@ -346,13 +347,8 @@ class AudioDatabase:
         if not db_dir:
             db_dir = audio_dir
 
-        try:
-            os.mkdir(db_dir)
-        except OSError as err:
-            if os.path.exists(db_dir):
-                print "database directory already exists"
-            else:
-                raise err
+        #Check to see if the database directory already exists
+        fileops.must_exist(db_dir, msg="Database directory already exists.")
 
         def initialise_subdir(dirkey, db_dir):
             """
@@ -366,7 +362,8 @@ class AudioDatabase:
                 print "Created directory: ",directory 
             except OSError as err:
                 if os.path.exists(directory):
-                    print "{0} directory already exists".format(dirkey)
+                    print "{0} directory already exists:\t\t{1}".format(dirkey,
+                            os.path.relpath(directory))
                     for item in fileops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
@@ -377,8 +374,10 @@ class AudioDatabase:
 
         #create a sub directory for every key in the subdir list
         #store reference to this in dictionary
+        print "\nCreating sub-directories..."
         subdir_paths = {key:initialise_subdir(key, db_dir) for key in subdir_list}
         
+        print "\nMoving any audio to sub directory..."
         #Move audio files to database
         if os.path.exists(audio_dir):
             for item in fileops.listdir_nohidden(audio_dir):
@@ -403,6 +402,7 @@ class AudioDatabase:
 
     def generate_analyses(self):
         for audiofile in self.analysed_audio_list:
-            print "\n", audiofile.name, ":"
+            print audiofile.name, ":"
             audiofile.create_rms_analysis()
             audiofile.estimate_attack()
+            print ""
