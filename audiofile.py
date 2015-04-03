@@ -62,9 +62,49 @@ class AudioFile(PySndfile):
         self.seek(position, 0)
         return grain
 
+    def normalize_audio(self, maximum = 1.0):
+        """Normalize frames so that the maximum sample value == the maximum provided"""
+        if self.mode != 'rw':
+            raise ValueError("AudioFile object must be in read/write mode to"
+                             "normalize audio")
+        frames = self.read_frames()
+        max_sample = np.max(frames)
+        ratio = maximum / max_sample
+        frames = frames * ratio
+        self.write_frames(frames)
+
     def get_seek_position(self):
         """Returns the current seeker position in the file"""
         return self.seek(0, 1)
+
+    def ms_to_samps(self, ms):
+        """
+        Converts milliseconds to samples based on the sample rate of the audio 
+        file
+        """
+        seconds = ms / 1000.0
+        return int(round(seconds * self.samplerate()))
+
+    def secs_to_samps(self, seconds):
+        """
+        Converts seconds to samples based on the sample rate of the audio file
+        """
+        return int(round(seconds * self.samplerate()))
+
+    def samps_to_secs(self, samps):
+        """
+        Converts samples to seconds based on the sample rate of the audio
+        file
+        """
+        return (float(samps) / self.samplerate())
+
+    def samps_to_ms(self, samps):
+        """
+        Converts samples to milliseconds based on the sample rate of the audio
+        file
+        """
+        return (float(samps) / self.samplerate()) * 1000.0
+
 
     def __repr__(self):
         return ('AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath))
@@ -100,6 +140,11 @@ class AnalysedAudioFile(AudioFile):
         self.attackpath = kwargs.pop('atkpath', None)
         self.attack_start = None
         self.attack_end = None
+        self.attack_size = None
+
+        #---------------
+        #Initialise zero-crossing variables
+        self.zeroxpath = kwargs.pop('zeroxpath', None)
 
         #Initialise the AudioFile parent class
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
@@ -121,7 +166,7 @@ class AnalysedAudioFile(AudioFile):
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
-                print "Creating RMS File:\t\t\t", os.path.relpath(self.rmspath)
+                print "Creating RMS file:\t\t\t", os.path.relpath(self.rmspath)
                 #Count the number of windows analysed
                 self.rms_window_count = 0
                 while i < self.frames():
@@ -213,7 +258,7 @@ class AnalysedAudioFile(AudioFile):
         rng = maxs - mins
         return high - (((high - low) * (maxs - array)) / rng)
 
-    def estimate_attack(self, multiplier=3):
+    def create_attack_analysis(self, multiplier=3):
         """
         Estimate the start and end of the attack of the audio
         Adaptive threshold method (weakest effort method) described here:
@@ -278,12 +323,19 @@ class AnalysedAudioFile(AudioFile):
     #-------------------------------------------------------------------------
     #ZERO-CROSSING DETECTION METHODS
     
-    def detect_zero_x(self, window_size = 25):
+    def create_zerox_analysis(self, window_size = 25):
         """Generate zero crossing detections for windows of the signal"""
-        i = 0
-
-        while i < self.frames():
-            zero_crossings = np.where(np.diff(np.sign(self.read_grain(i, window_size))))[0]
+        self.zeroxpath = os.path.join(self.db_dir, "zerox", self.name + ".lab")
+        with open(self.zeroxpath, 'w') as zeroxfile:
+            print "Creating zero-crossing file:\t\t", os.path.relpath(self.zeroxpath)
+            i = 0
+            while i < self.frames():
+                zero_crossings = np.where(np.diff(np.sign(self.read_grain(i,
+                    window_size))))[0].size
+                zeroxfile.write("{0} {1} {2}\n".format(self.samps_to_secs(i),
+                                                     self.samps_to_secs(i+window_size),
+                                                     zero_crossings))
+                i += window_size
 
     #-------------------------------------------------------------------------
     #GENERAL ANALYSIS METHODS
@@ -310,20 +362,6 @@ class AnalysedAudioFile(AudioFile):
             raise ValueError("'{0}' is not a valid window"
                              " type".format(window_type))
 
-    def ms_to_samps(self, ms):
-        """
-        Converts milliseconds to samples based on the sample rate of the audio 
-        file
-        """
-        seconds = ms / 1000.0
-        return int(round(seconds * self.samplerate()))
-
-    def samps_to_secs(self, samps):
-        """
-        Converts samples to seconds based on the sample rate of the audio
-        file
-        """
-        return (float(samps) / self.samplerate())
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
@@ -338,7 +376,7 @@ class AudioDatabase:
         print "\nInitialising Database..."
         #define a list of sub-directory names for each of the analysis
         #parameters
-        subdir_list = ["wav", "rms", "atk", "0x"]
+        subdir_list = ["wav", "rms", "atk", "zerox"]
 
         #Create a dictionary to store reference to the content of the database
         db_content = collections.defaultdict(lambda: {i:None for i in subdir_list})
@@ -372,7 +410,7 @@ class AudioDatabase:
                     raise err
             return directory 
 
-        #create a sub directory for every key in the subdir list
+        #Create a sub directory for every key in the subdir list
         #store reference to this in dictionary
         print "\nCreating sub-directories..."
         subdir_paths = {key:initialise_subdir(key, db_dir) for key in subdir_list}
@@ -397,12 +435,15 @@ class AudioDatabase:
             self.analysed_audio_list.append(
                 AnalysedAudioFile(db_content[key]["wav"], 'r',
                                   rmspath=db_content[key]["rms"],
+                                  zeroxpath=db_content[key]["zerox"],
                                   name=key,
                                   db_dir=db_dir))
 
     def generate_analyses(self):
+        print "\nAnalysing audio files in database..."
         for audiofile in self.analysed_audio_list:
             print audiofile.name, ":"
             audiofile.create_rms_analysis()
-            audiofile.estimate_attack()
+            audiofile.create_attack_analysis()
+            audiofile.create_zerox_analysis(window_size=11025/8)
             print ""
