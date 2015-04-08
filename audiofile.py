@@ -7,6 +7,7 @@ import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
 import fileops
+from progressbar import ProgressBar
 
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
@@ -105,6 +106,18 @@ class AudioFile(PySndfile):
         """
         return (float(samps) / self.samplerate()) * 1000.0
 
+    def plot_grain_to_graph(self, start_index, number_of_samps):
+        """
+        Uses matplotlib to create a graph of the audio file
+        """
+        #Get audio samples from the audio file
+        #Create an empty array which will contain rms frame number and value
+        #pairs
+        samps = self.read_grain(start_index, number_of_samps) 
+        plt.plot(samps, 'r')
+        plt.xlabel("Time (samples)")
+        plt.ylabel("sample value")
+        plt.show()
 
     def __repr__(self):
         return ('AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath))
@@ -169,6 +182,7 @@ class AnalysedAudioFile(AudioFile):
                 print "Creating RMS file:\t\t\t", os.path.relpath(self.rmspath)
                 #Count the number of windows analysed
                 self.rms_window_count = 0
+                pbar = ProgressBar(maxval=self.frames())
                 while i < self.frames():
                     #Read frames from audio file
                     frames = self.read_grain(i, window_size)
@@ -182,6 +196,8 @@ class AnalysedAudioFile(AudioFile):
                     #Iterate frame
                     i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
+                    pbar.update(i)
+            pbar.finish()
             return self.rmspath
         except IOError:
             return False
@@ -221,18 +237,6 @@ class AnalysedAudioFile(AudioFile):
         rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
         return rms_contour
 
-    def plot_to_graph(self, item1):
-        """
-        Uses matplotlib to create a graph of the audio file and the generated
-        RMS values
-        """
-        #Get audio samples from the audio file
-        #Create an empty array which will contain rms frame number and value
-        #pairs
-        plt.plot(item1, 'r')
-        plt.xlabel("Time (samples)")
-        plt.ylabel("sample value")
-        plt.show()
 
     def plot_rms_to_graph(self):
         """
@@ -304,9 +308,10 @@ class AnalysedAudioFile(AudioFile):
             else:
                 attack_end_ind = threshold_inds[-1]
             #Refine position by searching for local min and max of these values
-            attack_start = self.samps_to_secs(attack_start_ind)
-            attack_end = self.samps_to_secs(attack_end_ind)
-            attackfile.write("{0}\t0\tAttack_start\n{1}\t0\tAttack_end".format(attack_start, attack_end))
+            self.attack_start = self.samps_to_secs(attack_start_ind)
+            self.attack_end = self.samps_to_secs(attack_end_ind)
+            attackfile.write("{0}\t0\tAttack_start\n{1}\t0\tAttack_end".format(self.attack_start,
+                self.attack_end))
 
     def calc_log_attack_time(self):
         """
@@ -315,7 +320,7 @@ class AnalysedAudioFile(AudioFile):
         Described here:
         http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
         """
-        if not self.attackstart or not self.attackend:
+        if not self.attack_start or not self.attack_end:
             raise ValueError("Attack times must be calculated before calling" 
                     "the log attack time method")
         self.logattacktime = math.log10(self.attackend-self.attackstart)    
@@ -339,12 +344,15 @@ class AnalysedAudioFile(AudioFile):
 
     #-------------------------------------------------------------------------
     #GENERAL ANALYSIS METHODS
-    def gen_window(self, window_type, window_size, sym=True):
+    @staticmethod
+    def gen_window(window_type, window_size, sym=True):
         """
         Generates a window function of given size and type
         Returns a 1D numpy array
 
-        sym: Used in the triangle window generation. When True (default), generates a symmetric window, for use in filter design. When False, generates a periodic window, for use in spectral analysis
+        sym: Used in the triangle window generation. When True (default), 
+        generates a symmetric window, for use in filter design. When False, 
+        generates a periodic window, for use in spectral analysis
         """
         if window_type is "hanning":
             return np.hanning(window_size)
@@ -365,7 +373,11 @@ class AnalysedAudioFile(AudioFile):
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
-                'rms={2})'.format(self.name, self.wavpath, self.rmspath))
+                'rms={2}, attack={3}, zerox={4})'.format(self.name,
+                                                         self.wavpath, 
+                                                         self.rmspath,
+                                                         self.attackpath,
+                                                         self.zeroxpath))
 
 class AudioDatabase:
     """A class for encapsulating a database of AnalysedAudioFile objects"""
@@ -430,6 +442,7 @@ class AudioDatabase:
         
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
+            #if there is no wav file then skip
             if not db_content[key]["wav"]:
                 continue
             self.analysed_audio_list.append(
