@@ -10,6 +10,7 @@ import fileops
 from progressbar import ProgressBar
 
 class AudioFile(PySndfile):
+
     """Object for storing and accessing basic information for an audio file"""
 
     def __new__(cls, filename, mode, **kwargs):
@@ -50,7 +51,7 @@ class AudioFile(PySndfile):
         Audio object seeker is not changed
         """
         position = self.get_seek_position()
-        #Read grain
+        # Read grain
         index = self.seek(start_index, 0)
         if index + grain_size > self.frames():
             grain = self.read_frames(self.frames() - index)
@@ -63,7 +64,7 @@ class AudioFile(PySndfile):
         self.seek(position, 0)
         return grain
 
-    def normalize_audio(self, maximum = 1.0):
+    def normalize_audio(self, maximum=1.0):
         """Normalize frames so that the maximum sample value == the maximum provided"""
         if self.mode != 'rw':
             raise ValueError("AudioFile object must be in read/write mode to"
@@ -80,7 +81,7 @@ class AudioFile(PySndfile):
 
     def ms_to_samps(self, ms):
         """
-        Converts milliseconds to samples based on the sample rate of the audio 
+        Converts milliseconds to samples based on the sample rate of the audio
         file
         """
         seconds = ms / 1000.0
@@ -110,60 +111,96 @@ class AudioFile(PySndfile):
         """
         Uses matplotlib to create a graph of the audio file
         """
-        #Get audio samples from the audio file
-        #Create an empty array which will contain rms frame number and value
-        #pairs
-        samps = self.read_grain(start_index, number_of_samps) 
+        # Get audio samples from the audio file
+        # Create an empty array which will contain rms frame number and value
+        # pairs
+        samps = self.read_grain(start_index, self.ms_to_samps(4000))
         plt.plot(samps, 'r')
         plt.xlabel("Time (samples)")
         plt.ylabel("sample value")
         plt.show()
 
+    def fade_audio(self, audio, position, fade_time, mode):
+        """
+        Fades the in or out linearly from the position specified over the time specified.
+        audio: A numpy array of audio to manipulate
+        start_position: The starting position to begin the fade from (ms)
+        fade_time: The length of the fade (ms)
+        mode: choose to fade the audio in or out (string: "in" or "out")
+        """
+        if mode == "in":
+            #Calculate the amplitude values to multiply the audio by
+            fade = np.linspace(0.0, 1.0, self.ms_to_samps(fade_time))
+            position = self.ms_to_samps(position)
+            #multiply samples by the fade values from the start position for
+            #the duration of the fade
+            audio[position:fade.size] *= fade
+            #zero any samples before the fade in
+            audio[:position] *= 0
+
+        elif mode == "out":
+            #Calculate the amplitude values to multiply the audio by
+            fade = np.linspace(1.0, 0.0, self.ms_to_samps(fade_time))
+            position = self.ms_to_samps(position)
+            #multiply samples by the fade values from the start position for
+            #the duration of the fade
+            audio[position:position-fade.size] *= fade
+            #zero any samples after the fade in
+            audio[position-fade.size:] *= 0
+        else:
+            print mode, " is not a valid fade option. Use either \"in\" or \"out\""
+            raise ValueError
+
+        return audio
+
     def __repr__(self):
         return ('AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath))
 
+
 class AnalysedAudioFile(AudioFile):
+
     """Generates and stores analysis information for an audio file"""
 
     def __init__(self, *args, **kwargs):
         #---------------
-        #Initialise database variables
-        #Stores the path to the database
+        # Initialise database variables
+        # Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
 
         #---------------
-        #Initialise f0 variables
-        #Stores the path to the f0 file
+        # Initialise f0 variables
+        # Stores the path to the f0 file
         self.f0path = kwargs.pop('f0path', None)
 
         #---------------
-        #Initialise RMS variables
-        #Stores the path to the RMS lab file
+        # Initialise RMS variables
+        # Stores the path to the RMS lab file
         self.rmspath = kwargs.pop('rmspath', None)
-        #Stores the number of RMS window values when calculating the RMS contour
+        # Stores the number of RMS window values when calculating the RMS
+        # contour
         self.rms_window_count = None
-        #If an RMS file is provided then count the number of lines (1 for each
-        #window)
+        # If an RMS file is provided then count the number of lines (1 for each
+        # window)
         if self.rmspath:
             with open(self.rmspath, 'r') as rmsfile:
                 self.rms_window_count = sum(1 for line in rmsfile)
 
         #---------------
-        #Initialise Attack estimation variables
+        # Initialise Attack estimation variables
         self.attackpath = kwargs.pop('atkpath', None)
         self.attack_start = None
         self.attack_end = None
         self.attack_size = None
 
         #---------------
-        #Initialise zero-crossing variables
+        # Initialise zero-crossing variables
         self.zeroxpath = kwargs.pop('zeroxpath', None)
 
-        #Initialise the AudioFile parent class
+        # Initialise the AudioFile parent class
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
     #-------------------------------------------------------------------------
-    #RMS ESTIMATION METHODS
+    # RMS ESTIMATION METHODS
     def create_rms_analysis(self,
                             window_size=25,
                             window_type="triangle",
@@ -180,20 +217,20 @@ class AnalysedAudioFile(AudioFile):
         try:
             with open(self.rmspath, 'w') as rms_file:
                 print "Creating RMS file:\t\t\t", os.path.relpath(self.rmspath)
-                #Count the number of windows analysed
+                # Count the number of windows analysed
                 self.rms_window_count = 0
                 pbar = ProgressBar(maxval=self.frames())
                 while i < self.frames():
-                    #Read frames from audio file
+                    # Read frames from audio file
                     frames = self.read_grain(i, window_size)
-                    #Apply window function to frames
+                    # Apply window function to frames
                     frames = frames * window_function
-                    #Calculate the RMS value of the current window of frames
+                    # Calculate the RMS value of the current window of frames
                     rms = np.sqrt(np.mean(np.square(frames)))
-                    #Write data to RMS .lab file
+                    # Write data to RMS .lab file
                     rms_file.write("{0} {1:6f}\n".format(
                         i + int(round(window_size / 2.0)), rms))
-                    #Iterate frame
+                    # Iterate frame
                     i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
                     pbar.update(i)
@@ -202,51 +239,50 @@ class AnalysedAudioFile(AudioFile):
         except IOError:
             return False
 
-
     def get_rms_from_file(self, start=0, end=-1):
         """
         Read values from RMS file between start and end points provided (in
         samples)
         """
-        #Convert -1 index to final window index
+        # Convert -1 index to final window index
         if end == -1:
-            end = self.frames() 
-        #Create empty array with a size equal to the maximum possible RMS values
+            end = self.frames()
+        # Create empty array with a size equal to the maximum possible RMS
+        # values
         rms_array = np.empty((2, self.rms_window_count))
-        #Open the RMS file
+        # Open the RMS file
         with open(self.rmspath, 'r') as rmsfile:
             i = 0
-            for line in rmsfile.xreadlines():
-                #Split the values and convert to their correct types
+            for line in rmsfile:
+                # Split the values and convert to their correct types
                 time, value = line.split()
                 time = int(time)
                 value = float(value)
-                #If the values are within the desired range, add them to the
-                #array
+                # If the values are within the desired range, add them to the
+                # array
                 if time >= start and time <= end:
-                    #The first value will be rounded down to the start
+                    # The first value will be rounded down to the start
                     if i == 0:
                         time = start
                     rms_array[0][i] = time
                     rms_array[1][i] = value
                     i += 1
-            #The last value will be rounded up to the end
+            # The last value will be rounded up to the end
             rms_array[0][i] = end
         rms_array = rms_array[:, start:start+i]
-        #Interpolate between window values to get per-sample values
+        # Interpolate between window values to get per-sample values
         rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
         return rms_contour
-
 
     def plot_rms_to_graph(self):
         """
         Uses matplotlib to create a graph of the audio file and the generated
         RMS values
         """
-        #Get audio samples from the audio file
+        # Get audio samples from the audio file
         audio_array = self.read_frames()[:(44100 * 5)]
-        #Create an empty array which will contain rms frame number and value
-        #pairs
+        # Create an empty array which will contain rms frame number and value
+        # pairs
         rms_contour = self.get_rms_from_file(start=0, end=(44100 * 5))
         plt.plot(audio_array, 'b', rms_contour, 'r')
         plt.xlabel("Time (samples)")
@@ -254,7 +290,7 @@ class AnalysedAudioFile(AudioFile):
         plt.show()
 
     #-------------------------------------------------------------------------
-    #ATTACK ESTIMATION METHODS
+    # ATTACK ESTIMATION METHODS
 
     def scale_to_range(self, array, high=1.0, low=0.0):
         mins = np.min(array)
@@ -268,50 +304,60 @@ class AnalysedAudioFile(AudioFile):
         Adaptive threshold method (weakest effort method) described here:
         http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
         """
-        #Make sure RMS has been calculated
+        # Make sure RMS has been calculated
         if not self.rmspath:
             raise IOError("RMS analysis is required to estimate attack")
         if not self.attackpath:
             if not self.db_dir:
                 raise IOError("Analysed Audio object must have an atk file path"
                               "or be part of a database")
-            self.attackpath = os.path.join(self.db_dir, "atk", self.name + ".lab")
+            self.attackpath = os.path.join(
+                self.db_dir,
+                "atk",
+                self.name +
+                ".lab")
         with open(self.attackpath, 'w') as attackfile:
             print "Creating attack estimation file:\t", os.path.relpath(self.attackpath)
             rms_contour = self.get_rms_from_file()
             rms_contour = self.scale_to_range(rms_contour)
             thresholds = np.arange(1, 11) * 0.1
             thresholds = thresholds.reshape(-1, 1)
-            #Find first index of rms that is over the threshold for each
-            #thresholds
-            threshold_inds =  np.argmax(rms_contour >= thresholds, axis = 1)
+            # Find first index of rms that is over the threshold for each
+            # thresholds
+            threshold_inds = np.argmax(rms_contour >= thresholds, axis=1)
 
-            #Need to make sure rms does not return to a lower threshold after
-            #being > a threshold.
+            # Need to make sure rms does not return to a lower threshold after
+            # being > a threshold.
 
-            #Calculate the time difference between each of the indexes
+            # Calculate the time difference between each of the indexes
             ind_diffs = np.ediff1d(threshold_inds)
-            #Find the average (mean?) time between thresholds
+            # Find the average (mean?) time between thresholds
             mean_ind_diff = np.mean(ind_diffs)
-            #Calculate the start threshold by finding the first threshold that
-            #goes below the average time * the multiplier
+            # Calculate the start threshold by finding the first threshold that
+            # goes below the average time * the multiplier
             if np.any(ind_diffs < mean_ind_diff * multiplier):
-                attack_start_ind = threshold_inds[np.argmax(ind_diffs <
-                    mean_ind_diff * multiplier)]
+                attack_start_ind = threshold_inds[
+                    np.argmax(
+                        ind_diffs < mean_ind_diff *
+                        multiplier)]
             else:
                 attack_end_ind = threshold_inds[0]
-            #Calculate the end threshold by thr same method except looking above
-            #the average time * the multiplier
+            # Calculate the end threshold by thr same method except looking above
+            # the average time * the multiplier
             if np.any(ind_diffs > mean_ind_diff * multiplier):
-                attack_end_ind = threshold_inds[np.argmax(ind_diffs >
-                    mean_ind_diff * multiplier)]
+                attack_end_ind = threshold_inds[
+                    np.argmax(
+                        ind_diffs > mean_ind_diff *
+                        multiplier)]
             else:
                 attack_end_ind = threshold_inds[-1]
-            #Refine position by searching for local min and max of these values
+            # Refine position by searching for local min and max of these values
             self.attack_start = self.samps_to_secs(attack_start_ind)
             self.attack_end = self.samps_to_secs(attack_end_ind)
-            attackfile.write("{0}\t0\tAttack_start\n{1}\t0\tAttack_end".format(self.attack_start,
-                self.attack_end))
+            attackfile.write(
+                "{0}\t0\tAttack_start\n{1}\t0\tAttack_end".format(
+                    self.attack_start,
+                    self.attack_end))
 
     def calc_log_attack_time(self):
         """
@@ -321,37 +367,44 @@ class AnalysedAudioFile(AudioFile):
         http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
         """
         if not self.attack_start or not self.attack_end:
-            raise ValueError("Attack times must be calculated before calling" 
-                    "the log attack time method")
-        self.logattacktime = math.log10(self.attackend-self.attackstart)    
+            raise ValueError("Attack times must be calculated before calling"
+                             "the log attack time method")
+        self.logattacktime = math.log10(self.attackend-self.attackstart)
 
     #-------------------------------------------------------------------------
-    #ZERO-CROSSING DETECTION METHODS
-    
-    def create_zerox_analysis(self, window_size = 25):
+    # ZERO-CROSSING DETECTION METHODS
+
+    def create_zerox_analysis(self, window_size=25):
         """Generate zero crossing detections for windows of the signal"""
         self.zeroxpath = os.path.join(self.db_dir, "zerox", self.name + ".lab")
         with open(self.zeroxpath, 'w') as zeroxfile:
             print "Creating zero-crossing file:\t\t", os.path.relpath(self.zeroxpath)
             i = 0
             while i < self.frames():
-                zero_crossings = np.where(np.diff(np.sign(self.read_grain(i,
-                    window_size))))[0].size
-                zeroxfile.write("{0} {1} {2}\n".format(self.samps_to_secs(i),
-                                                     self.samps_to_secs(i+window_size),
-                                                     zero_crossings))
+                zero_crossings = np.where(
+                    np.diff(
+                        np.sign(
+                            self.read_grain(
+                                i,
+                                window_size))))[0].size
+                zeroxfile.write(
+                    "{0} {1} {2}\n".format(
+                        self.samps_to_secs(i),
+                        self.samps_to_secs(
+                            i+window_size),
+                        zero_crossings))
                 i += window_size
 
     #-------------------------------------------------------------------------
-    #GENERAL ANALYSIS METHODS
+    # GENERAL ANALYSIS METHODS
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
         """
         Generates a window function of given size and type
         Returns a 1D numpy array
 
-        sym: Used in the triangle window generation. When True (default), 
-        generates a symmetric window, for use in filter design. When False, 
+        sym: Used in the triangle window generation. When True (default),
+        generates a symmetric window, for use in filter design. When False,
         generates a periodic window, for use in spectral analysis
         """
         if window_type is "hanning":
@@ -370,34 +423,38 @@ class AnalysedAudioFile(AudioFile):
             raise ValueError("'{0}' is not a valid window"
                              " type".format(window_type))
 
-
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
                 'rms={2}, attack={3}, zerox={4})'.format(self.name,
-                                                         self.wavpath, 
+                                                         self.wavpath,
                                                          self.rmspath,
                                                          self.attackpath,
                                                          self.zeroxpath))
 
+
 class AudioDatabase:
+
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
     def __init__(self, audio_dir, db_dir=None):
         """Creates the folder hierachy for the database of files to be stored in"""
 
         print "\nInitialising Database..."
-        #define a list of sub-directory names for each of the analysis
-        #parameters
+        # define a list of sub-directory names for each of the analysis
+        # parameters
         subdir_list = ["wav", "rms", "atk", "zerox"]
 
-        #Create a dictionary to store reference to the content of the database
-        db_content = collections.defaultdict(lambda: {i:None for i in subdir_list})
+        # Create a dictionary to store reference to the content of the database
+        db_content = collections.defaultdict(
+            lambda: {
+                i: None for i in subdir_list})
 
-        #If the database directory isnt specified then the directory where the audio files are stored will be used
+        # If the database directory isnt specified then the directory where the
+        # audio files are stored will be used
         if not db_dir:
             db_dir = audio_dir
 
-        #Check to see if the database directory already exists
+        # Check to see if the database directory already exists
         fileops.must_exist(db_dir, msg="Database directory already exists.")
 
         def initialise_subdir(dirkey, db_dir):
@@ -405,44 +462,47 @@ class AudioDatabase:
             Create a subdirectory in the database with the name of the key
             provided.
             """
-            #Make sure directory exists
+            # Make sure directory exists
             directory = os.path.join(db_dir, dirkey)
             try:
                 os.mkdir(directory)
-                print "Created directory: ",directory 
+                print "Created directory: ", directory
             except OSError as err:
                 if os.path.exists(directory):
                     print "{0} directory already exists:\t\t{1}".format(dirkey,
-                            os.path.relpath(directory))
+                                                                        os.path.relpath(directory))
                     for item in fileops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
                         )
                 else:
                     raise err
-            return directory 
+            return directory
 
-        #Create a sub directory for every key in the subdir list
-        #store reference to this in dictionary
+        # Create a sub directory for every key in the subdir list
+        # store reference to this in dictionary
         print "\nCreating sub-directories..."
-        subdir_paths = {key:initialise_subdir(key, db_dir) for key in subdir_list}
-        
+        subdir_paths = {
+            key: initialise_subdir(
+                key,
+                db_dir) for key in subdir_list}
+
         print "\nMoving any audio to sub directory..."
-        #Move audio files to database
+        # Move audio files to database
         if os.path.exists(audio_dir):
             for item in fileops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == ".wav":
                     wavpath = os.path.join(audio_dir, item)
                     shutil.move(wavpath, subdir_paths["wav"])
                     print ("Moved: ", item, "\nTo directory: ",
-                    subdir_paths["wav"])
+                           subdir_paths["wav"])
                     db_content[os.path.splitext(item)[0]]["wav"] = (
                         os.path.join(subdir_paths["wav"], item)
                     )
-        
+
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
-            #if there is no wav file then skip
+            # if there is no wav file then skip
             if not db_content[key]["wav"]:
                 continue
             self.analysed_audio_list.append(
