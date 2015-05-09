@@ -1,4 +1,3 @@
-#Embedded file name: audiofile.py
 import os
 import shutil
 import collections
@@ -8,7 +7,6 @@ import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
 import fileops.pathops as pathops
-from progressbar import ProgressBar
 
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
