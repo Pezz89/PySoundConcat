@@ -7,7 +7,7 @@ import numpy as np
 import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
-import fileops
+import fileops.pathops as pathops
 from progressbar import ProgressBar
 
 class AudioFile(PySndfile):
@@ -208,7 +208,6 @@ class AnalysedAudioFile(AudioFile):
             with open(self.rmspath, 'w') as rms_file:
                 print 'Creating RMS file:\t\t\t', os.path.relpath(self.rmspath)
                 self.rms_window_count = 0
-                pbar = ProgressBar(maxval=self.frames())
                 while i < self.frames():
                     frames = self.read_grain(i, window_size)
                     frames = frames * window_function
@@ -216,9 +215,7 @@ class AnalysedAudioFile(AudioFile):
                     rms_file.write('{0} {1:6f}\n'.format(i + int(round(window_size / 2.0)), rms))
                     i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
-                    pbar.update(i)
 
-            pbar.finish()
             return self.rmspath
         except IOError:
             return False
@@ -363,7 +360,7 @@ class AudioDatabase():
         db_content = collections.defaultdict(lambda : {i:None for i in subdir_list})
         if not db_dir:
             db_dir = audio_dir
-        fileops.must_exist(db_dir, msg='Database directory already exists.')
+        pathops.dir_must_exist(db_dir)
 
         def initialise_subdir(dirkey, db_dir):
             """
@@ -377,7 +374,7 @@ class AudioDatabase():
             except OSError as err:
                 if os.path.exists(directory):
                     print '{0} directory already exists:\t\t{1}'.format(dirkey, os.path.relpath(directory))
-                    for item in fileops.listdir_nohidden(directory):
+                    for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = os.path.join(directory, item)
 
                 else:
@@ -389,7 +386,7 @@ class AudioDatabase():
         subdir_paths = {key:initialise_subdir(key, db_dir) for key in subdir_list}
         print '\nMoving any audio to sub directory...'
         if os.path.exists(audio_dir):
-            for item in fileops.listdir_nohidden(audio_dir):
+            for item in pathops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == '.wav':
                     wavpath = os.path.join(audio_dir, item)
                     shutil.move(wavpath, subdir_paths['wav'])

@@ -1,8 +1,8 @@
 import numpy as np
 import math
-from audio_graph import plot_audio
-import pysndfile as psf
-import audio_funcs as af
+from pysound.analysis.audiograph import plot_audio
+#import pysndfile as psf
+#import audio_funcs as af
 
 def x_corr_time_lag(grain1, grain2):
     """
@@ -15,8 +15,8 @@ def x_corr_time_lag(grain1, grain2):
 
 
 def cheat_granulate_audio(
-    input_audio, 
-    output_audio, 
+    input_audio,
+    output_audio,
 ):
     grain_time_diff = 256
     grain_size = 2048
@@ -27,7 +27,7 @@ def cheat_granulate_audio(
     input_audio.seek(0, 0)
 
     grain1 = af.read_grain(input_audio, 0, grain_size)
-    
+
     #starts at 2nd grain and calculates between second and first,
     #then iterates through grains
     i = 1
@@ -37,16 +37,16 @@ def cheat_granulate_audio(
         #Read overlap with next grain to calculate the X-correlation
         time_lag = x_corr_time_lag(
             grain2[0:overlap_size],
-            grain1[grain_reposition:grain_reposition+overlap_size], 
+            grain1[grain_reposition:grain_reposition+overlap_size],
         )
         time_lag = 0
         fadein = np.linspace(
-            0.0, 
+            0.0,
             1.0,
             grain1.size - (i*grain_reposition-overlap_size+time_lag) #
         )
         fadeout = np.linspace(
-            1.0, 
+            1.0,
             0.0,
             grain1.size - ((i*grain_reposition-overlap_size)+time_lag) #
         )
@@ -66,8 +66,8 @@ def cheat_granulate_audio(
     exit()
 
 def granulate_audio(
-    input_audio, 
-    output_audio, 
+    input_audio,
+    output_audio,
     stretch=1.5,
     window_size=1000,
     offset = 500,
@@ -76,7 +76,7 @@ def granulate_audio(
     """
     Time-stretches audio using SOLA granulation
     """
-    input_grains = np.array([]) 
+    input_grains = np.array([])
     offset_count = 0
     #Read audio into grains of set size with set offset
     while True:
@@ -97,8 +97,8 @@ def granulate_audio(
         i += 1
     print input_grains.shape
 
-    
+
     #find the best overlap point fo the x-fade by calculating the cross
     #correlation
-    
+
     time_shift = int(round(offset * stretch))
