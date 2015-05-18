@@ -196,16 +196,25 @@ class AnalysedAudioFile(AudioFile):
     def create_rms_analysis(self, window_size = 25, window_type = 'triangle', window_overlap = 8):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
         window_size = self.ms_to_samps(window_size)
+        #Generate a window function to apply to rms windows before analysis
         window_function = self.gen_window(window_type, window_size)
+        # Check that the class file has a path to write the rms file to
         if not self.rmspath:
+            # If it doesn't then attampt to generate a path based on the
+            # location of the database that the object is a part of.
             if not self.db_dir:
-                raise IOError('Analysed Audio object must have an RMS file pathor be part of a database')
+                # If it isn't part of a database and doesn't have a path then
+                # there is no where to write the rms data to.
+                raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
             self.rmspath = os.path.join(self.db_dir, 'rms', self.name + '.lab')
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
                 print 'Creating RMS file:\t\t\t', os.path.relpath(self.rmspath)
                 self.rms_window_count = 0
+                # For all frames in the file, read overlapping windows and
+                # calculate the rms values for each window then write the data
+                # to file
                 while i < self.frames():
                     frames = self.read_grain(i, window_size)
                     frames = frames * window_function
@@ -215,6 +224,7 @@ class AnalysedAudioFile(AudioFile):
                     self.rms_window_count += 1
 
             return self.rmspath
+        #If the rms file couldn't be opened then raise an error
         except IOError:
             return False
 

@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from pysound.analysis.audiograph import plot_audio
+from pysound.analysis import graphplot
 #import pysndfile as psf
 #import audio_funcs as af
 
