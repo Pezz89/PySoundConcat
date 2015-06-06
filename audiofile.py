@@ -50,7 +50,7 @@ class AudioFile(PySndfile):
         self.seek(position, 0)
         return grain
 
-    def normalize_audio(self, maximum = 1.0):
+    def normalize_audio(self, maximum=1.0):
         """Normalize frames so that the maximum sample value == the maximum provided"""
         if self.mode != 'rw':
             raise ValueError('AudioFile object must be in read/write mode tonormalize audio')
@@ -121,8 +121,8 @@ class AudioFile(PySndfile):
             audio[position:position - fade.size] *= fade
             audio[position - fade.size:] *= 0
         else:
-            print mode, ' is not a valid fade option. Use either "in" or "out"'
-            raise ValueError
+            err_msg = ''.join(str(mode), ' is not a valid fade option. Use either "in" or "out"')
+            raise ValueError(err_msg)
         return audio
 
     def fade_audio_ends(self, audio, fade_time):
@@ -193,7 +193,7 @@ class AnalysedAudioFile(AudioFile):
         self.zeroxpath = kwargs.pop('zeroxpath', None)
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
-    def create_rms_analysis(self, window_size = 25, window_type = 'triangle', window_overlap = 8):
+    def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
         window_size = self.ms_to_samps(window_size)
         #Generate a window function to apply to rms windows before analysis
@@ -228,7 +228,7 @@ class AnalysedAudioFile(AudioFile):
         except IOError:
             return False
 
-    def get_rms_from_file(self, start = 0, end = -1):
+    def get_rms_from_file(self, start=0, end=-1):
         """
         Read values from RMS file between start and end points provided (in
         samples)
@@ -266,13 +266,13 @@ class AnalysedAudioFile(AudioFile):
         plt.ylabel('sample value')
         plt.show()
 
-    def scale_to_range(self, array, high = 1.0, low = 0.0):
+    def scale_to_range(self, array, high=1.0, low=0.0):
         mins = np.min(array)
         maxs = np.max(array)
         rng = maxs - mins
         return high - (high - low) * (maxs - array) / rng
 
-    def create_attack_analysis(self, multiplier = 3):
+    def create_attack_analysis(self, multiplier=3):
         """
         Estimate the start and end of the attack of the audio
         Adaptive threshold method (weakest effort method) described here:
@@ -358,7 +358,7 @@ class AnalysedAudioFile(AudioFile):
 class AudioDatabase():
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
-    def __init__(self, audio_dir, db_dir = None):
+    def __init__(self, audio_dir, db_dir=None):
         """Creates the folder hierachy for the database of files to be stored in"""
         print '\nInitialising Database...'
         subdir_list = ['wav',
