@@ -6,8 +6,7 @@ import numpy as np
 import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
-import fileops
-from progressbar import ProgressBar
+import fileops.pathops as pathops
 
 class AudioFile(PySndfile):
 
@@ -22,6 +21,7 @@ class AudioFile(PySndfile):
                  channels=None,
                  samplerate=None,
                  name=None, *args, **kwargs):
+
         super(AudioFile, self).__init__(wavpath,
                                         mode=mode,
                                         format=format,
@@ -32,17 +32,17 @@ class AudioFile(PySndfile):
 
     def audio_file_info(self):
         """ Prints audio information """
-        print "*************************************************"
-        print "File:                    ", os.path.relpath(self.wavpath)
-        print "No. channels:            ", self.channels()
-        print "Samplerate:              ", self.samplerate()
-        print "Format:                  ", self.format()
-        print "No. Frames:              ", self.frames()
-        print "Encoding string:         ", self.encoding_str()
-        print "Major format string:     ", self.major_format_str()
-        print "Seekable?:               ", bool(self.seekable())
-        print "Errors?:                 ", self.error()
-        print "*************************************************"
+        print '*************************************************'
+        print 'File:                    ', os.path.relpath(self.wavpath)
+        print 'No. channels:            ', self.channels()
+        print 'Samplerate:              ', self.samplerate()
+        print 'Format:                  ', self.format()
+        print 'No. Frames:              ', self.frames()
+        print 'Encoding string:         ', self.encoding_str()
+        print 'Major format string:     ', self.major_format_str()
+        print 'Seekable?:               ', bool(self.seekable())
+        print 'Errors?:                 ', self.error()
+        print '*************************************************'
 
     def read_grain(self, start_index, grain_size):
         """
@@ -98,26 +98,23 @@ class AudioFile(PySndfile):
         Converts samples to seconds based on the sample rate of the audio
         file
         """
-        return (float(samps) / self.samplerate())
+        return float(samps) / self.samplerate()
 
     def samps_to_ms(self, samps):
         """
         Converts samples to milliseconds based on the sample rate of the audio
         file
         """
-        return (float(samps) / self.samplerate()) * 1000.0
+        return float(samps) / self.samplerate() * 1000.0
 
     def plot_grain_to_graph(self, start_index, number_of_samps):
         """
         Uses matplotlib to create a graph of the audio file
         """
-        # Get audio samples from the audio file
-        # Create an empty array which will contain rms frame number and value
-        # pairs
         samps = self.read_grain(start_index, self.ms_to_samps(4000))
         plt.plot(samps, 'r')
-        plt.xlabel("Time (samples)")
-        plt.ylabel("sample value")
+        plt.xlabel('Time (samples)')
+        plt.ylabel('sample value')
         plt.show()
 
     def fade_audio(self, audio, position, fade_time, mode):
@@ -153,15 +150,47 @@ class AudioFile(PySndfile):
 
         return audio
 
-    def __repr__(self):
-        return ('AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath))
+    @staticmethod
+    def gen_white_noise(length, gain):
+        """
+        Generates a numpy array of white noise of the length specified
+        length (ms)
+        gain (silence 0.0 - full volume 1.0)
+        """
+        pass
 
+    @staticmethod
+    def gen_tone(length, gain, frequency, wavetype):
+        """
+        Generate a wave form
+        length (ms)
+        gain (silence 0.0 - full volume 1.0)
+        frequency (hz)
+        wavetype: "sine" "square" "triangle" "saw" "rev-saw"
+        """
+        pass
+
+    @staticmethod
+    def gen_ADSR_envelope(audio, attack, decay, sustain, release):
+        """
+        generates an ADSR envelope and applies to the audio
+        audio: A numpy array of audio to manipulate
+        attack:
+        decay:
+        sustain:
+        release:
+        """
+        pass
+
+    def __repr__(self):
+        return 'AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath)
 
 class AnalysedAudioFile(AudioFile):
 
     """Generates and stores analysis information for an audio file"""
 
     def __init__(self, *args, **kwargs):
+<<<<<<< HEAD
         #---------------
         # Initialise database variables
         # Stores the path to the database
@@ -201,41 +230,38 @@ class AnalysedAudioFile(AudioFile):
 
     #-------------------------------------------------------------------------
     # RMS ESTIMATION METHODS
-    def create_rms_analysis(self,
-                            window_size=25,
-                            window_type="triangle",
-                            window_overlap=8):
+    def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
         """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
         window_size = self.ms_to_samps(window_size)
+        #Generate a window function to apply to rms windows before analysis
         window_function = self.gen_window(window_type, window_size)
+        # Check that the class file has a path to write the rms file to
         if not self.rmspath:
+            # If it doesn't then attampt to generate a path based on the
+            # location of the database that the object is a part of.
             if not self.db_dir:
-                raise IOError("Analysed Audio object must have an RMS file path"
-                              "or be part of a database")
-            self.rmspath = os.path.join(self.db_dir, "rms", self.name + ".lab")
+                # If it isn't part of a database and doesn't have a path then
+                # there is no where to write the rms data to.
+                raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
+            self.rmspath = os.path.join(self.db_dir, 'rms', self.name + '.lab')
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
-                print "Creating RMS file:\t\t\t", os.path.relpath(self.rmspath)
-                # Count the number of windows analysed
+                print 'Creating RMS file:\t\t\t', os.path.relpath(self.rmspath)
                 self.rms_window_count = 0
-                pbar = ProgressBar(maxval=self.frames())
+                # For all frames in the file, read overlapping windows and
+                # calculate the rms values for each window then write the data
+                # to file
                 while i < self.frames():
-                    # Read frames from audio file
                     frames = self.read_grain(i, window_size)
-                    # Apply window function to frames
                     frames = frames * window_function
-                    # Calculate the RMS value of the current window of frames
                     rms = np.sqrt(np.mean(np.square(frames)))
-                    # Write data to RMS .lab file
-                    rms_file.write("{0} {1:6f}\n".format(
-                        i + int(round(window_size / 2.0)), rms))
-                    # Iterate frame
+                    rms_file.write('{0} {1:6f}\n'.format(i + int(round(window_size / 2.0)), rms))
                     i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
-                    pbar.update(i)
-            pbar.finish()
+
             return self.rmspath
+        #If the rms file couldn't be opened then raise an error
         except IOError:
             return False
 
@@ -244,6 +270,7 @@ class AnalysedAudioFile(AudioFile):
         Read values from RMS file between start and end points provided (in
         samples)
         """
+<<<<<<< HEAD
         # Convert -1 index to final window index
         if end == -1:
             end = self.frames()
@@ -279,6 +306,7 @@ class AnalysedAudioFile(AudioFile):
         Uses matplotlib to create a graph of the audio file and the generated
         RMS values
         """
+<<<<<<< HEAD
         # Get audio samples from the audio file
         audio_array = self.read_frames()[:(44100 * 5)]
         # Create an empty array which will contain rms frame number and value
@@ -291,7 +319,6 @@ class AnalysedAudioFile(AudioFile):
 
     #-------------------------------------------------------------------------
     # ATTACK ESTIMATION METHODS
-
     def scale_to_range(self, array, high=1.0, low=0.0):
         mins = np.min(array)
         maxs = np.max(array)
@@ -433,7 +460,6 @@ class AnalysedAudioFile(AudioFile):
 
 
 class AudioDatabase:
-
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
     def __init__(self, audio_dir, db_dir=None):
