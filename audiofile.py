@@ -6,7 +6,7 @@ import numpy as np
 import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
-import fileops
+import fileops.pathops as pathops
 
 class AudioFile(PySndfile):
 
