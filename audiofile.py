@@ -6,7 +6,7 @@ import numpy as np
 import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
-import fileops.pathops as pathops
+import fileops
 
 class AudioFile(PySndfile):
 
@@ -190,7 +190,6 @@ class AnalysedAudioFile(AudioFile):
     """Generates and stores analysis information for an audio file"""
 
     def __init__(self, *args, **kwargs):
-<<<<<<< HEAD
         #---------------
         # Initialise database variables
         # Stores the path to the database
@@ -270,7 +269,6 @@ class AnalysedAudioFile(AudioFile):
         Read values from RMS file between start and end points provided (in
         samples)
         """
-<<<<<<< HEAD
         # Convert -1 index to final window index
         if end == -1:
             end = self.frames()
@@ -306,7 +304,6 @@ class AnalysedAudioFile(AudioFile):
         Uses matplotlib to create a graph of the audio file and the generated
         RMS values
         """
-<<<<<<< HEAD
         # Get audio samples from the audio file
         audio_array = self.read_frames()[:(44100 * 5)]
         # Create an empty array which will contain rms frame number and value
