@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import fileops.pathops as pathops
 
 class AudioFile(PySndfile):
-
     """Object for storing and accessing basic information for an audio file"""
 
     def __new__(cls, filename, mode, **kwargs):
@@ -149,6 +148,27 @@ class AudioFile(PySndfile):
             raise ValueError
 
         return audio
+
+    def check_mono(self):
+        """Check that the audio file is a mono audio file"""
+        if self.channels() != 1:
+            return False
+        return True
+
+    def check_not_empty(self):
+        """Check that the file contains audio"""
+        if self.frames() > 0:
+            return True
+        return False
+
+    def check_valid(self):
+        """Test to make sure that the audio file is valid for use. ie mono, not empty"""
+        if not self.check_mono():
+            return False
+        if not self.check_not_empty():
+            return False
+        return True
+
 
     @staticmethod
     def gen_white_noise(length, gain):
@@ -459,18 +479,26 @@ class AnalysedAudioFile(AudioFile):
 class AudioDatabase:
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
-    def __init__(self, audio_dir, db_dir=None):
-        """Creates the folder hierachy for the database of files to be stored in"""
+    def __init__(self, audio_dir, db_dir=None, analysis_list=["wav", "rms", "atk", "zerox"]):
+        """
+        Creates the folder hierachy for the database of files to be stored in
+        Adds any pre existing audio files and analyses to the object automatically.
+        audio_dir:
+        db_dir:
+        analysis_list:
+        """
+        print audio_dir
+
+        # TODO: Check that analysis strings in analysis_list are valid analyses
 
         print "\nInitialising Database..."
         # define a list of sub-directory names for each of the analysis
         # parameters
-        subdir_list = ["wav", "rms", "atk", "zerox"]
 
         # Create a dictionary to store reference to the content of the database
         db_content = collections.defaultdict(
-            lambda: {
-                i: None for i in subdir_list})
+            lambda: {i: None for i in analysis_list}
+        )
 
         # If the database directory isnt specified then the directory where the
         # audio files are stored will be used
@@ -478,23 +506,28 @@ class AudioDatabase:
             db_dir = audio_dir
 
         # Check to see if the database directory already exists
-        fileops.must_exist(db_dir, msg="Database directory already exists.")
+        # Create if not
+        pathops.dir_must_exist(db_dir)
 
         def initialise_subdir(dirkey, db_dir):
             """
             Create a subdirectory in the database with the name of the key
             provided.
+            Returns the path to the created subdirectory.
             """
-            # Make sure directory exists
+            # Make sure database subdirectory exists
             directory = os.path.join(db_dir, dirkey)
             try:
+                # If it doesn't, Create it.
                 os.mkdir(directory)
                 print "Created directory: ", directory
             except OSError as err:
+                # If it does exist, add it's content to the database content
+                # dictionary.
                 if os.path.exists(directory):
                     print "{0} directory already exists:\t\t{1}".format(dirkey,
                                                                         os.path.relpath(directory))
-                    for item in fileops.listdir_nohidden(directory):
+                    for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
                         )
@@ -502,23 +535,20 @@ class AudioDatabase:
                     raise err
             return directory
 
-        # Create a sub directory for every key in the subdir list
+        # Create a sub directory for every key in the analysis list
         # store reference to this in dictionary
         print "\nCreating sub-directories..."
-        subdir_paths = {
-            key: initialise_subdir(
-                key,
-                db_dir) for key in subdir_list}
+        subdir_paths = {key: initialise_subdir(key, db_dir) for key in analysis_list}
 
         print "\nMoving any audio to sub directory..."
         # Move audio files to database
         if os.path.exists(audio_dir):
-            for item in fileops.listdir_nohidden(audio_dir):
+            for item in pathops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == ".wav":
                     wavpath = os.path.join(audio_dir, item)
-                    shutil.move(wavpath, subdir_paths["wav"])
-                    print ("Moved: ", item, "\nTo directory: ",
-                           subdir_paths["wav"])
+                    shutil.copy2(wavpath, subdir_paths["wav"])
+                    print "Moved: ", item, "\nTo directory: ", subdir_paths["wav"]
+                    print "---------------------------------------------\n"
                     db_content[os.path.splitext(item)[0]]["wav"] = (
                         os.path.join(subdir_paths["wav"], item)
                     )
@@ -536,10 +566,14 @@ class AudioDatabase:
                                   db_dir=db_dir))
 
     def generate_analyses(self):
-        print "\nAnalysing audio files in database..."
+        print "\nAnalysing audio files in database...\n"
         for audiofile in self.analysed_audio_list:
+            if not audiofile.check_valid():
+                print "File isn't valid: {0}, skipping...\nCheck that file is mono and isn't empty".format(audiofile.name)
+                print "---------------------------------------------\n"
+                continue
             print audiofile.name, ":"
             audiofile.create_rms_analysis()
             audiofile.create_attack_analysis()
             audiofile.create_zerox_analysis(window_size=11025/8)
-            print ""
+            print "---------------------------------------------\n"
