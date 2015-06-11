@@ -491,7 +491,10 @@ class AudioDatabase:
 
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
-        print "\nInitialising Database..."
+        print "*****************************************"
+        print "Initialising Database..."
+        print "*****************************************"
+        print ""
         # define a list of sub-directory names for each of the analysis
         # parameters
 
@@ -537,10 +540,15 @@ class AudioDatabase:
 
         # Create a sub directory for every key in the analysis list
         # store reference to this in dictionary
-        print "\nCreating sub-directories..."
+        print "*****************************************"
+        print "Creating sub-directories..."
+        print "*****************************************"
         subdir_paths = {key: initialise_subdir(key, db_dir) for key in analysis_list}
 
-        print "\nMoving any audio to sub directory..."
+        print ""
+        print "*****************************************"
+        print "Moving any audio to sub directory..."
+        print "*****************************************"
         # Move audio files to database
         if os.path.exists(audio_dir):
             for item in pathops.listdir_nohidden(audio_dir):
@@ -566,7 +574,9 @@ class AudioDatabase:
                                   db_dir=db_dir))
 
     def generate_analyses(self):
-        print "\nAnalysing audio files in database...\n"
+        print "*****************************************"
+        print "Analysing audio files in database..."
+        print "*****************************************"
         for audiofile in self.analysed_audio_list:
             if not audiofile.check_valid():
                 print "File isn't valid: {0}, skipping...\nCheck that file is mono and isn't empty".format(audiofile.name)
