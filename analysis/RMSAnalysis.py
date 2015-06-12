@@ -2,41 +2,52 @@ import os
 import numpy as np
 
 class RMSAnalysis:
+    """
+    An encapsulation of the RMS analysis of an AnalysedAudioFile.
+    On initialization, the RMS analysis is either created, or a pre existing file already exists.
+    In either case, once the file is generated, it's values can be obtained through use of the get_rms_from_file
+    method
+
+    Note: Due to the large size of RMS analysis it is not stored in a class member as other such analyses are.
+    Use get_rms_from_file.
+    """
     def __init__(self, AnalysedAudioFile, rmspath):
+        # Store reference to the file to be analysed
+        self.AnalysedAudioFile = AnalysedAudioFile
+
         # Store the path to the rms file if it already exists
         self.rmspath = rmspath
 
         # Stores the number of RMS window values when calculating the RMS
         # contour
         self.rms_window_count = None
-        # Check if analysis file already exists.
-        # If an RMS file is provided then count the number of lines (1 for each
-        # window)
-        if self.rmspath:
-            with open(self.rmspath, 'r') as rmsfile:
-                self.rms_window_count = sum(1 for line in rmsfile)
-        # If it does then great...
-        # If it doesn't then generate a new file
-        else:
-            self.rmspath = self.create_rms_analysis(AnalysedAudioFile)
 
-    #-------------------------------------------------------------------------
-    # RMS ESTIMATION METHODS
-    def create_rms_analysis(self, AnalysedAudioFile, window_size=25, window_type='triangle', window_overlap=8):
-        print AnalysedAudioFile
-        """Generate an energy contour analysis by calculating the RMS values of windowed segments of the audio file"""
-        window_size = AnalysedAudioFile.ms_to_samps(window_size)
-        #Generate a window function to apply to rms windows before analysis
-        window_function = AnalysedAudioFile.gen_window(window_type, window_size)
         # Check that the class file has a path to write the rms file to
         if not self.rmspath:
             # If it doesn't then attampt to generate a path based on the
             # location of the database that the object is a part of.
-            if not AnalysedAudioFile.db_dir:
+            if not self.AnalysedAudioFile.db_dir:
                 # If it isn't part of a database and doesn't have a path then
                 # there is no where to write the rms data to.
                 raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
-            self.rmspath = os.path.join(AnalysedAudioFile.db_dir, 'rms', AnalysedAudioFile.name + '.lab')
+            self.rmspath = os.path.join(self.AnalysedAudioFile.db_dir, 'rms', self.AnalysedAudioFile.name + '.lab')
+
+        # Check if analysis file already exists.
+        try:
+            with open(self.rmspath, 'r') as rmsfile:
+                # If an RMS file is provided then count the number of lines (1 for each
+                # window)
+                print "Reading RMS file:\t\t\t", os.path.relpath(self.rmspath)
+                self.rms_window_count = sum(1 for line in rmsfile)
+        except IOError:
+        # If it doesn't then generate a new file
+            self.rmspath = self.create_rms_analysis()
+
+    def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
+        """Generate an energy contour analysis by calculating the RMS values of windowed segments of the audio file"""
+        window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
+        #Generate a window function to apply to rms windows before analysis
+        window_function = self.AnalysedAudioFile.gen_window(window_type, window_size)
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
@@ -45,8 +56,8 @@ class RMSAnalysis:
                 # For all frames in the file, read overlapping windows and
                 # calculate the rms values for each window then write the data
                 # to file
-                while i < AnalysedAudioFile.frames():
-                    frames = AnalysedAudioFile.read_grain(i, window_size)
+                while i < self.AnalysedAudioFile.frames():
+                    frames = self.AnalysedAudioFile.read_grain(i, window_size)
                     frames = frames * window_function
                     rms = np.sqrt(np.mean(np.square(frames)))
                     rms_file.write('{0} {1:6f}\n'.format(i + int(round(window_size / 2.0)), rms))
@@ -63,13 +74,16 @@ class RMSAnalysis:
         Read values from RMS file between start and end points provided (in
         samples)
         """
+        print "Reading RMS file: {0}".format(self.rmspath)
         # Convert negative numbers to the end of the file offset by that value
         if end < 0:
-            end = self.frames() + end
+            end = self.AnalysedAudioFile.frames() + end + 1
         # Create empty array with a size equal to the maximum possible RMS
         # values
         rms_array = np.empty((2, self.rms_window_count))
         # Open the RMS file
+        if os.stat(self.rmspath).st_size == 0:
+            raise IOError("RMS file is empty")
         with open(self.rmspath, 'r') as rmsfile:
             i = 0
             for line in rmsfile:

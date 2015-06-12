@@ -1,3 +1,5 @@
-from graphplot import audiograph
-from zerox import zerox
-__all__ = ["audiograph", "zerox"]
+import audiograph
+import AttackAnalysis
+import RMSAnalysis
+import ZeroXAnalysis
+__all__ = ["audiograph", "ZeroXAnalysis", "RMSAnalysis", "AttackAnalysis"]

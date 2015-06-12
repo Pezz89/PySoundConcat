@@ -8,7 +8,10 @@ from pysndfile import PySndfile
 import matplotlib.pyplot as plt
 
 import fileops.pathops as pathops
-import analysis.rms.RMSAnalysis as RMSAnalysis
+import analysis.RMSAnalysis as RMSAnalysis
+import analysis.AttackAnalysis as AttackAnalysis
+import analysis.ZeroXAnalysis as ZeroXAnalysis
+
 
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
@@ -230,21 +233,26 @@ class AnalysedAudioFile(AudioFile):
 
         # Create RMS analysis object if file has an rms path or is part of a
         # database
-        if kwargs["rmspath"] or self.db_dir:
+        if "rmspath" in kwargs or self.db_dir:
             self.RMS = RMSAnalysis.RMSAnalysis(self, kwargs.pop('rmspath', None))
         else:
+            print "No RMS path for: {0}".format(self.name)
             self.RMS = None
 
-        #---------------
-        # Initialise Attack estimation variables
-        self.attackpath = kwargs.pop('atkpath', None)
-        self.attack_start = None
-        self.attack_end = None
-        self.attack_size = None
+        # Create attack estimation analysis
+        if "atkpath" in kwargs or self.db_dir:
+            self.Attack = AttackAnalysis.AttackAnalysis(self, kwargs.pop('atkpath', None))
+        else:
+            print "No Attack path for: {0}".format(self.name)
+            self.Attack = None
 
-        #---------------
-        # Initialise zero-crossing variables
-        self.zeroxpath = kwargs.pop('zeroxpath', None)
+        # Create Zero crossing analysis
+        if "zeroxpath" in kwargs or self.db_dir:
+            self.ZeroX = ZeroXAnalysis.ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
+        else:
+            print "No Zero crossing path for: {0}".format(self.name)
+            self.ZeroX = None
+
 
     def plot_rms_to_graph(self):
         """
@@ -261,110 +269,7 @@ class AnalysedAudioFile(AudioFile):
         plt.ylabel("sample value")
         plt.show()
 
-    #-------------------------------------------------------------------------
-    # ATTACK ESTIMATION METHODS
-    def scale_to_range(self, array, high=1.0, low=0.0):
-        mins = np.min(array)
-        maxs = np.max(array)
-        rng = maxs - mins
-        return high - (((high - low) * (maxs - array)) / rng)
 
-    def create_attack_analysis(self, multiplier=3):
-        """
-        Estimate the start and end of the attack of the audio
-        Adaptive threshold method (weakest effort method) described here:
-        http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
-        """
-        # Make sure RMS has been calculated
-        if not self.rmspath:
-            raise IOError("RMS analysis is required to estimate attack")
-        if not self.attackpath:
-            if not self.db_dir:
-                raise IOError("Analysed Audio object must have an atk file path"
-                              "or be part of a database")
-            self.attackpath = os.path.join(
-                self.db_dir,
-                "atk",
-                self.name +
-                ".lab")
-        with open(self.attackpath, 'w') as attackfile:
-            print "Creating attack estimation file:\t", os.path.relpath(self.attackpath)
-            rms_contour = self.get_rms_from_file()
-            rms_contour = self.scale_to_range(rms_contour)
-            thresholds = np.arange(1, 11) * 0.1
-            thresholds = thresholds.reshape(-1, 1)
-            # Find first index of rms that is over the threshold for each
-            # thresholds
-            threshold_inds = np.argmax(rms_contour >= thresholds, axis=1)
-
-            # TODO:Need to make sure rms does not return to a lower threshold after
-            # being > a threshold.
-
-            # Calculate the time difference between each of the indexes
-            ind_diffs = np.ediff1d(threshold_inds)
-            # Find the average (mean?) time between thresholds
-            mean_ind_diff = np.mean(ind_diffs)
-            # Calculate the start threshold by finding the first threshold that
-            # goes below the average time * the multiplier
-            if np.any(ind_diffs < mean_ind_diff * multiplier):
-                attack_start_ind = threshold_inds[
-                    np.argmax(
-                        ind_diffs < mean_ind_diff *
-                        multiplier)]
-            else:
-                attack_end_ind = threshold_inds[0]
-            # Calculate the end threshold by thr same method except looking above
-            # the average time * the multiplier
-            if np.any(ind_diffs > mean_ind_diff * multiplier):
-                attack_end_ind = threshold_inds[
-                    np.argmax(
-                        ind_diffs > mean_ind_diff *
-                        multiplier)]
-            else:
-                attack_end_ind = threshold_inds[-1]
-            # Refine position by searching for local min and max of these values
-            self.attack_start = self.samps_to_secs(attack_start_ind)
-            self.attack_end = self.samps_to_secs(attack_end_ind)
-            attackfile.write(
-                "{0}\t0\tAttack_start\n{1}\t0\tAttack_end".format(
-                    self.attack_start,
-                    self.attack_end))
-
-    def calc_log_attack_time(self):
-        """
-        Calculate the logarithm of the time duration between the time the
-        signal starts to the time that the signal reaches it's stable part
-        Described here:
-        http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
-        """
-        if not self.attack_start or not self.attack_end:
-            raise ValueError("Attack times must be calculated before calling"
-                             "the log attack time method")
-        self.logattacktime = math.log10(self.attackend-self.attackstart)
-
-    #-------------------------------------------------------------------------
-    # ZERO-CROSSING DETECTION METHODS
-
-    def create_zerox_analysis(self, window_size=25):
-        """Generate zero crossing detections for windows of the signal"""
-        self.zeroxpath = os.path.join(self.db_dir, "zerox", self.name + ".lab")
-        with open(self.zeroxpath, 'w') as zeroxfile:
-            print "Creating zero-crossing file:\t\t", os.path.relpath(self.zeroxpath)
-            i = 0
-            while i < self.frames():
-                zero_crossings = np.where(
-                    np.diff(
-                        np.sign(
-                            self.read_grain(
-                                i,
-                                window_size))))[0].size
-                zeroxfile.write(
-                    "{0} {1} {2}\n".format(
-                        self.samps_to_secs(i),
-                        self.samps_to_secs(
-                            i+window_size),
-                        zero_crossings))
-                i += window_size
 
     #-------------------------------------------------------------------------
     # GENERAL ANALYSIS METHODS
@@ -480,13 +385,18 @@ class AudioDatabase:
             for item in pathops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == ".wav":
                     wavpath = os.path.join(audio_dir, item)
-                    shutil.copy2(wavpath, subdir_paths["wav"])
-                    print "Moved: ", item, "\nTo directory: ", subdir_paths["wav"]
-                    print "---------------------------------------------\n"
+                    if not os.path.isfile('/'.join((subdir_paths["wav"], os.path.basename(wavpath)))):
+                        shutil.copy2(wavpath, subdir_paths["wav"])
+                        print "Moved: ", item, "\tTo directory: ", subdir_paths["wav"]
+                    else:
+                        print "File:  ", item, "\tAlready exists at: ", subdir_paths["wav"]
                     db_content[os.path.splitext(item)[0]]["wav"] = (
                         os.path.join(subdir_paths["wav"], item)
                     )
 
+        # TODO: Create a dictionary of anlyses to be passed to the
+        # AnalysedAudioFile objects that determines which analyses will be
+        # produced
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
             # if there is no wav file then skip
@@ -502,13 +412,3 @@ class AudioDatabase:
             except IOError:
                 # Skip any audio file objects that can't be analysed
                 continue
-
-    def generate_analyses(self):
-        print "*****************************************"
-        print "Analysing audio files in database..."
-        print "*****************************************"
-        for audiofile in self.analysed_audio_list:
-            print audiofile.name, ":"
-            audiofile.create_attack_analysis()
-            audiofile.create_zerox_analysis(window_size=11025/8)
-            print "---------------------------------------------\n"
