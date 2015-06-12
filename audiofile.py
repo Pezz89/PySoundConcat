@@ -6,7 +6,9 @@ import numpy as np
 import math
 from pysndfile import PySndfile
 import matplotlib.pyplot as plt
+
 import fileops.pathops as pathops
+import analysis.rms.RMSAnalysis as RMSAnalysis
 
 class AudioFile(PySndfile):
     """Object for storing and accessing basic information for an audio file"""
@@ -20,14 +22,14 @@ class AudioFile(PySndfile):
                  channels=None,
                  samplerate=None,
                  name=None, *args, **kwargs):
+        self.wavpath = wavpath
+        self.name = name
 
         super(AudioFile, self).__init__(wavpath,
                                         mode=mode,
                                         format=format,
                                         channels=channels,
                                         samplerate=samplerate)
-        self.wavpath = wavpath
-        self.name = name
 
     def audio_file_info(self):
         """ Prints audio information """
@@ -210,28 +212,28 @@ class AnalysedAudioFile(AudioFile):
     """Generates and stores analysis information for an audio file"""
 
     def __init__(self, *args, **kwargs):
+        # Initialise the AudioFile parent class
+        super(AnalysedAudioFile, self).__init__(*args, **kwargs)
+
         #---------------
         # Initialise database variables
         # Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
+
+        if not self.check_valid():
+            raise IOError("File isn't valid: {0}\nCheck that file is mono and isn't empty".format(self.name))
 
         #---------------
         # Initialise f0 variables
         # Stores the path to the f0 file
         self.f0path = kwargs.pop('f0path', None)
 
-        #---------------
-        # Initialise RMS variables
-        # Stores the path to the RMS lab file
-        self.rmspath = kwargs.pop('rmspath', None)
-        # Stores the number of RMS window values when calculating the RMS
-        # contour
-        self.rms_window_count = None
-        # If an RMS file is provided then count the number of lines (1 for each
-        # window)
-        if self.rmspath:
-            with open(self.rmspath, 'r') as rmsfile:
-                self.rms_window_count = sum(1 for line in rmsfile)
+        # Create RMS analysis object if file has an rms path or is part of a
+        # database
+        if kwargs["rmspath"] or self.db_dir:
+            self.RMS = RMSAnalysis.RMSAnalysis(self, kwargs.pop('rmspath', None))
+        else:
+            self.RMS = None
 
         #---------------
         # Initialise Attack estimation variables
@@ -243,81 +245,6 @@ class AnalysedAudioFile(AudioFile):
         #---------------
         # Initialise zero-crossing variables
         self.zeroxpath = kwargs.pop('zeroxpath', None)
-
-        # Initialise the AudioFile parent class
-        super(AnalysedAudioFile, self).__init__(*args, **kwargs)
-
-    #-------------------------------------------------------------------------
-    # RMS ESTIMATION METHODS
-    def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
-        """Generate an energy contour analysis by calculating the RMS values of windows segments of the audio file"""
-        window_size = self.ms_to_samps(window_size)
-        #Generate a window function to apply to rms windows before analysis
-        window_function = self.gen_window(window_type, window_size)
-        # Check that the class file has a path to write the rms file to
-        if not self.rmspath:
-            # If it doesn't then attampt to generate a path based on the
-            # location of the database that the object is a part of.
-            if not self.db_dir:
-                # If it isn't part of a database and doesn't have a path then
-                # there is no where to write the rms data to.
-                raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
-            self.rmspath = os.path.join(self.db_dir, 'rms', self.name + '.lab')
-        i = 0
-        try:
-            with open(self.rmspath, 'w') as rms_file:
-                print 'Creating RMS file:\t\t\t', os.path.relpath(self.rmspath)
-                self.rms_window_count = 0
-                # For all frames in the file, read overlapping windows and
-                # calculate the rms values for each window then write the data
-                # to file
-                while i < self.frames():
-                    frames = self.read_grain(i, window_size)
-                    frames = frames * window_function
-                    rms = np.sqrt(np.mean(np.square(frames)))
-                    rms_file.write('{0} {1:6f}\n'.format(i + int(round(window_size / 2.0)), rms))
-                    i += int(round(window_size / window_overlap))
-                    self.rms_window_count += 1
-
-            return self.rmspath
-        #If the rms file couldn't be opened then raise an error
-        except IOError:
-            return False
-
-    def get_rms_from_file(self, start=0, end=-1):
-        """
-        Read values from RMS file between start and end points provided (in
-        samples)
-        """
-        # Convert -1 index to final window index
-        if end == -1:
-            end = self.frames()
-        # Create empty array with a size equal to the maximum possible RMS
-        # values
-        rms_array = np.empty((2, self.rms_window_count))
-        # Open the RMS file
-        with open(self.rmspath, 'r') as rmsfile:
-            i = 0
-            for line in rmsfile:
-                # Split the values and convert to their correct types
-                time, value = line.split()
-                time = int(time)
-                value = float(value)
-                # If the values are within the desired range, add them to the
-                # array
-                if time >= start and time <= end:
-                    # The first value will be rounded down to the start
-                    if i == 0:
-                        time = start
-                    rms_array[0][i] = time
-                    rms_array[1][i] = value
-                    i += 1
-            # The last value will be rounded up to the end
-            rms_array[0][i] = end
-        rms_array = rms_array[:, start:start+i]
-        # Interpolate between window values to get per-sample values
-        rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
-        return rms_contour
 
     def plot_rms_to_graph(self):
         """
@@ -370,7 +297,7 @@ class AnalysedAudioFile(AudioFile):
             # thresholds
             threshold_inds = np.argmax(rms_contour >= thresholds, axis=1)
 
-            # Need to make sure rms does not return to a lower threshold after
+            # TODO:Need to make sure rms does not return to a lower threshold after
             # being > a threshold.
 
             # Calculate the time difference between each of the indexes
@@ -487,7 +414,6 @@ class AudioDatabase:
         db_dir:
         analysis_list:
         """
-        print audio_dir
 
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
@@ -566,24 +492,23 @@ class AudioDatabase:
             # if there is no wav file then skip
             if not db_content[key]["wav"]:
                 continue
-            self.analysed_audio_list.append(
-                AnalysedAudioFile(db_content[key]["wav"], 'r',
-                                  rmspath=db_content[key]["rms"],
-                                  zeroxpath=db_content[key]["zerox"],
-                                  name=key,
-                                  db_dir=db_dir))
+            try:
+                self.analysed_audio_list.append(
+                    AnalysedAudioFile(db_content[key]["wav"], 'r',
+                                    rmspath=db_content[key]["rms"],
+                                    zeroxpath=db_content[key]["zerox"],
+                                    name=key,
+                                    db_dir=db_dir))
+            except IOError:
+                # Skip any audio file objects that can't be analysed
+                continue
 
     def generate_analyses(self):
         print "*****************************************"
         print "Analysing audio files in database..."
         print "*****************************************"
         for audiofile in self.analysed_audio_list:
-            if not audiofile.check_valid():
-                print "File isn't valid: {0}, skipping...\nCheck that file is mono and isn't empty".format(audiofile.name)
-                print "---------------------------------------------\n"
-                continue
             print audiofile.name, ":"
-            audiofile.create_rms_analysis()
             audiofile.create_attack_analysis()
             audiofile.create_zerox_analysis(window_size=11025/8)
             print "---------------------------------------------\n"
