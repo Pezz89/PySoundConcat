@@ -4,7 +4,7 @@ import collections
 from scipy import signal
 import numpy as np
 import math
-from pysndfile import PySndfile
+import pysndfile
 import matplotlib.pyplot as plt
 
 import fileops.pathops as pathops
@@ -13,11 +13,19 @@ import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 
 
-class AudioFile(PySndfile):
+class AudioFile(pysndfile.PySndfile):
     """Object for storing and accessing basic information for an audio file"""
 
     def __new__(cls, filename, mode, **kwargs):
-        inst = PySndfile.__new__(cls, filename, mode)
+        print kwargs
+        inst = pysndfile.PySndfile.__new__(
+            cls,
+            filename,
+            mode,
+            format=kwargs.pop("format", None),
+            channels=kwargs.pop("channels", None),
+            samplerate=kwargs.pop("samplerate", None)
+        )
         return inst
 
     def __init__(self, wavpath, mode,
@@ -33,6 +41,13 @@ class AudioFile(PySndfile):
                                         format=format,
                                         channels=channels,
                                         samplerate=samplerate)
+    def __iter__(self):
+        """
+        Allows the AudioFile object to be iterated over
+        Each iteration returns a chunk of audio.
+        Audio chunk size is based on the self.chunksize member
+        """
+
 
     def audio_file_info(self):
         """ Prints audio information """
@@ -207,6 +222,23 @@ class AudioFile(PySndfile):
         """
         pass
 
+    @staticmethod
+    def gen_default_wav(path):
+        """
+        Convenience method that creates a wav file with the following spec at the path given:
+            Samplerate: 44.1Khz
+            Bit rate: 24Bit
+        """
+        if os.path.exists(path):
+            raise IOError(''.join(("File: \"", path, "\" already exists.")))
+        return AudioFile(
+            path,
+            "w",
+            format=pysndfile.construct_format("wav", "pcm24"),
+            channels=1,
+            samplerate=44100
+        )
+
     def __repr__(self):
         return 'AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath)
 
@@ -218,7 +250,6 @@ class AnalysedAudioFile(AudioFile):
         # Initialise the AudioFile parent class
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
-        #---------------
         # Initialise database variables
         # Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
