@@ -1,5 +1,4 @@
-import audiograph
-import AttackAnalysis
-import RMSAnalysis
-import ZeroXAnalysis
-__all__ = ["audiograph", "ZeroXAnalysis", "RMSAnalysis", "AttackAnalysis"]
+from AttackAnalysis import AttackAnalysis
+from RMSAnalysis import RMSAnalysis
+from ZeroXAnalysis import ZeroXAnalysis
+__all__ = ["ZeroXAnalysis", "RMSAnalysis", "AttackAnalysis"]

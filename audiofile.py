@@ -234,21 +234,21 @@ class AnalysedAudioFile(AudioFile):
         # Create RMS analysis object if file has an rms path or is part of a
         # database
         if "rmspath" in kwargs or self.db_dir:
-            self.RMS = RMSAnalysis.RMSAnalysis(self, kwargs.pop('rmspath', None))
+            self.RMS = RMSAnalysis(self, kwargs.pop('rmspath', None))
         else:
             print "No RMS path for: {0}".format(self.name)
             self.RMS = None
 
         # Create attack estimation analysis
         if "atkpath" in kwargs or self.db_dir:
-            self.Attack = AttackAnalysis.AttackAnalysis(self, kwargs.pop('atkpath', None))
+            self.Attack = AttackAnalysis(self, kwargs.pop('atkpath', None))
         else:
             print "No Attack path for: {0}".format(self.name)
             self.Attack = None
 
         # Create Zero crossing analysis
         if "zeroxpath" in kwargs or self.db_dir:
-            self.ZeroX = ZeroXAnalysis.ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
+            self.ZeroX = ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
         else:
             print "No Zero crossing path for: {0}".format(self.name)
             self.ZeroX = None
