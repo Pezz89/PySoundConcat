@@ -16,15 +16,14 @@ import analysis.ZeroXAnalysis as ZeroXAnalysis
 class AudioFile(pysndfile.PySndfile):
     """Object for storing and accessing basic information for an audio file"""
 
+    # Calling PySndfile's "__new__" method is not necessary as of pysndfile 0.2.11
+    # Maintained for compatability with versions < 0.2.11
     def __new__(cls, filename, mode, **kwargs):
-        print kwargs
         inst = pysndfile.PySndfile.__new__(
             cls,
             filename,
             mode,
-            format=kwargs.pop("format", None),
-            channels=kwargs.pop("channels", None),
-            samplerate=kwargs.pop("samplerate", None)
+            **kwargs
         )
         return inst
 
@@ -34,6 +33,8 @@ class AudioFile(pysndfile.PySndfile):
                  samplerate=None,
                  name=None, *args, **kwargs):
         self.wavpath = wavpath
+        # TODO: If a name isn't provided then create a default name based n the
+        # file name without an extension
         self.name = name
 
         super(AudioFile, self).__init__(wavpath,
@@ -223,13 +224,13 @@ class AudioFile(pysndfile.PySndfile):
         pass
 
     @staticmethod
-    def gen_default_wav(path):
+    def gen_default_wav(path, overwrite_existing=False):
         """
         Convenience method that creates a wav file with the following spec at the path given:
             Samplerate: 44.1Khz
             Bit rate: 24Bit
         """
-        if os.path.exists(path):
+        if os.path.exists(path) and not overwrite_existing:
             raise IOError(''.join(("File: \"", path, "\" already exists.")))
         return AudioFile(
             path,
