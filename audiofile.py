@@ -13,35 +13,184 @@ import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 
 
-class AudioFile(pysndfile.PySndfile):
+class AudioFile:
     """Object for storing and accessing basic information for an audio file"""
-
-    # Calling PySndfile's "__new__" method is not necessary as of pysndfile 0.2.11
-    # Maintained for compatability with versions < 0.2.11
-    def __new__(cls, filename, mode, **kwargs):
-        inst = pysndfile.PySndfile.__new__(
-            cls,
-            filename,
-            mode,
-            **kwargs
-        )
-        return inst
-
     def __init__(self, wavpath, mode,
                  format=None,
                  channels=None,
                  samplerate=None,
                  name=None, *args, **kwargs):
+
         self.wavpath = wavpath
         # TODO: If a name isn't provided then create a default name based n the
         # file name without an extension
         self.name = name
+        self.pysndfile_object = pysndfile.PySndfile(
+            wavpath,
+            mode=mode,
+            format=format,
+            channels=channels,
+            samplerate=samplerate
+        )
+    def channels(self):
+        """return number of channels of sndfile"""
+        return self.pysndfile_object.channels()
+    def encoding_str(self):
+        """
+        return string representation of encoding (e.g. pcm16)
+        see pysndfile.get_sndfile_encodings() for a list of available
+        encoding strings that are supported by a given sndfile format
+        """
+        return self.pysndfile_object.encoding_str()
+    def error(self):
+        """report error numbers related to the current sound file"""
+        return self.pysndfile_object.error()
+    def format(self):
+        """return raw format specification from sndfile"""
+        return self.pysndfile_object.format()
+    def frames(self):
+        """return number for frames (number of samples per channel)"""
+        return self.pysndfile_object.frames()
+    def get_strings(self):
+        """
+        get all stringtypes from the sound file.
+        see stringtype_name_top_id.keys() for the list of strings that
+        are supported by the libsndfile version you use.
+        """
+        return self.pysndfile_object.get_strings()
+    def major_format_str(self):
+        """
+        return short string representation of major format
+        (e.g. aiff) see pysndfile.get_sndfile_formats() for a complete
+        lst of fileformats
+        """
+        return self.pysndfile_object.major_format_str()
+    def read_frames(self, nframes=-1, dtype=np.float64):
+        """
+        Read the given number of frames and put the data into a numpy
+        array of the requested dtype.
 
-        super(AudioFile, self).__init__(wavpath,
-                                        mode=mode,
-                                        format=format,
-                                        channels=channels,
-                                        samplerate=samplerate)
+        Parameters
+        nframes: <int>
+        number of frames to read (default = -1 -> read all).
+        dtype: <numpy dtype>
+        dtype of the returned array containing read data (see note).
+
+        Notes
+        One column per channel.
+        """
+        return self.pysndfile_object.read_frames(nframes, dtype)
+    def rewind(self, mode='rw'):
+        """
+        rewind read/write/read and write position given by mode to
+        start of file
+        """
+        return self.pysndfile_object.format(mode)
+    def samplerate(self):
+        """return samplerate"""
+        return self.pysndfile_object.samplerate()
+    def seek(self, offset, whence=0, mode='rw'):
+        """
+        Seek into audio file: similar to python seek function,
+        taking only in account audio data.
+
+        Parameters
+        offset: <int>
+        the number of frames (eg two samples for stereo files) to move
+        relatively to position set by whence.
+        whence: <int>
+        only 0 (beginning), 1 (current) and 2 (end of the file) are valid.
+        mode: <string>
+        If set to 'rw', both read and write pointers are updated. If 'r'
+        is given, only read pointer is updated, if 'w', only the write one
+        is (this may of course make sense only if you open the file in a
+        certain mode).
+
+        Returns
+        offset: int the number of frames from the beginning of the file
+
+        Notes
+        Offset relative to audio data: meta-data are ignored.
+        if an invalid seek is given (beyond or before the file), an IOError
+        is raised; note that this is different from the seek method of a
+        File object.
+        """
+        return self.pysndfile_object.seek(offset, whence, mode)
+    def seekable(self):
+        """return true for soundfiles that support seeking"""
+        return self.seekable()
+    def set_auto_clipping(self, arg=True):
+        """
+        enable auto clipping when reading/writing samples from/to sndfile.
+
+        auto clipping is enabled by default. auto clipping is required by
+        libsndfile to properly handle scaling between sndfiles with pcm encoding
+        and float representation of the samples in numpy. When auto clipping
+        is set to on reading pcm data into a float vector and writing it back
+        with libsndfile will reproduce the original samples. If auto clipping
+        is off, samples will be changed slightly as soon as the amplitude is
+        close to the sample range because libsndfile applies slightly different
+        scaling factors during read and write
+        """
+        return self.pysndfile_object.set_auto_clipping(arg)
+    def set_string(self, stringtype_name, string):
+        """
+        set one of the stringtypes to the strig given as argument. If you try
+        to write a stringtype that is not supported byty the library a RuntimeError
+        will be raised
+        """
+        return self.pysndfile_object.set_string(stringtype_name, string)
+    def strError(self):
+        """report error strings related to the current sound file"""
+        return self.pysndfile_object.strError()
+    def writeSync(self):
+        """
+        call the operating system's function to force the writing of all file
+        cache buffers to disk the file.
+        No effect if file is open as read
+        """
+        return self.pysndfile_object.writeSync()
+    def write_frames(self, input):
+        """
+        write 1 or 2 dimensional array into sndfile.
+
+        Parameters
+        input: <numpy array>
+        containing data to write.
+        Notes
+        One column per channel.
+        updates the write pointer.
+        if the input type is float, and the file encoding is an integer type,
+        you should make sure the input data are normalized normalized data (that
+        is in the range [-1..1] - which will corresponds to the maximum range
+        allowed by the integer bitwidth).
+        """
+        return self.pysndfile_object.write_frames(input)
+    def construct_format(self, major, encoding):
+        """
+        construct a format specification for libsndfile from major format string
+        and encoding string
+        """
+        return self.pysndfile_object.construct_format(major, encoding)
+    def get_pysndfile_version(self):
+        """return tuple describing the version of pysndfile"""
+        return self.pysndfile_object.get_pysndfile_version()
+    def get_sndfile_version(self):
+        """return a tuple of ints representing the version of the libsdnfile that is used"""
+        return self.pysndfile_object.get_sndfile_version()
+    def get_sndfile_formats(self):
+        """Return lists of available file formats supported by libsndfile and pysndfile."""
+        return self.pysndfile_object.get_sndfile_formats()
+    def get_sndfile_encodings(self, major):
+        """
+        Return lists of available encoding for the given sndfile format.
+
+        Parameters
+        major sndfile format for that the list of available fomramst should
+        be returned. format should be specified as a string, using one of the
+        straings returned by get_sndfile_formats()
+        """
+        return self.pysndfile_object.get_sndfile_encodings(major)
     def __iter__(self):
         """
         Allows the AudioFile object to be iterated over
@@ -72,7 +221,7 @@ class AudioFile(pysndfile.PySndfile):
         """
         position = self.get_seek_position()
         # Read grain
-        index = self.seek(start_index, 0)
+        index = self.pysndfile_object.seek(start_index, 0)
         if index + grain_size > self.frames():
             grain = self.read_frames(self.frames() - index)
             grain = np.pad(grain, (0, index + grain_size - self.frames()),
@@ -190,6 +339,18 @@ class AudioFile(pysndfile.PySndfile):
             return False
         return True
 
+    def switch_mode(self):
+        inst = self.__new__(
+            AudioFile,
+            self.wavpath,
+            mode='w',
+            format=self.format(),
+            channels=self.channels(),
+            samplerate=self.samplerate()
+        )
+
+        super(self, inst).__init__(
+        )
 
     @staticmethod
     def gen_white_noise(length, gain):
@@ -234,7 +395,7 @@ class AudioFile(pysndfile.PySndfile):
             raise IOError(''.join(("File: \"", path, "\" already exists.")))
         return AudioFile(
             path,
-            "w",
+            "rw",
             format=pysndfile.construct_format("wav", "pcm24"),
             channels=1,
             samplerate=44100
