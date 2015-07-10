@@ -10,7 +10,7 @@ class ReadGrainTest(unittest.TestCase):
         # TODO: Have wav file written and deleted from within this test
         self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", overwrite_existing=True)
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
-        self.TestAudio = AudioFile("./.TestAudio.Mono.wav", mode='r')
+        self.TestAudio.switch_mode('r')
 
     def test_allGrains(self):
         """Check all samples are read correctly if no arguments are given"""

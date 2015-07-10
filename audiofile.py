@@ -3,7 +3,6 @@ import shutil
 import collections
 from scipy import signal
 import numpy as np
-import math
 import pysndfile
 import matplotlib.pyplot as plt
 
@@ -32,6 +31,9 @@ class AudioFile:
             channels=channels,
             samplerate=samplerate
         )
+        self.samplerate = samplerate
+        self.format = format
+        self.channels = channels
     def channels(self):
         """return number of channels of sndfile"""
         return self.pysndfile_object.channels()
@@ -339,17 +341,14 @@ class AudioFile:
             return False
         return True
 
-    def switch_mode(self):
-        inst = self.__new__(
-            AudioFile,
+    def switch_mode(self, mode):
+        assert mode == 'r' or mode == 'w'
+        self.pysndfile_object = pysndfile.PySndfile(
             self.wavpath,
-            mode='w',
-            format=self.format(),
-            channels=self.channels(),
-            samplerate=self.samplerate()
-        )
-
-        super(self, inst).__init__(
+            mode=mode,
+            format=self.format,
+            channels=self.channels,
+            samplerate=self.samplerate
         )
 
     @staticmethod
