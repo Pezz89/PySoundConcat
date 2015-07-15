@@ -221,6 +221,8 @@ class AudioFile:
         the file, the grain is padded with zeros.
         Audio object seeker is not changed
         """
+        if start_index < 0:
+            start_index = self.frames() + start_index
         position = self.get_seek_position()
         # Read grain
         index = self.pysndfile_object.seek(start_index, 0)
@@ -350,6 +352,7 @@ class AudioFile:
             channels=self.channels,
             samplerate=self.samplerate
         )
+        self.mode = mode
 
     @staticmethod
     def gen_white_noise(length, gain):
@@ -394,7 +397,7 @@ class AudioFile:
             raise IOError(''.join(("File: \"", path, "\" already exists.")))
         return AudioFile(
             path,
-            "rw",
+            "w",
             format=pysndfile.construct_format("wav", "pcm24"),
             channels=1,
             samplerate=44100
