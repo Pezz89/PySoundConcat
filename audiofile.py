@@ -24,6 +24,7 @@ class AudioFile:
         # TODO: If a name isn't provided then create a default name based n the
         # file name without an extension
         self.name = name
+        self.mode = mode
         self.pysndfile_object = pysndfile.PySndfile(
             wavpath,
             mode=mode,
@@ -345,6 +346,7 @@ class AudioFile:
 
     def switch_mode(self, mode):
         assert mode == 'r' or mode == 'w'
+        seek = self.get_seek_position()
         self.pysndfile_object = pysndfile.PySndfile(
             self.wavpath,
             mode=mode,
@@ -352,6 +354,7 @@ class AudioFile:
             channels=self.channels,
             samplerate=self.samplerate
         )
+        self.pysndfile_object.seek(seek)
         self.mode = mode
 
     @staticmethod
@@ -387,17 +390,21 @@ class AudioFile:
         pass
 
     @staticmethod
-    def gen_default_wav(path, overwrite_existing=False):
+    def gen_default_wav(path, overwrite_existing=False, mode='w'):
         """
         Convenience method that creates a wav file with the following spec at the path given:
             Samplerate: 44.1Khz
             Bit rate: 24Bit
         """
-        if os.path.exists(path) and not overwrite_existing:
-            raise IOError(''.join(("File: \"", path, "\" already exists.")))
+        if os.path.exists(path):
+            if not overwrite_existing:
+                raise IOError(''.join(("File: \"", path, "\" already exists.")))
+            else:
+                os.remove(path)
+
         return AudioFile(
             path,
-            "w",
+            mode,
             format=pysndfile.construct_format("wav", "pcm24"),
             channels=1,
             samplerate=44100

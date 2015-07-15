@@ -3,11 +3,46 @@ import numpy as np
 from pysound import AudioFile
 import os
 
+class FileCreationTests(unittest.TestCase):
+    def setUp(self):
+        """Create functions and variables that will be defined before each test is run"""
+        self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", overwrite_existing=True)
+        self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
+        self.TestAudio.switch_mode('r')
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+        ie. temporary test audio files generated during the tests.
+        """
+        del self.TestAudio
+        os.remove("./.TestAudio.Mono.wav")
+
+class SwitchModeTests(unittest.TestCase):
+    def setUp(self):
+        """Create functions and variables that will be defined before each test is run"""
+        self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", mode='r', overwrite_existing=True)
+
+    def test_switchMode(self):
+        """
+        Check that the switch_mode() function can write frames, then read then, then switch to write mode
+        and append to these frames, before switching back to read all written frames
+        """
+        self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
+        self.TestAudio.switch_mode('r')
+        # TODO: Assert write mode raises correct error
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+        ie. temporary test audio files generated during the tests.
+        """
+        del self.TestAudio
+        os.remove("./.TestAudio.Mono.wav")
 
 class ReadGrainTest(unittest.TestCase):
     def setUp(self):
         """Create functions and variables that will be defined before each test is run"""
-        # TODO: Have wav file written and deleted from within this test
         self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", overwrite_existing=True)
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
@@ -51,3 +86,4 @@ class ReadGrainTest(unittest.TestCase):
         """
         del self.TestAudio
         os.remove("./.TestAudio.Mono.wav")
+
