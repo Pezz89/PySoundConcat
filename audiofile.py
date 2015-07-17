@@ -347,6 +347,7 @@ class AudioFile:
     def switch_mode(self, mode):
         assert mode == 'r' or mode == 'w'
         seek = self.get_seek_position()
+        del self.pysndfile_object
         self.pysndfile_object = pysndfile.PySndfile(
             self.wavpath,
             mode=mode,

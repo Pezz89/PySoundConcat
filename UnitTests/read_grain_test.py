@@ -21,7 +21,7 @@ class FileCreationTests(unittest.TestCase):
 class SwitchModeTests(unittest.TestCase):
     def setUp(self):
         """Create functions and variables that will be defined before each test is run"""
-        self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", mode='r', overwrite_existing=True)
+        self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", mode='w', overwrite_existing=True)
 
     def test_switchMode(self):
         """
@@ -30,7 +30,14 @@ class SwitchModeTests(unittest.TestCase):
         """
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
-        # TODO: Assert write mode raises correct error
+        with self.assertRaises(IOError):
+            self.TestAudio.write_frames(np.zeros(10))
+        self.TestAudio.seek(0, 0)
+        self.assertEqual(self.TestAudio.read_frames().size, 101)
+        self.TestAudio.switch_mode('w')
+        self.TestAudio.seek(0,0)
+        self.assertEqual(self.TestAudio.read_frames().size, 0)
+        self.assertEqual(self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101)), 101)
 
     def tearDown(self):
         """
