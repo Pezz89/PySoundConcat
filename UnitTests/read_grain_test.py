@@ -4,19 +4,16 @@ from pysound import AudioFile
 import os
 
 class FileCreationTests(unittest.TestCase):
-    def setUp(self):
-        """Create functions and variables that will be defined before each test is run"""
+    def test_createAudioFile(self):
+        self.assertFalse(os.path.exists("./.TestAudio.Mono.wav"))
         self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", overwrite_existing=True)
-        self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
-        self.TestAudio.switch_mode('r')
-
-    def tearDown(self):
-        """
-        Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
-        """
+        self.assertTrue(os.path.exists("./.TestAudio.Mono.wav"))
         del self.TestAudio
         os.remove("./.TestAudio.Mono.wav")
+
+    def test_readFail(self):
+        with self.assertRaises(IOError):
+            self.TestAudio = AudioFile.gen_default_wav("./.TestAudio.Mono.wav", mode = 'r')
 
 class SwitchModeTests(unittest.TestCase):
     def setUp(self):

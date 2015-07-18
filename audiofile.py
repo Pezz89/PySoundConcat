@@ -25,16 +25,28 @@ class AudioFile:
         # file name without an extension
         self.name = name
         self.mode = mode
-        self.pysndfile_object = pysndfile.PySndfile(
-            wavpath,
-            mode=mode,
-            format=format,
-            channels=channels,
-            samplerate=samplerate
-        )
-        self.samplerate = samplerate
-        self.format = format
-        self.channels = channels
+        if mode == 'r':
+            if not os.path.exists(wavpath):
+                raise IOError("Cannot open {0} for reading as it cannot be found.".format(wavpath))
+            self.pysndfile_object = pysndfile.PySndfile(
+                wavpath,
+                mode=mode
+            )
+            self.samplerate = self.pysndfile_object.samplerate()
+            self.channels = self.pysndfile_object.channels()
+            self.format = self.pysndfile_object.format()
+
+        else:
+            self.pysndfile_object = pysndfile.PySndfile(
+                wavpath,
+                mode=mode,
+                format=format,
+                channels=channels,
+                samplerate=samplerate
+            )
+            self.samplerate = samplerate
+            self.format = format
+            self.channels = channels
     def channels(self):
         """return number of channels of sndfile"""
         return self.pysndfile_object.channels()
@@ -216,10 +228,10 @@ class AudioFile:
         print 'Errors?:                 ', self.error()
         print '*************************************************'
 
-    def read_grain(self, start_index, grain_size):
+    def read_grain(self, start_index, grain_size, padding=True):
         """
         Read a grain of audio from the file. if grain ends after the end of
-        the file, the grain is padded with zeros.
+        the file, the grain can be padded with zeros using the padding argument.
         Audio object seeker is not changed
         """
         if start_index < 0:
@@ -229,10 +241,10 @@ class AudioFile:
         index = self.pysndfile_object.seek(start_index, 0)
         if index + grain_size > self.frames():
             grain = self.read_frames(self.frames() - index)
-            grain = np.pad(grain, (0, index + grain_size - self.frames()),
-                           'constant',
-                           constant_values=(0, 0))
-
+            if padding:
+                grain = np.pad(grain, (0, index + grain_size - self.frames()),
+                            'constant',
+                            constant_values=(0, 0))
         else:
             grain = self.read_frames(grain_size)
         self.seek(position, 0)
@@ -248,6 +260,63 @@ class AudioFile:
         ratio = maximum / max_sample
         frames = frames * ratio
         self.write_frames(frames)
+
+    def convert_to_mono(self, overwrite_original=False):
+        """Mixes stereo audio files to mono"""
+        (current_filename, current_fileextension) = os.path.splitext(self.wavpath)
+        mono_filename = ''.join((current_filename, ".mono", current_fileextension))
+        mono_file = pysndfile.PySndfile(
+            mono_filename,
+            mode = 'w',
+            format = self.format,
+            channels = 1,
+            samplerate = self.samplerate
+        )
+        i = 0
+        chunk_size = 2048
+        while i < self.frames():
+            chunk = self.read_grain(i, chunk_size, padding=False)
+            chunk = ((chunk[:, 0] * 0.5) + (chunk[:, 1] * 0.5))
+            mono_file.write_frames(chunk)
+            i += chunk_size
+        if overwrite_original:
+            del self.pysndfile_object
+            os.remove(self.wavpath)
+            self.pysndfile_object = mono_file
+            self.pysndfile_object.switch_mode(self.mode)
+            return None
+        else:
+            return mono_file
+
+    def rename_file(self, filename):
+        """Renames the audio file associated with the object to the name specified as an argument"""
+        # Check name doesn't already exist
+        if os.path.exists(filename):
+            raise ValueError("The filepath: {0} is an already existing file")
+        # Check name is a valid file path
+        if not os.path.exists(os.path.dirname(filename)):
+            raise ValueError("The filepath: {0} does not point to an existing directory".format(filename))
+        # Check name has the same extension as previous file
+        old_ext = os.path.spitext(self.wavpath)
+        new_ext = os.path.splitext(filename)
+        if old_ext != new_ext):
+            raise ValueError("The renamed file's extesnion ({0})
+                             "must be the same as the original extension ({1})".format(old_ext, new_ext))
+        # Delete pysndfie object
+        del self.pysndfile_object
+        # Rename file
+        os.rename(self.wavpath, filename)
+        # Reinitialize pysndfile object
+        self.pysndfile_object =
+        # Re-set seek position to previous position
+
+    def print_audio(self, start=0, end=-1):
+        """
+        Plots audio using matplotlib
+        Defaults to plotting all audio.
+        start and end arguments can be used to plot a set slice of audio
+        """
+
 
     def get_seek_position(self):
         """Returns the current seeker position in the file"""
