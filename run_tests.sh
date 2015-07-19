@@ -1,2 +1,2 @@
 cd ./UnitTests
-python -m unittest read_grain_test
+python -m unittest -v read_grain_test

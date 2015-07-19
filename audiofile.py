@@ -301,12 +301,15 @@ class AudioFile:
 
     def convert_to_mono(self, overwrite_original=False):
         """Mixes stereo audio files to mono"""
+        # Get current file name and it's extension
         (current_filename, current_fileextension) = (
             os.path.splitext(self.wavpath)
         )
+        # Create a seperate filepath to use for the mono file to be created
         mono_filename = ''.join(
             (current_filename, ".mono", current_fileextension)
         )
+        # Create the empty mono file object
         mono_file = pysndfile.PySndfile(
             mono_filename,
             mode='w',
@@ -314,6 +317,9 @@ class AudioFile:
             channels=1,
             samplerate=self.samplerate
         )
+        # Read current file in chunks and convert to mono by deviding all
+        # samples by 2 and combining to create a single signal
+        self.seek(0, 0)
         i = 0
         chunk_size = 2048
         while i < self.frames():
@@ -321,12 +327,17 @@ class AudioFile:
             chunk = ((chunk[:, 0] * 0.5) + (chunk[:, 1] * 0.5))
             mono_file.write_frames(chunk)
             i += chunk_size
+        # If overwriting the original sound file, delete the original stereo
+        # audio file from the system and replace the audio object with the mono
+        # audio object created earlier. Re-name the mono audio file to be the
+        # same as the audio file it was replacing
         if overwrite_original:
             del self.pysndfile_object
             os.remove(self.wavpath)
+            stereo_filename = self.wavpath
+            self.wavpath = mono_filename
             self.pysndfile_object = mono_file
-            self.pysndfile_object.switch_mode(self.mode)
-
+            self.rename_file(stereo_filename)
             return None
         else:
             return mono_file
@@ -345,13 +356,13 @@ class AudioFile:
             raise ValueError("The filepath: {0} does not point to an existing "
                              "directory".format(filename))
         # Check name has the same extension as previous file
-        old_ext = os.path.spitext(self.wavpath)
-        new_ext = os.path.splitext(filename)
+        old_ext = os.path.splitext(self.wavpath)[1]
+        new_ext = os.path.splitext(filename)[1]
         if old_ext != new_ext:
             raise ValueError("The renamed file's extension ({0})"
                              "must be the same as the original extension"
                              "({1})".format(old_ext, new_ext))
-        # Delete pysndfie object
+        # Delete pysndfile object
         seek = self.get_seek_position()
         del self.pysndfile_object
         # Rename file
@@ -489,6 +500,23 @@ class AudioFile:
         self.mode = mode
 
     @staticmethod
+    def mono_arrays_to_stereo(array1, array2):
+        """
+        Converts to horizontal numpy arrays to one concatenated verticaly
+        stacked array that can be written to a stereo file.
+        eg:
+            array1 = np.array([0.0, 0.1, 0.2, 0.3])
+            array2 = np.array([0.4, 0.5, 0.6, 0.7])
+
+            result:
+                np.array([[0.0, 0.4]
+                          [0.1, 0.5]
+                          [0.2, 0.6]
+                          [0.3, 0.7]])
+        """
+        return np.vstack((np.hstack(array1), np.hstack(array2)))
+
+    @staticmethod
     def gen_white_noise(length, gain):
         """
         Generates a numpy array of white noise of the length specified
@@ -521,7 +549,7 @@ class AudioFile:
         pass
 
     @staticmethod
-    def gen_default_wav(path, overwrite_existing=False, mode='w'):
+    def gen_default_wav(path, overwrite_existing=False, mode='w', channels=1):
         """
         Convenience method that creates a wav file with the following spec at
         the path given:
@@ -540,7 +568,7 @@ class AudioFile:
             path,
             mode,
             format=pysndfile.construct_format("wav", "pcm24"),
-            channels=1,
+            channels=channels,
             samplerate=44100
         )
 

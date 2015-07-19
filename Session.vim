@@ -7,9 +7,9 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +341 audiofile.py
-badd +37 UnitTests/read_grain_test.py
-badd +38 ~/.nvimrc
+badd +319 audiofile.py
+badd +166 UnitTests/read_grain_test.py
+badd +2 run_tests.sh
 argglobal
 silent! argdel *
 argadd audiofile.py
@@ -29,12 +29,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 559 - ((0 * winheight(0) + 23) / 46)
+let s:l = 333 - ((42 * winheight(0) + 23) / 46)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-559
-normal! 020|
+333
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
