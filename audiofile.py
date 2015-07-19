@@ -27,7 +27,10 @@ class AudioFile:
         self.mode = mode
         if mode == 'r':
             if not os.path.exists(wavpath):
-                raise IOError("Cannot open {0} for reading as it cannot be found.".format(wavpath))
+                raise IOError(
+                    "Cannot open {0} for reading as it cannot be "
+                    "found.".format(wavpath)
+                )
             self.pysndfile_object = pysndfile.PySndfile(
                 wavpath,
                 mode=mode
@@ -47,9 +50,11 @@ class AudioFile:
             self.samplerate = samplerate
             self.format = format
             self.channels = channels
+
     def channels(self):
         """return number of channels of sndfile"""
         return self.pysndfile_object.channels()
+
     def encoding_str(self):
         """
         return string representation of encoding (e.g. pcm16)
@@ -57,15 +62,19 @@ class AudioFile:
         encoding strings that are supported by a given sndfile format
         """
         return self.pysndfile_object.encoding_str()
+
     def error(self):
         """report error numbers related to the current sound file"""
         return self.pysndfile_object.error()
+
     def format(self):
         """return raw format specification from sndfile"""
         return self.pysndfile_object.format()
+
     def frames(self):
         """return number for frames (number of samples per channel)"""
         return self.pysndfile_object.frames()
+
     def get_strings(self):
         """
         get all stringtypes from the sound file.
@@ -73,6 +82,7 @@ class AudioFile:
         are supported by the libsndfile version you use.
         """
         return self.pysndfile_object.get_strings()
+
     def major_format_str(self):
         """
         return short string representation of major format
@@ -80,6 +90,7 @@ class AudioFile:
         lst of fileformats
         """
         return self.pysndfile_object.major_format_str()
+
     def read_frames(self, nframes=-1, dtype=np.float64):
         """
         Read the given number of frames and put the data into a numpy
@@ -95,15 +106,18 @@ class AudioFile:
         One column per channel.
         """
         return self.pysndfile_object.read_frames(nframes, dtype)
+
     def rewind(self, mode='rw'):
         """
         rewind read/write/read and write position given by mode to
         start of file
         """
         return self.pysndfile_object.format(mode)
+
     def samplerate(self):
         """return samplerate"""
         return self.pysndfile_object.samplerate()
+
     def seek(self, offset, whence=0, mode='rw'):
         """
         Seek into audio file: similar to python seek function,
@@ -131,33 +145,38 @@ class AudioFile:
         File object.
         """
         return self.pysndfile_object.seek(offset, whence, mode)
+
     def seekable(self):
         """return true for soundfiles that support seeking"""
         return self.seekable()
+
     def set_auto_clipping(self, arg=True):
         """
         enable auto clipping when reading/writing samples from/to sndfile.
 
         auto clipping is enabled by default. auto clipping is required by
-        libsndfile to properly handle scaling between sndfiles with pcm encoding
-        and float representation of the samples in numpy. When auto clipping
-        is set to on reading pcm data into a float vector and writing it back
-        with libsndfile will reproduce the original samples. If auto clipping
-        is off, samples will be changed slightly as soon as the amplitude is
-        close to the sample range because libsndfile applies slightly different
-        scaling factors during read and write
+        libsndfile to properly handle scaling between sndfiles with pcm
+        encoding and float representation of the samples in numpy. When auto
+        clipping is set to on reading pcm data into a float vector and writing
+        it back with libsndfile will reproduce the original samples. If auto
+        clipping is off, samples will be changed slightly as soon as the
+        amplitude is close to the sample range because libsndfile applies
+        slightly different scaling factors during read and write
         """
         return self.pysndfile_object.set_auto_clipping(arg)
+
     def set_string(self, stringtype_name, string):
         """
         set one of the stringtypes to the strig given as argument. If you try
-        to write a stringtype that is not supported byty the library a RuntimeError
-        will be raised
+        to write a stringtype that is not supported byty the library a
+        RuntimeError will be raised
         """
         return self.pysndfile_object.set_string(stringtype_name, string)
+
     def strError(self):
         """report error strings related to the current sound file"""
         return self.pysndfile_object.strError()
+
     def writeSync(self):
         """
         call the operating system's function to force the writing of all file
@@ -165,6 +184,7 @@ class AudioFile:
         No effect if file is open as read
         """
         return self.pysndfile_object.writeSync()
+
     def write_frames(self, input):
         """
         write 1 or 2 dimensional array into sndfile.
@@ -176,26 +196,37 @@ class AudioFile:
         One column per channel.
         updates the write pointer.
         if the input type is float, and the file encoding is an integer type,
-        you should make sure the input data are normalized normalized data (that
-        is in the range [-1..1] - which will corresponds to the maximum range
-        allowed by the integer bitwidth).
+        you should make sure the input data are normalized normalized data
+        (that is in the range [-1..1] - which will corresponds to the maximum
+        range allowed by the integer bitwidth).
         """
         return self.pysndfile_object.write_frames(input)
+
     def construct_format(self, major, encoding):
         """
-        construct a format specification for libsndfile from major format string
-        and encoding string
+        construct a format specification for libsndfile from major format
+        string and encoding string
         """
         return self.pysndfile_object.construct_format(major, encoding)
+
     def get_pysndfile_version(self):
         """return tuple describing the version of pysndfile"""
         return self.pysndfile_object.get_pysndfile_version()
+
     def get_sndfile_version(self):
-        """return a tuple of ints representing the version of the libsdnfile that is used"""
+        """
+        return a tuple of ints representing the version of the libsdnfile that
+        is used
+        """
         return self.pysndfile_object.get_sndfile_version()
+
     def get_sndfile_formats(self):
-        """Return lists of available file formats supported by libsndfile and pysndfile."""
+        """
+        Return lists of available file formats supported by libsndfile and
+        pysndfile.
+        """
         return self.pysndfile_object.get_sndfile_formats()
+
     def get_sndfile_encodings(self, major):
         """
         Return lists of available encoding for the given sndfile format.
@@ -206,13 +237,13 @@ class AudioFile:
         straings returned by get_sndfile_formats()
         """
         return self.pysndfile_object.get_sndfile_encodings(major)
+
     def __iter__(self):
         """
         Allows the AudioFile object to be iterated over
         Each iteration returns a chunk of audio.
         Audio chunk size is based on the self.chunksize member
         """
-
 
     def audio_file_info(self):
         """ Prints audio information """
@@ -231,7 +262,8 @@ class AudioFile:
     def read_grain(self, start_index, grain_size, padding=True):
         """
         Read a grain of audio from the file. if grain ends after the end of
-        the file, the grain can be padded with zeros using the padding argument.
+        the file, the grain can be padded with zeros using the padding
+        argument.
         Audio object seeker is not changed
         """
         if start_index < 0:
@@ -242,16 +274,22 @@ class AudioFile:
         if index + grain_size > self.frames():
             grain = self.read_frames(self.frames() - index)
             if padding:
-                grain = np.pad(grain, (0, index + grain_size - self.frames()),
-                            'constant',
-                            constant_values=(0, 0))
+                grain = np.pad(
+                    grain,
+                    (0, index + grain_size - self.frames()),
+                    'constant',
+                    constant_values=(0, 0)
+                )
         else:
             grain = self.read_frames(grain_size)
         self.seek(position, 0)
         return grain
 
     def normalize_audio(self, maximum=1.0):
-        """Normalize frames so that the maximum sample value == the maximum provided"""
+        """
+        Normalize frames so that the maximum sample value == the maximum
+        provided
+        """
         if self.mode != 'rw':
             raise ValueError("AudioFile object must be in read/write mode to"
                              "normalize audio")
@@ -263,14 +301,18 @@ class AudioFile:
 
     def convert_to_mono(self, overwrite_original=False):
         """Mixes stereo audio files to mono"""
-        (current_filename, current_fileextension) = os.path.splitext(self.wavpath)
-        mono_filename = ''.join((current_filename, ".mono", current_fileextension))
+        (current_filename, current_fileextension) = (
+            os.path.splitext(self.wavpath)
+        )
+        mono_filename = ''.join(
+            (current_filename, ".mono", current_fileextension)
+        )
         mono_file = pysndfile.PySndfile(
             mono_filename,
-            mode = 'w',
-            format = self.format,
-            channels = 1,
-            samplerate = self.samplerate
+            mode='w',
+            format=self.format,
+            channels=1,
+            samplerate=self.samplerate
         )
         i = 0
         chunk_size = 2048
@@ -284,31 +326,46 @@ class AudioFile:
             os.remove(self.wavpath)
             self.pysndfile_object = mono_file
             self.pysndfile_object.switch_mode(self.mode)
+
             return None
         else:
             return mono_file
 
     def rename_file(self, filename):
-        """Renames the audio file associated with the object to the name specified as an argument"""
+        """
+        Renames the audio file associated with the object to the name
+        specified as an argument
+        """
+        # TODO: Consider the race condition here. Is this a problem?
         # Check name doesn't already exist
         if os.path.exists(filename):
             raise ValueError("The filepath: {0} is an already existing file")
         # Check name is a valid file path
         if not os.path.exists(os.path.dirname(filename)):
-            raise ValueError("The filepath: {0} does not point to an existing directory".format(filename))
+            raise ValueError("The filepath: {0} does not point to an existing "
+                             "directory".format(filename))
         # Check name has the same extension as previous file
         old_ext = os.path.spitext(self.wavpath)
         new_ext = os.path.splitext(filename)
-        if old_ext != new_ext):
-            raise ValueError("The renamed file's extesnion ({0})
-                             "must be the same as the original extension ({1})".format(old_ext, new_ext))
+        if old_ext != new_ext:
+            raise ValueError("The renamed file's extension ({0})"
+                             "must be the same as the original extension"
+                             "({1})".format(old_ext, new_ext))
         # Delete pysndfie object
+        seek = self.get_seek_position()
         del self.pysndfile_object
         # Rename file
         os.rename(self.wavpath, filename)
         # Reinitialize pysndfile object
-        self.pysndfile_object =
+        self.pysndfile_object = pysndfile.PySndfile(
+            filename,
+            mode=self.mode,
+            format=self.format,
+            samplerate=self.samplerate,
+            channels=self.channels
+        )
         # Re-set seek position to previous position
+        self.seek(seek, 0)
 
     def print_audio(self, start=0, end=-1):
         """
@@ -316,7 +373,6 @@ class AudioFile:
         Defaults to plotting all audio.
         start and end arguments can be used to plot a set slice of audio
         """
-
 
     def get_seek_position(self):
         """Returns the current seeker position in the file"""
@@ -362,33 +418,35 @@ class AudioFile:
 
     def fade_audio(self, audio, position, fade_time, mode):
         """
-        Fades the in or out linearly from the position specified over the time specified.
+        Fades the in or out linearly from the position specified over the time
+        specified.
         audio: A numpy array of audio to manipulate
         start_position: The starting position to begin the fade from (ms)
         fade_time: The length of the fade (ms)
         mode: choose to fade the audio in or out (string: "in" or "out")
         """
         if mode == "in":
-            #Calculate the amplitude values to multiply the audio by
+            # Calculate the amplitude values to multiply the audio by
             fade = np.linspace(0.0, 1.0, self.ms_to_samps(fade_time))
             position = self.ms_to_samps(position)
-            #multiply samples by the fade values from the start position for
-            #the duration of the fade
+            # multiply samples by the fade values from the start position for
+            # the duration of the fade
             audio[position:fade.size] *= fade
-            #zero any samples before the fade in
+            # zero any samples before the fade in
             audio[:position] *= 0
 
         elif mode == "out":
-            #Calculate the amplitude values to multiply the audio by
+            # Calculate the amplitude values to multiply the audio by
             fade = np.linspace(1.0, 0.0, self.ms_to_samps(fade_time))
             position = self.ms_to_samps(position)
-            #multiply samples by the fade values from the start position for
-            #the duration of the fade
+            # multiply samples by the fade values from the start position for
+            # the duration of the fade
             audio[position:position-fade.size] *= fade
-            #zero any samples after the fade in
+            # zero any samples after the fade in
             audio[position-fade.size:] *= 0
         else:
-            print mode, " is not a valid fade option. Use either \"in\" or \"out\""
+            print mode, " is not a valid fade option. Use either \"in\" or "
+            "\"out\""
             raise ValueError
 
         return audio
@@ -406,7 +464,10 @@ class AudioFile:
         return False
 
     def check_valid(self):
-        """Test to make sure that the audio file is valid for use. ie mono, not empty"""
+        """
+        Test to make sure that the audio file is valid for use.
+        ie mono, not empty
+        """
         if not self.check_mono():
             return False
         if not self.check_not_empty():
@@ -462,13 +523,16 @@ class AudioFile:
     @staticmethod
     def gen_default_wav(path, overwrite_existing=False, mode='w'):
         """
-        Convenience method that creates a wav file with the following spec at the path given:
+        Convenience method that creates a wav file with the following spec at
+        the path given:
             Samplerate: 44.1Khz
             Bit rate: 24Bit
         """
         if os.path.exists(path):
             if not overwrite_existing:
-                raise IOError(''.join(("File: \"", path, "\" already exists.")))
+                raise IOError(
+                    ''.join(("File: \"", path, "\" already exists."))
+                )
             else:
                 os.remove(path)
 
@@ -483,6 +547,7 @@ class AudioFile:
     def __repr__(self):
         return 'AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath)
 
+
 class AnalysedAudioFile(AudioFile):
 
     """Generates and stores analysis information for an audio file"""
@@ -496,9 +561,11 @@ class AnalysedAudioFile(AudioFile):
         self.db_dir = kwargs.pop('db_dir', None)
 
         if not self.check_valid():
-            raise IOError("File isn't valid: {0}\nCheck that file is mono and isn't empty".format(self.name))
+            raise IOError(
+                "File isn't valid: {0}\nCheck that file is mono and isn't "
+                "empty".format(self.name))
 
-        #---------------
+        # ---------------
         # Initialise f0 variables
         # Stores the path to the f0 file
         self.f0path = kwargs.pop('f0path', None)
@@ -525,7 +592,6 @@ class AnalysedAudioFile(AudioFile):
             print "No Zero crossing path for: {0}".format(self.name)
             self.ZeroX = None
 
-
     def plot_rms_to_graph(self):
         """
         Uses matplotlib to create a graph of the audio file and the generated
@@ -541,9 +607,7 @@ class AnalysedAudioFile(AudioFile):
         plt.ylabel("sample value")
         plt.show()
 
-
-
-    #-------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # GENERAL ANALYSIS METHODS
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
@@ -583,10 +647,16 @@ class AnalysedAudioFile(AudioFile):
 class AudioDatabase:
     """A class for encapsulating a database of AnalysedAudioFile objects"""
 
-    def __init__(self, audio_dir, db_dir=None, analysis_list=["wav", "rms", "atk", "zerox"]):
+    def __init__(
+        self,
+        audio_dir,
+        db_dir=None,
+        analysis_list=["wav", "rms", "atk", "zerox"]
+    ):
         """
         Creates the folder hierachy for the database of files to be stored in
-        Adds any pre existing audio files and analyses to the object automatically.
+        Adds any pre existing audio files and analyses to the object
+        automatically.
         audio_dir:
         db_dir:
         analysis_list:
@@ -631,8 +701,8 @@ class AudioDatabase:
                 # If it does exist, add it's content to the database content
                 # dictionary.
                 if os.path.exists(directory):
-                    print "{0} directory already exists:\t\t{1}".format(dirkey,
-                                                                        os.path.relpath(directory))
+                    print "{0} directory already exists:"
+                    "\t\t{1}".format(dirkey, os.path.relpath(directory))
                     for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
@@ -646,7 +716,9 @@ class AudioDatabase:
         print "*****************************************"
         print "Creating sub-directories..."
         print "*****************************************"
-        subdir_paths = {key: initialise_subdir(key, db_dir) for key in analysis_list}
+        subdir_paths = {
+            key: initialise_subdir(key, db_dir) for key in analysis_list
+        }
 
         print ""
         print "*****************************************"
@@ -657,11 +729,17 @@ class AudioDatabase:
             for item in pathops.listdir_nohidden(audio_dir):
                 if os.path.splitext(item)[1] == ".wav":
                     wavpath = os.path.join(audio_dir, item)
-                    if not os.path.isfile('/'.join((subdir_paths["wav"], os.path.basename(wavpath)))):
+                    if not os.path.isfile(
+                        '/'.join(
+                            (subdir_paths["wav"], os.path.basename(wavpath))
+                        )
+                    ):
                         shutil.copy2(wavpath, subdir_paths["wav"])
-                        print "Moved: ", item, "\tTo directory: ", subdir_paths["wav"]
+                        print "Moved: ", item, "\tTo directory: ",
+                        subdir_paths["wav"]
                     else:
-                        print "File:  ", item, "\tAlready exists at: ", subdir_paths["wav"]
+                        print "File:  ", item, "\tAlready exists at: ",
+                        subdir_paths["wav"]
                     db_content[os.path.splitext(item)[0]]["wav"] = (
                         os.path.join(subdir_paths["wav"], item)
                     )
@@ -676,11 +754,15 @@ class AudioDatabase:
                 continue
             try:
                 self.analysed_audio_list.append(
-                    AnalysedAudioFile(db_content[key]["wav"], 'r',
-                                    rmspath=db_content[key]["rms"],
-                                    zeroxpath=db_content[key]["zerox"],
-                                    name=key,
-                                    db_dir=db_dir))
+                    AnalysedAudioFile(
+                        db_content[key]["wav"],
+                        'r',
+                        rmspath=db_content[key]["rms"],
+                        zeroxpath=db_content[key]["zerox"],
+                        name=key,
+                        db_dir=db_dir
+                    )
+                )
             except IOError:
                 # Skip any audio file objects that can't be analysed
                 continue
