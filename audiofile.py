@@ -13,7 +13,9 @@ import analysis.ZeroXAnalysis as ZeroXAnalysis
 
 
 class AudioFile:
-    """Object for storing and accessing basic information for an audio file"""
+
+    """Object for storing and accessing basic information for an audio file."""
+
     def __init__(self, wavpath, mode,
                  format=None,
                  channels=None,
@@ -21,8 +23,8 @@ class AudioFile:
                  name=None, *args, **kwargs):
 
         self.wavpath = wavpath
-        # TODO: If a name isn't provided then create a default name based n the
-        # file name without an extension
+        # TODO: If a name isn't provided then create a default name based on
+        # the file name without an extension
         self.name = name
         self.mode = mode
         if mode == 'r':
@@ -285,22 +287,93 @@ class AudioFile:
         self.seek(position, 0)
         return grain
 
-    def normalize_audio(self, maximum=1.0):
+    def normalize_file(self, overwrite_original=False):
+        """Normalizes the entire file"""
+        # Get current file name and it's extension
+        (current_filename, current_fileextension) = (
+            os.path.splitext(self.wavpath)
+        )
+        # Create a seperate filepath to use for the mono file to be created
+        normalized_filename = ''.join(
+            (current_filename, ".norm", current_fileextension)
+        )
+        # If the mono audio file already exists then use that to replace the
+        # stereo file, rather than computing again from scratch
+        if os.path.exists(normalized_filename):
+            del self.pysndfile_object
+            os.remove(self.wavpath)
+            origin_filename = self.wavpath
+            self.wavpath = normalized_filename
+            normalized_file = AudioFile(
+                normalized_filename,
+                mode='w',
+                format=self.format,
+                channels=1,
+                samplerate=self.samplerate
+            )
+            self.pysndfile_object = normalized_file.pysndfile_object
+            self.rename_file(origin_filename)
+            return None
+        # Create the empty mono file object
+        normalized_file = AudioFile(
+            normalized_filename,
+            mode='w',
+            format=self.format,
+            channels=1,
+            samplerate=self.samplerate
+        )
+        # Read current file in chunks and convert to mono by deviding all
+        # samples by 2 and combining to create a single signal
+        self.seek(0, 0)
+        self.switch_mode('r')
+        samples = self.pysndfile_object.read_frames()
+        self.normalize_audio(samples)
+        normalized_file.write_frames(samples)
+        normalized_file.switch_mode('r')
+
+        # If overwriting the original sound file, delete the original stereo
+        # audio file from the system and replace the audio object with the mono
+        # audio object created earlier. Re-name the mono audio file to be the
+        # same as the audio file it was replacing
+        if overwrite_original:
+            del self.pysndfile_object
+            os.remove(self.wavpath)
+            origin_filename = self.wavpath
+            self.wavpath = normalized_filename
+            self.pysndfile_object = normalized_file.pysndfile_object
+            self.rename_file(origin_filename)
+            return None
+        else:
+            return normalized_file
+
+    def check_mono(self):
+        """Check that the audio file is a mono audio file"""
+        if self.channels() != 1:
+            return False
+        return True
+
+    def replace_audiofile(self, replacement_filename):
         """
-        Normalize frames so that the maximum sample value == the maximum
-        provided
+        Replace the current audiofile and audiofile object with the file
+        specified.
         """
-        if self.mode != 'rw':
-            raise ValueError("AudioFile object must be in read/write mode to"
-                             "normalize audio")
-        frames = self.read_frames()
-        max_sample = np.max(frames)
-        ratio = maximum / max_sample
-        frames = frames * ratio
-        self.write_frames(frames)
+        pathops.file_must_exist(replacement_filename)
+        del self.pysndfile_object
+        os.remove(self.wavpath)
+        os.rename(replacement_filename, self.wavpath)
+        replacement_file = pysndfile.PySndfile(
+            self.wavpath,
+            mode='r',
+        )
+        self.channels = replacement_file.channels()
+        self.samplerate = replacement_file.samplerate()
+        self.pysndfile_object = replacement_file
+        self.mode = 'r'
 
     def convert_to_mono(self, overwrite_original=False):
-        """Mixes stereo audio files to mono"""
+        # TODO: Implement mixdown for multi-channel audio other than 2 channel
+        # stereo.
+
         # Get current file name and it's extension
         (current_filename, current_fileextension) = (
             os.path.splitext(self.wavpath)
@@ -309,8 +382,13 @@ class AudioFile:
         mono_filename = ''.join(
             (current_filename, ".mono", current_fileextension)
         )
+        # If the mono audio file already exists then use that to replace the
+        # stereo file, rather than computing again from scratch
+        if os.path.exists(mono_filename):
+            self.replace_audiofile(mono_filename)
+            return None
         # Create the empty mono file object
-        mono_file = pysndfile.PySndfile(
+        mono_file = AudioFile(
             mono_filename,
             mode='w',
             format=self.format,
@@ -332,12 +410,8 @@ class AudioFile:
         # audio object created earlier. Re-name the mono audio file to be the
         # same as the audio file it was replacing
         if overwrite_original:
-            del self.pysndfile_object
-            os.remove(self.wavpath)
-            stereo_filename = self.wavpath
-            self.wavpath = mono_filename
-            self.pysndfile_object = mono_file
-            self.rename_file(stereo_filename)
+            self.replace_audiofile(mono_filename)
+            del mono_file
             return None
         else:
             return mono_file
@@ -375,6 +449,7 @@ class AudioFile:
             samplerate=self.samplerate,
             channels=self.channels
         )
+        self.wavpath = filename
         # Re-set seek position to previous position
         self.seek(seek, 0)
 
@@ -395,27 +470,27 @@ class AudioFile:
         file
         """
         seconds = ms / 1000.0
-        return int(round(seconds * self.samplerate()))
+        return int(round(seconds * self.samplerate))
 
     def secs_to_samps(self, seconds):
         """
         Converts seconds to samples based on the sample rate of the audio file
         """
-        return int(round(seconds * self.samplerate()))
+        return int(round(seconds * self.samplerate))
 
     def samps_to_secs(self, samps):
         """
         Converts samples to seconds based on the sample rate of the audio
         file
         """
-        return float(samps) / self.samplerate()
+        return float(samps) / self.samplerate
 
     def samps_to_ms(self, samps):
         """
         Converts samples to milliseconds based on the sample rate of the audio
         file
         """
-        return float(samps) / self.samplerate() * 1000.0
+        return float(samps) / self.samplerate * 1000.0
 
     def plot_grain_to_graph(self, start_index, number_of_samps):
         """
@@ -442,7 +517,7 @@ class AudioFile:
             position = self.ms_to_samps(position)
             # multiply samples by the fade values from the start position for
             # the duration of the fade
-            audio[position:fade.size] *= fade
+            audio[position:position+fade.size] *= fade
             # zero any samples before the fade in
             audio[:position] *= 0
 
@@ -452,21 +527,14 @@ class AudioFile:
             position = self.ms_to_samps(position)
             # multiply samples by the fade values from the start position for
             # the duration of the fade
-            audio[position:position-fade.size] *= fade
+            audio[position:position+fade.size] *= fade
             # zero any samples after the fade in
-            audio[position-fade.size:] *= 0
+            audio[position+fade.size:] *= 0
         else:
-            print mode, " is not a valid fade option. Use either \"in\" or "
-            "\"out\""
+            print "{0} is not a valid fade option. Use either \"in\" or "
+            "\"out\"".format(mode)
             raise ValueError
-
         return audio
-
-    def check_mono(self):
-        """Check that the audio file is a mono audio file"""
-        if self.channels() != 1:
-            return False
-        return True
 
     def check_not_empty(self):
         """Check that the file contains audio"""
@@ -500,6 +568,19 @@ class AudioFile:
         self.mode = mode
 
     @staticmethod
+    def normalize_audio(audio, maximum=1.0):
+        """
+        Normalize array of audio so that the maximum sample value == the
+        maximum provided
+        """
+        if audio.size < 1:
+            raise ValueError("Audio array is empty. Cannot be normalized""")
+        max_sample = np.max(np.abs(audio))
+        ratio = maximum / max_sample
+        audio = audio * ratio
+        return audio
+
+    @staticmethod
     def mono_arrays_to_stereo(array1, array2):
         """
         Converts to horizontal numpy arrays to one concatenated verticaly
@@ -514,7 +595,7 @@ class AudioFile:
                           [0.2, 0.6]
                           [0.3, 0.7]])
         """
-        return np.vstack((np.hstack(array1), np.hstack(array2)))
+        return np.hstack((np.vstack(array1), np.vstack(array2)))
 
     @staticmethod
     def gen_white_noise(length, gain):
