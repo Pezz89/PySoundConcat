@@ -7,8 +7,8 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +369 audiofile.py
-badd +176 UnitTests/audiofile_tests.py
+badd +351 audiofile.py
+badd +302 UnitTests/audiofile_tests.py
 badd +8 ~/PerryPerrySource/pysource/fileops/pathops.py
 argglobal
 silent! argdel *
@@ -29,12 +29,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 368 - ((16 * winheight(0) + 20) / 41)
+let s:l = 1 - ((0 * winheight(0) + 23) / 46)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-368
-normal! 030|
+1
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

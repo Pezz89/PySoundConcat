@@ -14,6 +14,13 @@ class FileCreationTests(unittest.TestCase):
             overwrite_existing=True
         )
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
         del self.TestAudio
         os.remove("./.TestAudio.wav")
 
@@ -44,6 +51,15 @@ class SwitchModeTests(unittest.TestCase):
         then switch to write mode and append to these frames, before switching
         back to read all written frames.
         """
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
         with self.assertRaises(IOError):
@@ -80,9 +96,20 @@ class ReadGrainTest(unittest.TestCase):
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
 
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'r')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
     def test_AllGrains(self):
         """Check all samples are read correctly if no arguments are given"""
         # TestAudio file has 100 samples
+        self.check_setup()
         self.assertEqual(
             self.TestAudio.read_grain(0, -1).size, 101, "Read Grain - all "
             "grains test failed: Didn't Read all samples")
@@ -92,6 +119,7 @@ class ReadGrainTest(unittest.TestCase):
         Check that slice from begining of audio is read from and too the
         correct sample
         """
+        self.check_setup()
         grain = self.TestAudio.read_grain(0, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Start to middle test "
                          "failed: Didn't read correct number of samples.")
@@ -102,6 +130,7 @@ class ReadGrainTest(unittest.TestCase):
 
     def test_NegativeIndexing(self):
         """Check that slice from end is read from and too the correct sample"""
+        self.check_setup()
         grain = self.TestAudio.read_grain(-51, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Negative indexing test "
                          "failed: Didn't return correct number of samples.")
@@ -115,6 +144,7 @@ class ReadGrainTest(unittest.TestCase):
         Check that reading samples further than the end sample results in zero
         padding after the last sample
         """
+        self.check_setup()
         grain = self.TestAudio.read_grain(-26, 50)
         self.assertEqual(grain.size, 50, "Read Grain - Zero padding test "
                          "failed: Didn't read correct number of samples.")
@@ -152,10 +182,27 @@ class MonoDownmixTest(unittest.TestCase):
         self.TestAudio.write_frames(
             samples
         )
+        self.TestAudio.switch_mode('r')
+        self.TestAudio.seek(0, 0)
+
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 2)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 2)
+        self.assertEquals(self.TestAudio.mode, 'r')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_MixToMono(self):
+        self.check_setup()
+
         mono_file = self.TestAudio.convert_to_mono(overwrite_original=False)
+        mono_file.switch_mode('r')
+        mono_file.seek(0, 0)
         stereo_frames = self.TestAudio.frames()
+        self.assertGreater(stereo_frames, 0)
         # Check new file exists
         self.assertTrue(os.path.exists("./.TestAudio.mono.wav"))
         # Check new file is mono
@@ -179,8 +226,11 @@ class MonoDownmixTest(unittest.TestCase):
         # Check new file is the same length in frames as the original
         self.assertEqual(stereo_frames, mono_file.frames())
         self.TestAudio.seek(0, 0)
-        self.TestAudio.switch_mode('r')
         samples = self.TestAudio.read_frames()
+        self.TestAudio.switch_mode('r')
+        self.TestAudio.seek(0, 0)
+        samples = self.TestAudio.read_frames()
+        self.assertEqual(samples.size, 101)
 
     def tearDown(self):
         """
@@ -209,11 +259,23 @@ class NormalizeTest(unittest.TestCase):
         )
         self.TestAudio.seek(0, 0)
 
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
     def test_Normalize(self):
+        self.check_setup()
         normalized_file = self.TestAudio.normalize_file(
             overwrite_original=False
         )
         normalized_frames = self.TestAudio.frames()
+        self.assertGreater(normalized_frames, 0)
         # Check new file exists
         self.assertTrue(os.path.exists("./.TestAudio.norm.wav"))
         # Check new file is normalized
@@ -235,6 +297,9 @@ class NormalizeTest(unittest.TestCase):
         # Check new file is the same length in frames as the original
         self.assertEqual(normalized_frames, normalized_file.frames())
         # Check that all samples have been normalized
+        self.TestAudio.switch_mode('r')
+        self.TestAudio.seek(0, 0)
+        self.assertGreater(self.TestAudio.read_frames().all(), 0.9)
 
     def tearDown(self):
         """
@@ -257,7 +322,18 @@ class RenameFileTests(unittest.TestCase):
         )
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
 
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
     def test_RenameFile(self):
+        self.check_setup()
         original_framecount = self.TestAudio.frames()
         original_channels = self.TestAudio.channels
         # Check original file exists
@@ -298,7 +374,18 @@ class ReplaceFileTests(unittest.TestCase):
         self.TestAudio2.write_frames(np.ones(50))
         del self.TestAudio2
 
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
     def test_ReplaceFile(self):
+        self.check_setup()
         # Check that file to be replaced exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         # Check that file to replace file with exists
@@ -329,7 +416,18 @@ class FadeAudioTest(unittest.TestCase):
             "./.TestAudio.wav", overwrite_existing=True
         )
 
+    def check_setup(self):
+        # Check setup was correct
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
     def test_FadeIn(self):
+        self.check_setup()
         faded_audio = self.TestAudio.fade_audio(
             self.test_audio,
             500,

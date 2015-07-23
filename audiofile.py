@@ -300,19 +300,7 @@ class AudioFile:
         # If the mono audio file already exists then use that to replace the
         # stereo file, rather than computing again from scratch
         if os.path.exists(normalized_filename):
-            del self.pysndfile_object
-            os.remove(self.wavpath)
-            origin_filename = self.wavpath
-            self.wavpath = normalized_filename
-            normalized_file = AudioFile(
-                normalized_filename,
-                mode='w',
-                format=self.format,
-                channels=1,
-                samplerate=self.samplerate
-            )
-            self.pysndfile_object = normalized_file.pysndfile_object
-            self.rename_file(origin_filename)
+            self.replace_audiofile(normalized_filename)
             return None
         # Create the empty mono file object
         normalized_file = AudioFile(
@@ -336,12 +324,7 @@ class AudioFile:
         # audio object created earlier. Re-name the mono audio file to be the
         # same as the audio file it was replacing
         if overwrite_original:
-            del self.pysndfile_object
-            os.remove(self.wavpath)
-            origin_filename = self.wavpath
-            self.wavpath = normalized_filename
-            self.pysndfile_object = normalized_file.pysndfile_object
-            self.rename_file(origin_filename)
+            self.replace_audiofile(normalized_filename)
             return None
         else:
             return normalized_file
