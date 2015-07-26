@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import numpy as np
 
@@ -9,12 +10,13 @@ class RMSAnalysis:
     """
 
     An encapsulation of the RMS analysis of an AnalysedAudioFile.
-    On initialization, the RMS analysis is either created, or a pre existing file already exists.
-    In either case, once the file is generated, it's values can be obtained through use of the get_rms_from_file
-    method
+    On initialization, the RMS analysis is either created, or a pre existing
+    file already exists.
+    In either case, once the file is generated, it's values can be obtained
+    through use of the get_rms_from_file method
 
-    Note: Due to the large size of RMS analysis it is not stored in a class member as other such analyses are.
-    Use get_rms_from_file.
+    Note: Due to the large size of RMS analysis it is not stored in a class
+    member as other such analyses are. Use get_rms_from_file.
     """
     def __init__(self, AnalysedAudioFile, rmspath):
         # Store reference to the file to be analysed
@@ -34,8 +36,13 @@ class RMSAnalysis:
             if not self.AnalysedAudioFile.db_dir:
                 # If it isn't part of a database and doesn't have a path then
                 # there is no where to write the rms data to.
-                raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
-            self.rmspath = os.path.join(self.AnalysedAudioFile.db_dir, 'rms', self.AnalysedAudioFile.name + '.lab')
+                raise IOError('Analysed Audio object must have an RMS file'
+                              'path or be part of a database')
+            self.rmspath = os.path.join(
+                self.AnalysedAudioFile.db_dir,
+                'rms',
+                self.AnalysedAudioFile.name + '.lab'
+            )
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one
@@ -46,23 +53,30 @@ class RMSAnalysis:
             # Check if analysis file already exists.
             try:
                 with open(self.rmspath, 'r') as rmsfile:
-                    # If an RMS file is provided then count the number of lines (1 for each
-                    # window)
-                    print "Reading RMS file:\t\t\t", os.path.relpath(self.rmspath)
+                    # If an RMS file is provided then count the number of lines
+                    # (1 for each window)
+                    print("Reading RMS file:\t\t\t",
+                          os.path.relpath(self.rmspath))
                     self.rms_window_count = sum(1 for line in rmsfile)
             except IOError:
-            # If it doesn't then generate a new file
+                # If it doesn't then generate a new file
                 self.rmspath = self.create_rms_analysis()
 
-    def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
-        """Generate an energy contour analysis by calculating the RMS values of windowed segments of the audio file"""
+    def create_rms_analysis(self, window_size=25, window_type='triangle',
+                            window_overlap=8):
+        """
+        Generate an energy contour analysis by calculating the RMS values of
+        windowed segments of the audio file
+        """
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
-        #Generate a window function to apply to rms windows before analysis
-        window_function = self.AnalysedAudioFile.gen_window(window_type, window_size)
+        # Generate a window function to apply to rms windows before analysis
+        window_function = self.AnalysedAudioFile.gen_window(window_type,
+                                                            window_size)
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
-                print 'Creating RMS file:\t\t\t', os.path.relpath(self.rmspath)
+                print('Creating RMS file:\t\t\t',
+                      os.path.relpath(self.rmspath))
                 self.rms_window_count = 0
                 # For all frames in the file, read overlapping windows and
                 # calculate the rms values for each window then write the data
@@ -71,12 +85,14 @@ class RMSAnalysis:
                     frames = self.AnalysedAudioFile.read_grain(i, window_size)
                     frames = frames * window_function
                     rms = np.sqrt(np.mean(np.square(frames)))
-                    rms_file.write('{0} {1:6f}\n'.format(i + int(round(window_size / 2.0)), rms))
+                    rms_file.write('{0} {1:6f}\n'.format(
+                        i + int(round(window_size / 2.0)), rms)
+                    )
                     i += int(round(window_size / window_overlap))
                     self.rms_window_count += 1
 
             return self.rmspath
-        #If the rms file couldn't be opened then raise an error
+        # If the rms file couldn't be opened then raise an error
         except IOError:
             return False
 
@@ -85,7 +101,7 @@ class RMSAnalysis:
         Read values from RMS file between start and end points provided (in
         samples)
         """
-        print "Reading RMS file: {0}".format(self.rmspath)
+        print("Reading RMS file: {0}".format(self.rmspath))
         # Convert negative numbers to the end of the file offset by that value
         if end < 0:
             end = self.AnalysedAudioFile.frames() + end + 1

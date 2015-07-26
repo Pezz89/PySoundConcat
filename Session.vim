@@ -7,16 +7,17 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +756 audiofile.py
-badd +53 ~/PerryPerrySource/pysource/fileops/pathops.py
-badd +6 analysis/AttackAnalysis.py
-badd +1 analysis/RMSAnalysis.py
-badd +6 analysis/ZeroXAnalysis.py
-badd +15 create_database.py
+badd +435 audiofile.py
+badd +18 ~/PerryPerrySource/pysource/fileops/pathops.py
+badd +130 analysis/AttackAnalysis.py
+badd +135 analysis/RMSAnalysis.py
+badd +60 analysis/ZeroXAnalysis.py
+badd +58 create_database.py
+badd +340 UnitTests/audiofile_tests.py
 argglobal
 silent! argdel *
 argadd audiofile.py
-edit create_database.py
+edit audiofile.py
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
@@ -32,12 +33,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 45 - ((41 * winheight(0) + 23) / 46)
+let s:l = 1 - ((0 * winheight(0) + 23) / 46)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-45
-normal! 013|
+1
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

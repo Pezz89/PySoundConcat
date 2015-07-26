@@ -300,6 +300,7 @@ class NormalizeTest(unittest.TestCase):
         self.TestAudio.switch_mode('r')
         self.TestAudio.seek(0, 0)
         self.assertGreater(self.TestAudio.read_frames().all(), 0.9)
+        self.assertEqual(self.TestAudio.frames(), 1000)
 
     def tearDown(self):
         """
@@ -321,12 +322,13 @@ class RenameFileTests(unittest.TestCase):
             "./.TestAudio.wav", overwrite_existing=True
         )
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
+        self.TestAudio.switch_mode('r')
 
     def check_setup(self):
         """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.mode, 'r')
         self.assertEquals(self.TestAudio.samplerate, 44100)
         self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
         self.assertEquals(self.TestAudio.format, 65539)
@@ -348,6 +350,7 @@ class RenameFileTests(unittest.TestCase):
         self.assertEqual(self.TestAudio.channels, original_channels)
         # Check original file no longer exists
         self.assertFalse(os.path.exists("./.TestAudio.wav"))
+        self.assertEqual(self.TestAudio.frames(), 101)
 
     def tearDown(self):
         """

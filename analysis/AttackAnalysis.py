@@ -1,5 +1,7 @@
+from __future__ import print_function
 import os
 import numpy as np
+import math
 
 import fileops.pathops as pathops
 
@@ -18,8 +20,8 @@ class AttackAnalysis:
         # to be generated even if a file already exists.
         if not self.attackpath:
             if not self.AnalysedAudioFile.db_dir:
-                raise IOError("Analysed Audio object must have an atk file path"
-                              "or be part of a database")
+                raise IOError("Analysed Audio object must have an atk file"
+                              " path or be part of a database")
             self.attackpath = os.path.join(
                 self.AnalysedAudioFile.db_dir,
                 "atk",
@@ -41,14 +43,16 @@ class AttackAnalysis:
         Estimate the start and end of the attack of the audio
         Adaptive threshold method (weakest effort method) described here:
         http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
-        Stores values in a file at the attack path provided with the following format:
+        Stores values in a file at the attack path provided with the following
+        format:
         attack_start attack_end
         """
         # Make sure RMS has been calculated
         if not self.AnalysedAudioFile.RMS:
             raise IOError("RMS analysis is required to estimate attack")
         with open(self.attackpath, 'w') as attackfile:
-            print "Creating attack estimation file:\t\t", os.path.relpath(self.attackpath)
+            print("Creating attack estimation file:\t\t",
+                  os.path.relpath(self.attackpath))
             rms_contour = self.AnalysedAudioFile.RMS.get_rms_from_file()
             rms_contour = self.scale_to_range(rms_contour)
             thresholds = np.arange(1, 11) * 0.1
@@ -57,8 +61,8 @@ class AttackAnalysis:
             # thresholds
             threshold_inds = np.argmax(rms_contour >= thresholds, axis=1)
 
-            # TODO:Need to make sure rms does not return to a lower threshold after
-            # being > a threshold.
+            # TODO:Need to make sure rms does not return to a lower threshold
+            # after being > a threshold.
 
             # Calculate the time difference between each of the indexes
             ind_diffs = np.ediff1d(threshold_inds)
@@ -73,8 +77,8 @@ class AttackAnalysis:
                         multiplier)]
             else:
                 attack_end_ind = threshold_inds[0]
-            # Calculate the end threshold by thr same method except looking above
-            # the average time * the multiplier
+            # Calculate the end threshold by thr same method except looking
+            # above the average time * the multiplier
             if np.any(ind_diffs > mean_ind_diff * multiplier):
                 attack_end_ind = threshold_inds[
                     np.argmax(
@@ -82,12 +86,16 @@ class AttackAnalysis:
                         multiplier)]
             else:
                 attack_end_ind = threshold_inds[-1]
-            # Refine position by searching for local min and max of these values
-            self.attack_start = self.AnalysedAudioFile.samps_to_secs(attack_start_ind)
-            self.attack_end = self.AnalysedAudioFile.samps_to_secs(attack_end_ind)
+            # Refine position by searching for local min and max of these
+            # values
+            self.attack_start = self.AnalysedAudioFile.samps_to_secs(
+                attack_start_ind)
+            self.attack_end = self.AnalysedAudioFile.samps_to_secs(
+                attack_end_ind)
             # Values are stored in the file with the following format:
             # attack_start attack_end
-            attackfile.write("{0} {1}\n".format(self.attack_start, self.attack_end))
+            attackfile.write("{0} {1}\n".format(self.attack_start,
+                                                self.attack_end))
 
     def calc_log_attack_time(self):
         """
@@ -104,9 +112,9 @@ class AttackAnalysis:
     def get_attack_from_file(self):
         """Read the attack values from a previously generated file"""
         # TODO:
-        print "Reading attack estimation file:\t\t", os.path.relpath(self.attackpath)
+        print("Reading attack estimation file:\t\t",
+              os.path.relpath(self.attackpath))
         with open(self.attackpath, 'r') as attackfile:
-            i = 0
             for line in attackfile:
                 # Split the values and convert to their correct types
                 starttime, endtime = line.split()

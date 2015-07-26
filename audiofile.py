@@ -398,8 +398,8 @@ class AudioFile(object):
         # audio object created earlier. Re-name the mono audio file to be the
         # same as the audio file it was replacing
         if overwrite_original:
-            self.replace_audiofile(mono_filename)
             del mono_file
+            self.replace_audiofile(mono_filename)
             return None
         else:
             return mono_file
@@ -432,7 +432,7 @@ class AudioFile(object):
         # Reinitialize pysndfile object
         self.pysndfile_object = pysndfile.PySndfile(
             filename,
-            mode=self.mode,
+            mode='r',
             format=self.format,
             samplerate=self.samplerate,
             channels=self.channels
@@ -753,7 +753,7 @@ class AudioDatabase:
         self,
         audio_dir,
         db_dir=None,
-        analysis_list=["wav", "rms", "atk", "zerox"]
+        analysis_list=["rms", "atk", "zerox"]
     ):
         """
         Create the folder hierachy for the database of files to be stored in.
@@ -766,6 +766,15 @@ class AudioDatabase:
         """
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
+        # Check that all analysis list args are valid
+        valid_analyses = {'rms', 'zerox', 'atk'}
+        for analysis in analysis_list:
+            if analysis not in valid_analyses:
+                raise ValueError("{0} is not a valid analysis type")
+
+        # Wav directory must be created for storing the audiofiles
+        analysis_list.append("wav")
+
         print("*****************************************")
         print("Initialising Database...")
         print("*****************************************")
@@ -777,6 +786,11 @@ class AudioDatabase:
         db_content = collections.defaultdict(
             lambda: {i: None for i in analysis_list}
         )
+
+        # Check that audio directory exists
+        if not os.path.exists(audio_dir):
+            raise IOError("The audio directory provided ({0}) doesn't "
+                          "exist").format(audio_dir)
 
         # If the database directory isnt specified then the directory where the
         # audio files are stored will be used
@@ -826,25 +840,26 @@ class AudioDatabase:
         print("*****************************************")
         print("Moving any audio to sub directory...")
         print("*****************************************")
+
+        valid_filetypes = {'.wav', '.aif', '.aiff'}
         # Move audio files to database
-        if os.path.exists(audio_dir):
-            for item in pathops.listdir_nohidden(audio_dir):
-                if os.path.splitext(item)[1] == ".wav" or os.path.splitext(item)[1] == ".aif":
-                    wavpath = os.path.join(audio_dir, item)
-                    if not os.path.isfile(
-                        '/'.join(
-                            (subdir_paths["wav"], os.path.basename(wavpath))
-                        )
-                    ):
-                        shutil.copy2(wavpath, subdir_paths["wav"])
-                        print("Moved: ", item, "\tTo directory: ",
-                              subdir_paths["wav"], "\n")
-                    else:
-                        print("File:  ", item, "\tAlready exists at: ",
-                              subdir_paths["wav"])
-                    db_content[os.path.splitext(item)[0]]["wav"] = (
-                        os.path.join(subdir_paths["wav"], item)
+        for item in pathops.listdir_nohidden(audio_dir):
+            if os.path.splitext(item)[1] in valid_filetypes:
+                wavpath = os.path.join(audio_dir, item)
+                if not os.path.isfile(
+                    '/'.join(
+                        (subdir_paths["wav"], os.path.basename(wavpath))
                     )
+                ):
+                    shutil.copy2(wavpath, subdir_paths["wav"])
+                    print("Moved: ", item, "\tTo directory: ",
+                            subdir_paths["wav"], "\n")
+                else:
+                    print("File:  ", item, "\tAlready exists at: ",
+                            subdir_paths["wav"])
+                db_content[os.path.splitext(item)[0]]["wav"] = (
+                    os.path.join(subdir_paths["wav"], item)
+                )
 
         # TODO: Create a dictionary of anlyses to be passed to the
         # AnalysedAudioFile objects that determines which analyses will be

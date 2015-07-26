@@ -1,8 +1,13 @@
+#!/usr/bin/env python
+
+"""Command line interface for generating an analysed audio file database."""
+
 import argparse
 import audiofile
 
 
 def main():
+    """Parse arguments then generate database."""
     parser = argparse.ArgumentParser(
         description='Generate a database at argument 1 based on files in '
         'argument 2.'
@@ -42,10 +47,6 @@ def main():
         help='Specify arguments for creating zero-crossing analyses'
     )
     args = parser.parse_args()
-
-    # Check that source exists and is a directory
-    # Check that target exists and is a directory
-    # Check that all analysis list args are valid
 
     audiofile.AudioDatabase(
         args.source,
