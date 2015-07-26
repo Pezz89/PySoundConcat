@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import shutil
 import collections
@@ -12,7 +13,7 @@ import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 
 
-class AudioFile:
+class AudioFile(object):
 
     """Object for storing and accessing basic information for an audio file."""
 
@@ -54,32 +55,34 @@ class AudioFile:
             self.channels = channels
 
     def channels(self):
-        """return number of channels of sndfile"""
+        """Return number of channels of sndfile."""
         return self.pysndfile_object.channels()
 
     def encoding_str(self):
         """
-        return string representation of encoding (e.g. pcm16)
-        see pysndfile.get_sndfile_encodings() for a list of available
+        Return string representation of encoding (e.g. pcm16).
+
+        See pysndfile.get_sndfile_encodings() for a list of available
         encoding strings that are supported by a given sndfile format
         """
         return self.pysndfile_object.encoding_str()
 
     def error(self):
-        """report error numbers related to the current sound file"""
+        """Report error numbers related to the current sound file."""
         return self.pysndfile_object.error()
 
     def format(self):
-        """return raw format specification from sndfile"""
+        """Return raw format specification from sndfile."""
         return self.pysndfile_object.format()
 
     def frames(self):
-        """return number for frames (number of samples per channel)"""
+        """Return number of frames in file (number of samples per channel)."""
         return self.pysndfile_object.frames()
 
     def get_strings(self):
         """
         get all stringtypes from the sound file.
+
         see stringtype_name_top_id.keys() for the list of strings that
         are supported by the libsndfile version you use.
         """
@@ -87,7 +90,8 @@ class AudioFile:
 
     def major_format_str(self):
         """
-        return short string representation of major format
+        return short string representation of major format.
+
         (e.g. aiff) see pysndfile.get_sndfile_formats() for a complete
         lst of fileformats
         """
@@ -111,19 +115,19 @@ class AudioFile:
 
     def rewind(self, mode='rw'):
         """
-        rewind read/write/read and write position given by mode to
-        start of file
+        Rewind read/write/read and write position given by mode to
+        start of file.
         """
         return self.pysndfile_object.format(mode)
 
     def samplerate(self):
-        """return samplerate"""
+        """Return the samplerate of the file."""
         return self.pysndfile_object.samplerate()
 
     def seek(self, offset, whence=0, mode='rw'):
         """
         Seek into audio file: similar to python seek function,
-        taking only in account audio data.
+        but taking only audio data into account.
 
         Parameters
         offset: <int>
@@ -149,12 +153,12 @@ class AudioFile:
         return self.pysndfile_object.seek(offset, whence, mode)
 
     def seekable(self):
-        """return true for soundfiles that support seeking"""
+        """Return true for soundfiles that support seeking."""
         return self.seekable()
 
     def set_auto_clipping(self, arg=True):
         """
-        enable auto clipping when reading/writing samples from/to sndfile.
+        Enable auto clipping when reading/writing samples from/to sndfile.
 
         auto clipping is enabled by default. auto clipping is required by
         libsndfile to properly handle scaling between sndfiles with pcm
@@ -163,26 +167,27 @@ class AudioFile:
         it back with libsndfile will reproduce the original samples. If auto
         clipping is off, samples will be changed slightly as soon as the
         amplitude is close to the sample range because libsndfile applies
-        slightly different scaling factors during read and write
+        slightly different scaling factors during read and write.
         """
         return self.pysndfile_object.set_auto_clipping(arg)
 
     def set_string(self, stringtype_name, string):
         """
-        set one of the stringtypes to the strig given as argument. If you try
-        to write a stringtype that is not supported byty the library a
-        RuntimeError will be raised
+        Set one of the stringtypes to the strig given as argument.
+
+        If you try to write a stringtype that is not supported byty the library
+        a RuntimeError will be raised
         """
         return self.pysndfile_object.set_string(stringtype_name, string)
 
     def strError(self):
-        """report error strings related to the current sound file"""
+        """Report error strings related to the current sound file."""
         return self.pysndfile_object.strError()
 
     def writeSync(self):
         """
-        call the operating system's function to force the writing of all file
-        cache buffers to disk the file.
+        Call the operating system's function to force the writing of all file
+        cache buffers to disk.
         No effect if file is open as read
         """
         return self.pysndfile_object.writeSync()
@@ -249,17 +254,17 @@ class AudioFile:
 
     def audio_file_info(self):
         """ Prints audio information """
-        print '*************************************************'
-        print 'File:                    ', os.path.relpath(self.wavpath)
-        print 'No. channels:            ', self.channels()
-        print 'Samplerate:              ', self.samplerate()
-        print 'Format:                  ', self.format()
-        print 'No. Frames:              ', self.frames()
-        print 'Encoding string:         ', self.encoding_str()
-        print 'Major format string:     ', self.major_format_str()
-        print 'Seekable?:               ', bool(self.seekable())
-        print 'Errors?:                 ', self.error()
-        print '*************************************************'
+        print('*************************************************')
+        print('File:                    ', os.path.relpath(self.wavpath))
+        print('No. channels:            ', self.channels())
+        print('Samplerate:              ', self.samplerate())
+        print('Format:                  ', self.format())
+        print('No. Frames:              ', self.frames())
+        print('Encoding string:         ', self.encoding_str())
+        print('Major format string:     ', self.major_format_str())
+        print('Seekable?:               ', bool(self.seekable()))
+        print('Errors?:                 ', self.error())
+        print('*************************************************')
 
     def read_grain(self, start_index, grain_size, padding=True):
         """
@@ -331,7 +336,7 @@ class AudioFile:
 
     def check_mono(self):
         """Check that the audio file is a mono audio file"""
-        if self.channels() != 1:
+        if self.channels != 1:
             return False
         return True
 
@@ -514,8 +519,8 @@ class AudioFile:
             # zero any samples after the fade in
             audio[position+fade.size:] *= 0
         else:
-            print "{0} is not a valid fade option. Use either \"in\" or "
-            "\"out\"".format(mode)
+            print("{0} is not a valid fade option. Use either \"in\" or "
+                  "\"out\"".format(mode))
             raise ValueError
         return audio
 
@@ -525,12 +530,15 @@ class AudioFile:
             return True
         return False
 
-    def check_valid(self):
+    def check_valid(self, force_mono=False):
         """
         Test to make sure that the audio file is valid for use.
         ie mono, not empty
         """
         if not self.check_mono():
+            if force_mono:
+                self.convert_to_mono(overwrite_original=True)
+                return True
             return False
         if not self.check_not_empty():
             return False
@@ -651,8 +659,9 @@ class AnalysedAudioFile(AudioFile):
         # Initialise database variables
         # Stores the path to the database
         self.db_dir = kwargs.pop('db_dir', None)
+        self.force_analysis = kwargs.pop('reanalyse', False)
 
-        if not self.check_valid():
+        if not self.check_valid(force_mono=True):
             raise IOError(
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
@@ -667,21 +676,21 @@ class AnalysedAudioFile(AudioFile):
         if "rmspath" in kwargs or self.db_dir:
             self.RMS = RMSAnalysis(self, kwargs.pop('rmspath', None))
         else:
-            print "No RMS path for: {0}".format(self.name)
+            print("No RMS path for: {0}".format(self.name))
             self.RMS = None
 
         # Create attack estimation analysis
         if "atkpath" in kwargs or self.db_dir:
             self.Attack = AttackAnalysis(self, kwargs.pop('atkpath', None))
         else:
-            print "No Attack path for: {0}".format(self.name)
+            print("No Attack path for: {0}".format(self.name))
             self.Attack = None
 
         # Create Zero crossing analysis
         if "zeroxpath" in kwargs or self.db_dir:
             self.ZeroX = ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
         else:
-            print "No Zero crossing path for: {0}".format(self.name)
+            print("No Zero crossing path for: {0}".format(self.name))
             self.ZeroX = None
 
     def plot_rms_to_graph(self):
@@ -737,7 +746,8 @@ class AnalysedAudioFile(AudioFile):
 
 
 class AudioDatabase:
-    """A class for encapsulating a database of AnalysedAudioFile objects"""
+
+    """A class for encapsulating a database of AnalysedAudioFile objects."""
 
     def __init__(
         self,
@@ -746,20 +756,20 @@ class AudioDatabase:
         analysis_list=["wav", "rms", "atk", "zerox"]
     ):
         """
-        Creates the folder hierachy for the database of files to be stored in
+        Create the folder hierachy for the database of files to be stored in.
+
         Adds any pre existing audio files and analyses to the object
         automatically.
         audio_dir:
         db_dir:
         analysis_list:
         """
-
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
-        print "*****************************************"
-        print "Initialising Database..."
-        print "*****************************************"
-        print ""
+        print("*****************************************")
+        print("Initialising Database...")
+        print("*****************************************")
+        print("")
         # define a list of sub-directory names for each of the analysis
         # parameters
 
@@ -788,12 +798,12 @@ class AudioDatabase:
             try:
                 # If it doesn't, Create it.
                 os.mkdir(directory)
-                print "Created directory: ", directory
+                print("Created directory: ", directory)
             except OSError as err:
                 # If it does exist, add it's content to the database content
                 # dictionary.
                 if os.path.exists(directory):
-                    print "{0} directory already exists:"
+                    print("{0} directory already exists:")
                     "\t\t{1}".format(dirkey, os.path.relpath(directory))
                     for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
@@ -805,21 +815,21 @@ class AudioDatabase:
 
         # Create a sub directory for every key in the analysis list
         # store reference to this in dictionary
-        print "*****************************************"
-        print "Creating sub-directories..."
-        print "*****************************************"
+        print("*****************************************")
+        print("Creating sub-directories...")
+        print("*****************************************")
         subdir_paths = {
             key: initialise_subdir(key, db_dir) for key in analysis_list
         }
 
-        print ""
-        print "*****************************************"
-        print "Moving any audio to sub directory..."
-        print "*****************************************"
+        print("")
+        print("*****************************************")
+        print("Moving any audio to sub directory...")
+        print("*****************************************")
         # Move audio files to database
         if os.path.exists(audio_dir):
             for item in pathops.listdir_nohidden(audio_dir):
-                if os.path.splitext(item)[1] == ".wav":
+                if os.path.splitext(item)[1] == ".wav" or os.path.splitext(item)[1] == ".aif":
                     wavpath = os.path.join(audio_dir, item)
                     if not os.path.isfile(
                         '/'.join(
@@ -827,11 +837,11 @@ class AudioDatabase:
                         )
                     ):
                         shutil.copy2(wavpath, subdir_paths["wav"])
-                        print "Moved: ", item, "\tTo directory: ",
-                        subdir_paths["wav"]
+                        print("Moved: ", item, "\tTo directory: ",
+                              subdir_paths["wav"], "\n")
                     else:
-                        print "File:  ", item, "\tAlready exists at: ",
-                        subdir_paths["wav"]
+                        print("File:  ", item, "\tAlready exists at: ",
+                              subdir_paths["wav"])
                     db_content[os.path.splitext(item)[0]]["wav"] = (
                         os.path.join(subdir_paths["wav"], item)
                     )
@@ -841,6 +851,7 @@ class AudioDatabase:
         # produced
         self.analysed_audio_list = []
         for key in db_content.viewkeys():
+            print("--------------------------------------------------")
             # if there is no wav file then skip
             if not db_content[key]["wav"]:
                 continue
@@ -852,9 +863,12 @@ class AudioDatabase:
                         rmspath=db_content[key]["rms"],
                         zeroxpath=db_content[key]["zerox"],
                         name=key,
-                        db_dir=db_dir
+                        db_dir=db_dir,
+                        reanalyse=True
                     )
                 )
-            except IOError:
+            except IOError as err:
                 # Skip any audio file objects that can't be analysed
+                print("File cannot be analysed: {0}\nReason: {1}\nSkipping...".format(
+                    db_content[key]["wav"], err))
                 continue

@@ -1,6 +1,9 @@
 import os
 import numpy as np
 
+import fileops.pathops as pathops
+
+
 class AttackAnalysis:
     """ """
     def __init__(self, AnalysedAudioFile, atkpath):
@@ -22,12 +25,16 @@ class AttackAnalysis:
                 "atk",
                 self.AnalysedAudioFile.name +
                 ".lab")
-        try:
-            # If it does then get values from file
-            self.get_attack_from_file()
-        except IOError:
-            # Otherwise, generate new values
-            self.create_attack_analysis()
+        if self.AnalysedAudioFile.force_analysis:
+            pathops.delete_if_exists(self.attackpath)
+            self.attackpath = self.create_attack_analysis()
+        else:
+            try:
+                # If it does then get values from file
+                self.get_attack_from_file()
+            except IOError:
+                # Otherwise, generate new values
+                self.create_attack_analysis()
 
     def create_attack_analysis(self, multiplier=3):
         """

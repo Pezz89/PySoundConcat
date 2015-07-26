@@ -1,8 +1,13 @@
 import os
 import numpy as np
 
+import fileops.pathops as pathops
+
+
 class RMSAnalysis:
+
     """
+
     An encapsulation of the RMS analysis of an AnalysedAudioFile.
     On initialization, the RMS analysis is either created, or a pre existing file already exists.
     In either case, once the file is generated, it's values can be obtained through use of the get_rms_from_file
@@ -32,16 +37,22 @@ class RMSAnalysis:
                 raise IOError('Analysed Audio object must have an RMS file path or be part of a database')
             self.rmspath = os.path.join(self.AnalysedAudioFile.db_dir, 'rms', self.AnalysedAudioFile.name + '.lab')
 
-        # Check if analysis file already exists.
-        try:
-            with open(self.rmspath, 'r') as rmsfile:
-                # If an RMS file is provided then count the number of lines (1 for each
-                # window)
-                print "Reading RMS file:\t\t\t", os.path.relpath(self.rmspath)
-                self.rms_window_count = sum(1 for line in rmsfile)
-        except IOError:
-        # If it doesn't then generate a new file
+        # If forcing new analysis creation then delete old analysis and create
+        # a new one
+        if self.AnalysedAudioFile.force_analysis:
+            pathops.delete_if_exists(self.rmspath)
             self.rmspath = self.create_rms_analysis()
+        else:
+            # Check if analysis file already exists.
+            try:
+                with open(self.rmspath, 'r') as rmsfile:
+                    # If an RMS file is provided then count the number of lines (1 for each
+                    # window)
+                    print "Reading RMS file:\t\t\t", os.path.relpath(self.rmspath)
+                    self.rms_window_count = sum(1 for line in rmsfile)
+            except IOError:
+            # If it doesn't then generate a new file
+                self.rmspath = self.create_rms_analysis()
 
     def create_rms_analysis(self, window_size=25, window_type='triangle', window_overlap=8):
         """Generate an energy contour analysis by calculating the RMS values of windowed segments of the audio file"""

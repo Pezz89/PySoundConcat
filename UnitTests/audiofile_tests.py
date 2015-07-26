@@ -97,7 +97,7 @@ class ReadGrainTest(unittest.TestCase):
         self.TestAudio.switch_mode('r')
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
         self.assertEquals(self.TestAudio.mode, 'r')
@@ -107,7 +107,7 @@ class ReadGrainTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_AllGrains(self):
-        """Check all samples are read correctly if no arguments are given"""
+        """Check all samples are read correctly if no arguments are given."""
         # TestAudio file has 100 samples
         self.check_setup()
         self.assertEqual(
@@ -117,7 +117,7 @@ class ReadGrainTest(unittest.TestCase):
     def test_SliceStartToMiddle(self):
         """
         Check that slice from begining of audio is read from and too the
-        correct sample
+        correct sample.
         """
         self.check_setup()
         grain = self.TestAudio.read_grain(0, 51)
@@ -129,7 +129,7 @@ class ReadGrainTest(unittest.TestCase):
                          "failed: Didn't read to correct end index.")
 
     def test_NegativeIndexing(self):
-        """Check that slice from end is read from and too the correct sample"""
+        """Check that slice from end is read from and too the correct sample."""
         self.check_setup()
         grain = self.TestAudio.read_grain(-51, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Negative indexing test "
@@ -142,7 +142,7 @@ class ReadGrainTest(unittest.TestCase):
     def test_ZeroPadding(self):
         """
         Check that reading samples further than the end sample results in zero
-        padding after the last sample
+        padding after the last sample.
         """
         self.check_setup()
         grain = self.TestAudio.read_grain(-26, 50)
@@ -186,7 +186,7 @@ class MonoDownmixTest(unittest.TestCase):
         self.TestAudio.seek(0, 0)
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 2)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 2)
         self.assertEquals(self.TestAudio.mode, 'r')
@@ -260,7 +260,7 @@ class NormalizeTest(unittest.TestCase):
         self.TestAudio.seek(0, 0)
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
         self.assertEquals(self.TestAudio.mode, 'w')
@@ -323,7 +323,7 @@ class RenameFileTests(unittest.TestCase):
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
         self.assertEquals(self.TestAudio.mode, 'w')
@@ -375,7 +375,7 @@ class ReplaceFileTests(unittest.TestCase):
         del self.TestAudio2
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
         self.assertEquals(self.TestAudio.mode, 'w')
@@ -417,7 +417,7 @@ class FadeAudioTest(unittest.TestCase):
         )
 
     def check_setup(self):
-        # Check setup was correct
+        """Check setup was correct."""
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
         self.assertEquals(self.TestAudio.mode, 'w')
