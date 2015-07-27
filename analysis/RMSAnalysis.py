@@ -8,8 +8,8 @@ import fileops.pathops as pathops
 class RMSAnalysis:
 
     """
-
     An encapsulation of the RMS analysis of an AnalysedAudioFile.
+
     On initialization, the RMS analysis is either created, or a pre existing
     file already exists.
     In either case, once the file is generated, it's values can be obtained
@@ -18,6 +18,7 @@ class RMSAnalysis:
     Note: Due to the large size of RMS analysis it is not stored in a class
     member as other such analyses are. Use get_rms_from_file.
     """
+
     def __init__(self, AnalysedAudioFile, rmspath):
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -65,8 +66,10 @@ class RMSAnalysis:
     def create_rms_analysis(self, window_size=25, window_type='triangle',
                             window_overlap=8):
         """
-        Generate an energy contour analysis by calculating the RMS values of
-        windowed segments of the audio file
+        Generate an energy contour analysis.
+
+        Calculate the RMS values of windowed segments of the audio file and
+        save to disk.
         """
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         # Generate a window function to apply to rms windows before analysis
@@ -94,6 +97,7 @@ class RMSAnalysis:
             return self.rmspath
         # If the rms file couldn't be opened then raise an error
         except IOError:
+            # TODO: Sort this. This isn't right I don't think.
             return False
 
     def get_rms_from_file(self, start=0, end=-1):

@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import os
 import shutil
 import collections
@@ -273,6 +273,7 @@ class AudioFile(object):
         argument.
         Audio object seeker is not changed
         """
+        self.switch_mode('r')
         if start_index < 0:
             start_index = self.frames() + start_index
         position = self.get_seek_position()
@@ -475,16 +476,14 @@ class AudioFile(object):
 
     def samps_to_ms(self, samps):
         """
-        Converts samples to milliseconds based on the sample rate of the audio
+        Convert samples to milliseconds based on the sample rate of the audio
         file
         """
         return float(samps) / self.samplerate * 1000.0
 
     def plot_grain_to_graph(self, start_index, number_of_samps):
-        """
-        Uses matplotlib to create a graph of the audio file
-        """
-        samps = self.read_grain(start_index, self.ms_to_samps(4000))
+        """Use matplotlib to create a graph of the audio file."""
+        samps = self.read_grain(start_index, self.ms_to_samps(number_of_samps))
         plt.plot(samps, 'r')
         plt.xlabel('Time (samples)')
         plt.ylabel('sample value')
@@ -492,8 +491,8 @@ class AudioFile(object):
 
     def fade_audio(self, audio, position, fade_time, mode):
         """
-        Fades the in or out linearly from the position specified over the time
-        specified.
+        Fade the audio in or out linearly from the position specified over the
+        time specified.
         audio: A numpy array of audio to manipulate
         start_position: The starting position to begin the fade from (ms)
         fade_time: The length of the fade (ms)
@@ -546,17 +545,19 @@ class AudioFile(object):
 
     def switch_mode(self, mode):
         assert mode == 'r' or mode == 'w'
-        seek = self.get_seek_position()
-        del self.pysndfile_object
-        self.pysndfile_object = pysndfile.PySndfile(
-            self.wavpath,
-            mode=mode,
-            format=self.format,
-            channels=self.channels,
-            samplerate=self.samplerate
-        )
-        self.pysndfile_object.seek(seek)
-        self.mode = mode
+        # Change mode only if it is different from the currently set mode
+        if self.mode != mode:
+            seek = self.get_seek_position()
+            del self.pysndfile_object
+            self.pysndfile_object = pysndfile.PySndfile(
+                self.wavpath,
+                mode=mode,
+                format=self.format,
+                channels=self.channels,
+                samplerate=self.samplerate
+            )
+            self.pysndfile_object.seek(seek)
+            self.mode = mode
 
     @staticmethod
     def normalize_audio(audio, maximum=1.0):
@@ -576,6 +577,7 @@ class AudioFile(object):
         """
         Converts to horizontal numpy arrays to one concatenated verticaly
         stacked array that can be written to a stereo file.
+
         eg:
             array1 = np.array([0.0, 0.1, 0.2, 0.3])
             array2 = np.array([0.4, 0.5, 0.6, 0.7])
@@ -589,18 +591,21 @@ class AudioFile(object):
         return np.hstack((np.vstack(array1), np.vstack(array2)))
 
     @staticmethod
-    def gen_white_noise(length, gain):
+    def gen_white_noise(length, gain, samplerate):
         """
-        Generates a numpy array of white noise of the length specified
-        length (ms)
+        Generate mono white noise of the number of samples specified.
+
+        length (samples)
         gain (silence 0.0 - full volume 1.0)
         """
+        return np.random.normal(scale=gain, size=length)
         pass
 
     @staticmethod
     def gen_tone(length, gain, frequency, wavetype):
         """
-        Generate a wave form
+        Generate a wave form.
+
         length (ms)
         gain (silence 0.0 - full volume 1.0)
         frequency (hz)

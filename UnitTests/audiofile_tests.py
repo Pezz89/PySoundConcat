@@ -1,3 +1,4 @@
+"""A set of unit tests to check the correct operation of the pysound module."""
 import unittest
 import numpy as np
 from pysound import AudioFile
@@ -6,8 +7,11 @@ import os
 
 
 class FileCreationTests(unittest.TestCase):
+
+    """Audio file creation tests."""
+
     def test_CreateAudioFile(self):
-        """Check the creation of default audio files"""
+        """Check the creation of default audio files."""
         self.assertFalse(os.path.exists("./.TestAudio.wav"))
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav",
@@ -25,7 +29,7 @@ class FileCreationTests(unittest.TestCase):
         os.remove("./.TestAudio.wav")
 
     def test_ReadFail(self):
-        """Check that opening a file that doesn't exist for reading fails"""
+        """Check that opening a file that doesn't exist for reading fails."""
         with self.assertRaises(IOError):
             self.TestAudio = AudioFile.gen_default_wav(
                 "./.TestAudio.wav",
@@ -34,11 +38,11 @@ class FileCreationTests(unittest.TestCase):
 
 
 class SwitchModeTests(unittest.TestCase):
+
+    """Test read/write mode switching functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run.
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav",
             mode='w',
@@ -47,6 +51,8 @@ class SwitchModeTests(unittest.TestCase):
 
     def test_SwitchMode(self):
         """
+        Read/write mode switching test.
+
         Check that the switch_mode() function can write frames, then read them,
         then switch to write mode and append to these frames, before switching
         back to read all written frames.
@@ -85,11 +91,11 @@ class SwitchModeTests(unittest.TestCase):
 
 
 class ReadGrainTest(unittest.TestCase):
+
+    """Test granular sample reading functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav", overwrite_existing=True
         )
@@ -107,7 +113,11 @@ class ReadGrainTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_AllGrains(self):
-        """Check all samples are read correctly if no arguments are given."""
+        """
+        Read grain - Read all samples test.
+
+        Check all samples are read correctly if no arguments are given.
+        """
         # TestAudio file has 100 samples
         self.check_setup()
         self.assertEqual(
@@ -116,6 +126,8 @@ class ReadGrainTest(unittest.TestCase):
 
     def test_SliceStartToMiddle(self):
         """
+        Read grain - Slicing test.
+
         Check that slice from begining of audio is read from and too the
         correct sample.
         """
@@ -129,7 +141,11 @@ class ReadGrainTest(unittest.TestCase):
                          "failed: Didn't read to correct end index.")
 
     def test_NegativeIndexing(self):
-        """Check that slice from end is read from and too the correct sample."""
+        """
+        Read grain - Negative indexing test.
+
+        Check that slice from end is read from and too the correct sample.
+        """
         self.check_setup()
         grain = self.TestAudio.read_grain(-51, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Negative indexing test "
@@ -141,6 +157,8 @@ class ReadGrainTest(unittest.TestCase):
 
     def test_ZeroPadding(self):
         """
+        Read grain - zero padding test.
+
         Check that reading samples further than the end sample results in zero
         padding after the last sample.
         """
@@ -157,18 +175,20 @@ class ReadGrainTest(unittest.TestCase):
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
+
+        For example: delete temporary test audio files generated during the
+        tests.
         """
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
 
 
 class MonoDownmixTest(unittest.TestCase):
+
+    """Test mixing of audio files from multi-channel to mono."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav",
             overwrite_existing=True,
@@ -196,6 +216,7 @@ class MonoDownmixTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_MixToMono(self):
+        """Run the test."""
         self.check_setup()
 
         mono_file = self.TestAudio.convert_to_mono(overwrite_original=False)
@@ -235,7 +256,9 @@ class MonoDownmixTest(unittest.TestCase):
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
+
+        For example: delete temporary test audio files generated during the
+        tests.
         """
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
@@ -243,11 +266,11 @@ class MonoDownmixTest(unittest.TestCase):
 
 
 class NormalizeTest(unittest.TestCase):
+
+    """Test the audio normalization functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav",
             overwrite_existing=True,
@@ -270,6 +293,7 @@ class NormalizeTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_Normalize(self):
+        """Run the test."""
         self.check_setup()
         normalized_file = self.TestAudio.normalize_file(
             overwrite_original=False
@@ -305,7 +329,9 @@ class NormalizeTest(unittest.TestCase):
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
+
+        For example: delete temporary test audio files generated during the
+        tests.
         """
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
@@ -313,11 +339,11 @@ class NormalizeTest(unittest.TestCase):
 
 
 class RenameFileTests(unittest.TestCase):
+
+    """Test the audio file renaming functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav", overwrite_existing=True
         )
@@ -335,6 +361,7 @@ class RenameFileTests(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_RenameFile(self):
+        """Run the tests."""
         self.check_setup()
         original_framecount = self.TestAudio.frames()
         original_channels = self.TestAudio.channels
@@ -355,18 +382,21 @@ class RenameFileTests(unittest.TestCase):
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
+
+        For example: delete temporary test audio files generated during the
+        tests.
         """
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
         pathops.delete_if_exists("./.TestAudio.rename.wav")
 
+
 class ReplaceFileTests(unittest.TestCase):
+
+    """Test audio file replacement functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         self.TestAudio = AudioFile.gen_default_wav(
             "./.TestAudio.wav", overwrite_existing=True
         )
@@ -388,6 +418,7 @@ class ReplaceFileTests(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_ReplaceFile(self):
+        """Do the test."""
         self.check_setup()
         # Check that file to be replaced exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
@@ -408,11 +439,11 @@ class ReplaceFileTests(unittest.TestCase):
 
 
 class FadeAudioTest(unittest.TestCase):
+
+    """Test audio fade in/out functionality."""
+
     def setUp(self):
-        """
-        Create functions and variables that will be defined before each test
-        is run
-        """
+        """Create functions and variables before each test is run."""
         # Generate 2 second of ones at a samplerate of 44.1Khz
         self.test_audio = np.ones(88200)
         self.TestAudio = AudioFile.gen_default_wav(
@@ -430,6 +461,7 @@ class FadeAudioTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_FadeIn(self):
+        """Run the test."""
         self.check_setup()
         faded_audio = self.TestAudio.fade_audio(
             self.test_audio,
@@ -458,7 +490,9 @@ class FadeAudioTest(unittest.TestCase):
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.
-        ie. temporary test audio files generated during the tests.
+
+        For example: delete temporary test audio files generated during the
+        tests.
         """
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
