@@ -591,15 +591,14 @@ class AudioFile(object):
         return np.hstack((np.vstack(array1), np.vstack(array2)))
 
     @staticmethod
-    def gen_white_noise(length, gain, samplerate):
+    def gen_white_noise(length, gain):
         """
         Generate mono white noise of the number of samples specified.
 
         length (samples)
         gain (silence 0.0 - full volume 1.0)
         """
-        return np.random.normal(scale=gain, size=length)
-        pass
+        return np.random.uniform(low=-gain, high=gain, size=length)
 
     @staticmethod
     def gen_tone(length, gain, frequency, wavetype):

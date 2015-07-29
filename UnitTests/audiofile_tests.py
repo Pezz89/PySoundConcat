@@ -183,6 +183,49 @@ class ReadGrainTest(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.wav")
 
 
+class GenerateWhiteNoiseTest(unittest.TestCase):
+
+    """Test white noise generation."""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        self.TestAudio = AudioFile.gen_default_wav(
+            "./.TestAudio.wav",
+            overwrite_existing=True,
+            channels=1
+        )
+
+    def check_setup(self):
+        """Check setup was correct."""
+        self.assertEquals(self.TestAudio.channels, 1)
+        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
+        self.assertEquals(self.TestAudio.mode, 'w')
+        self.assertEquals(self.TestAudio.samplerate, 44100)
+        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
+        self.assertEquals(self.TestAudio.format, 65539)
+        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+
+    def test_CreateNoise(self):
+        """Test that white noise is generated corectly without clipping."""
+        self.check_setup()
+        samples = AudioFile.gen_white_noise(2 * self.TestAudio.samplerate, 0.7)
+        # Check all samples are within the range of -1.0 to 1.0
+        self.assertFalse((samples < -1.0).any() and (samples > 1.0).any())
+        self.TestAudio.write_frames(samples)
+        self.TestAudio.switch_mode('r')
+        self.assertEqual(self.TestAudio.frames(), 88200)
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example: delete temporary test audio files generated during the
+        tests.
+        """
+        del self.TestAudio
+        pathops.delete_if_exists("./.TestAudio.wav")
+
+
 class MonoDownmixTest(unittest.TestCase):
 
     """Test mixing of audio files from multi-channel to mono."""
@@ -461,7 +504,7 @@ class FadeAudioTest(unittest.TestCase):
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
 
     def test_FadeIn(self):
-        """Run the test."""
+        """Check that audio is faded in and out correctly and accuratley."""
         self.check_setup()
         faded_audio = self.TestAudio.fade_audio(
             self.test_audio,
