@@ -6,6 +6,7 @@ from scipy import signal
 import numpy as np
 import pysndfile
 import matplotlib.pyplot as plt
+import pdb
 
 import fileops.pathops as pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -442,13 +443,6 @@ class AudioFile(object):
         # Re-set seek position to previous position
         self.seek(seek, 0)
 
-    def print_audio(self, start=0, end=-1):
-        """
-        Plots audio using matplotlib
-        Defaults to plotting all audio.
-        start and end arguments can be used to plot a set slice of audio
-        """
-
     def get_seek_position(self):
         """Returns the current seeker position in the file"""
         return self.seek(0, 1)
@@ -484,10 +478,7 @@ class AudioFile(object):
     def plot_grain_to_graph(self, start_index, number_of_samps):
         """Use matplotlib to create a graph of the audio file."""
         samps = self.read_grain(start_index, self.ms_to_samps(number_of_samps))
-        plt.plot(samps, 'r')
-        plt.xlabel('Time (samples)')
-        plt.ylabel('sample value')
-        plt.show()
+        self.plot_array_to_graph(samps)
 
     def fade_audio(self, audio, position, fade_time, mode):
         """
@@ -560,6 +551,13 @@ class AudioFile(object):
             self.mode = mode
 
     @staticmethod
+    def plot_array_to_graph(array):
+        plt.plot(array, 'r')
+        plt.xlabel('Time (samples)')
+        plt.ylabel('sample value')
+        plt.show()
+
+    @staticmethod
     def normalize_audio(audio, maximum=1.0):
         """
         Normalize array of audio so that the maximum sample value == the
@@ -613,16 +611,34 @@ class AudioFile(object):
         pass
 
     @staticmethod
-    def gen_ADSR_envelope(audio, attack, decay, sustain, release):
+    def gen_ADSR_envelope(
+        attack,
+        decay,
+        sustain,
+        sustain_length,
+        release,
+        samplerate=44100,
+        gain=1.0
+    ):
         """
-        generates an ADSR envelope and applies to the audio
-        audio: A numpy array of audio to manipulate
-        attack:
-        decay:
-        sustain:
-        release:
+        generate an ADSR envelope and applies to the audio.
+
+        attack:         (float) attack time in ms
+        decay:          (float) decay time in ms
+        sustain:        (float) sustain level (0.0-1.0)
+        sustain_length: (float) length of sustain in ms
+        release:        (float) release time in ms
         """
-        pass
+        sustain_array = np.empty(sustain_length*samplerate)
+        sustain_array.fill(sustain)
+        envelope = np.concatenate(
+            (np.linspace(0.0, gain, attack*samplerate),
+             np.linspace(gain, sustain, decay*samplerate),
+             sustain_array,
+             np.linspace(sustain, 0.0, release*samplerate)),
+            axis=2
+        )
+        return envelope
 
     @staticmethod
     def gen_default_wav(path, overwrite_existing=False, mode='w', channels=1):
