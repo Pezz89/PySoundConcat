@@ -71,6 +71,7 @@ class RMSAnalysis:
         Calculate the RMS values of windowed segments of the audio file and
         save to disk.
         """
+        # TODO: Add low pass filter that relates to the window size
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         # Generate a window function to apply to rms windows before analysis
         window_function = self.AnalysedAudioFile.gen_window(window_type,

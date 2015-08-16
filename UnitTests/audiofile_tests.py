@@ -6,17 +6,43 @@ from fileops import pathops
 import os
 
 
-class FileCreationTests(unittest.TestCase):
+class globalTests(unittest.TestCase):
+
+    """Includes functions that are accesible to all audiofile tests."""
+
+    def check_setup(self, Audio, channels=1, mode='r',
+                    format=65539, samplerate=44100):
+        """Check setup was correct."""
+        self.assertEquals(Audio.channels, channels)
+        self.assertEquals(Audio.pysndfile_object.channels(), channels)
+        self.assertEquals(Audio.mode, mode)
+        self.assertEquals(Audio.samplerate, samplerate)
+        self.assertEquals(Audio.pysndfile_object.samplerate(), samplerate)
+        self.assertEquals(Audio.format, format)
+        self.assertEquals(Audio.pysndfile_object.format(), format)
+
+    def check_result(self, Audio, channels, mode='r',
+                     format=65539, samplerate=44100):
+        """Check the output file is the correct size, format etc..."""
+
+    def create_test_audio(self, filename="./.TestAudio.wav",  mode='w', channels=1):
+        """Create a default audio file to test on"""
+        return AudioFile.gen_default_wav(
+            filename,
+            overwrite_existing=True,
+            mode=mode,
+            channels=channels,
+        )
+
+
+class FileCreationTests(globalTests):
 
     """Audio file creation tests."""
 
     def test_CreateAudioFile(self):
         """Check the creation of default audio files."""
         self.assertFalse(os.path.exists("./.TestAudio.wav"))
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav",
-            overwrite_existing=True
-        )
+        self.TestAudio = self.create_test_audio()
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         self.assertEquals(self.TestAudio.channels, 1)
         self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
@@ -37,34 +63,18 @@ class FileCreationTests(unittest.TestCase):
             )
 
 
-class SwitchModeTests(unittest.TestCase):
+class SwitchModeTests(globalTests):
 
     """Test read/write mode switching functionality."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav",
-            mode='w',
-            overwrite_existing=True
-        )
+        self.TestAudio = self.create_test_audio()
 
     def test_SwitchMode(self):
-        """
-        Read/write mode switching test.
-
-        Check that the switch_mode() function can write frames, then read them,
-        then switch to write mode and append to these frames, before switching
-        back to read all written frames.
-        """
+        """Check that pysndfile object mode switching works as expected."""
         # Check setup was correct
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+        self.check_setup(self.TestAudio, mode='w')
 
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
@@ -90,48 +100,27 @@ class SwitchModeTests(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.wav")
 
 
-class ReadGrainTest(unittest.TestCase):
+class ReadGrainTest(globalTests):
 
     """Test granular sample reading functionality."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav", overwrite_existing=True
-        )
+        self.TestAudio = self.create_test_audio()
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
 
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'r')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-
     def test_AllGrains(self):
-        """
-        Read grain - Read all samples test.
-
-        Check all samples are read correctly if no arguments are given.
-        """
+        """Check all samples are read correctly if no arguments are given."""
         # TestAudio file has 100 samples
-        self.check_setup()
+        self.check_setup(self.TestAudio)
         self.assertEqual(
             self.TestAudio.read_grain(0, -1).size, 101, "Read Grain - all "
             "grains test failed: Didn't Read all samples")
 
     def test_SliceStartToMiddle(self):
-        """
-        Read grain - Slicing test.
-
-        Check that slice from begining of audio is read from and too the
-        correct sample.
-        """
-        self.check_setup()
+        """Check that start slicing is read from and too the correct sample."""
+        self.check_setup(self.TestAudio)
         grain = self.TestAudio.read_grain(0, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Start to middle test "
                          "failed: Didn't read correct number of samples.")
@@ -141,12 +130,8 @@ class ReadGrainTest(unittest.TestCase):
                          "failed: Didn't read to correct end index.")
 
     def test_NegativeIndexing(self):
-        """
-        Read grain - Negative indexing test.
-
-        Check that slice from end is read from and too the correct sample.
-        """
-        self.check_setup()
+        """Check that end slicing is read from and too the correct sample."""
+        self.check_setup(self.TestAudio)
         grain = self.TestAudio.read_grain(-51, 51)
         self.assertEqual(grain.size, 51, "Read Grain - Negative indexing test "
                          "failed: Didn't return correct number of samples.")
@@ -157,12 +142,10 @@ class ReadGrainTest(unittest.TestCase):
 
     def test_ZeroPadding(self):
         """
-        Read grain - zero padding test.
-
         Check that reading samples further than the end sample results in zero
         padding after the last sample.
         """
-        self.check_setup()
+        self.check_setup(self.TestAudio)
         grain = self.TestAudio.read_grain(-26, 50)
         self.assertEqual(grain.size, 50, "Read Grain - Zero padding test "
                          "failed: Didn't read correct number of samples.")
@@ -183,32 +166,19 @@ class ReadGrainTest(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.wav")
 
 
-class GenerateWhiteNoiseTest(unittest.TestCase):
+class GenerateWhiteNoiseTest(globalTests):
 
     """Test white noise generation."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav",
-            overwrite_existing=True,
-            channels=1
-        )
-
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+        self.TestAudio = self.create_test_audio()
 
     def test_CreateNoise(self):
         """Test that white noise is generated corectly without clipping."""
-        self.check_setup()
+        self.check_setup(self.TestAudio, mode='w',)
         samples = AudioFile.gen_white_noise(2 * self.TestAudio.samplerate, 0.7)
+
         # Check all samples are within the range of -1.0 to 1.0
         self.assertFalse((samples < -1.0).any() and (samples > 1.0).any())
         self.TestAudio.write_frames(samples)
@@ -226,17 +196,13 @@ class GenerateWhiteNoiseTest(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.wav")
 
 
-class MonoDownmixTest(unittest.TestCase):
+class MonoDownmixTest(globalTests):
 
     """Test mixing of audio files from multi-channel to mono."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav",
-            overwrite_existing=True,
-            channels=2
-        )
+        self.TestAudio = self.create_test_audio(channels=2)
 
         samples = AudioFile.mono_arrays_to_stereo(
             np.linspace(-0.5, 0.5, 101),
@@ -248,19 +214,9 @@ class MonoDownmixTest(unittest.TestCase):
         self.TestAudio.switch_mode('r')
         self.TestAudio.seek(0, 0)
 
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 2)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 2)
-        self.assertEquals(self.TestAudio.mode, 'r')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-
     def test_MixToMono(self):
-        """Run the test."""
-        self.check_setup()
+        """Test that mixing audio to mono works as expected."""
+        self.check_setup(self.TestAudio, channels=2)
 
         mono_file = self.TestAudio.convert_to_mono(overwrite_original=False)
         mono_file.switch_mode('r')
@@ -308,36 +264,22 @@ class MonoDownmixTest(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.mono.wav")
 
 
-class NormalizeTest(unittest.TestCase):
+class NormalizeTest(globalTests):
 
     """Test the audio normalization functionality."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav",
-            overwrite_existing=True,
-        )
-
+        self.TestAudio = self.create_test_audio()
         samples = np.linspace(-0.3, 0.3, 1000)
         self.TestAudio.write_frames(
             samples
         )
         self.TestAudio.seek(0, 0)
 
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-
     def test_Normalize(self):
-        """Run the test."""
-        self.check_setup()
+        """Test that audio normalization works as expected."""
+        self.check_setup(self.TestAudio, mode='w')
         normalized_file = self.TestAudio.normalize_file(
             overwrite_original=False
         )
@@ -381,31 +323,19 @@ class NormalizeTest(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.norm.wav")
 
 
-class RenameFileTests(unittest.TestCase):
+class RenameFileTests(globalTests):
 
     """Test the audio file renaming functionality."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav", overwrite_existing=True
-        )
+        self.TestAudio = self.create_test_audio()
         self.TestAudio.write_frames(np.linspace(-0.5, 0.5, 101))
         self.TestAudio.switch_mode('r')
 
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'r')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-
     def test_RenameFile(self):
-        """Run the tests."""
-        self.check_setup()
+        """Check that file renaming function works correctly."""
+        self.check_setup(self.TestAudio, mode='r')
         original_framecount = self.TestAudio.frames()
         original_channels = self.TestAudio.channels
         # Check original file exists
@@ -434,35 +364,23 @@ class RenameFileTests(unittest.TestCase):
         pathops.delete_if_exists("./.TestAudio.rename.wav")
 
 
-class ReplaceFileTests(unittest.TestCase):
+class ReplaceFileTests(globalTests):
 
     """Test audio file replacement functionality."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav", overwrite_existing=True
-        )
+        self.TestAudio = self.create_test_audio()
         self.TestAudio.write_frames(np.zeros(101))
-        self.TestAudio2 = AudioFile.gen_default_wav(
-            "./.TestAudio.replace.wav", overwrite_existing=True
+        self.TestAudio2 = self.create_test_audio(
+            filename='./.TestAudio.replace.wav'
         )
         self.TestAudio2.write_frames(np.ones(50))
         del self.TestAudio2
 
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-
     def test_ReplaceFile(self):
-        """Do the test."""
-        self.check_setup()
+        """Check that file replacment function works correctly."""
+        self.check_setup(self.TestAudio, mode='w')
         # Check that file to be replaced exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         # Check that file to replace file with exists
@@ -481,7 +399,7 @@ class ReplaceFileTests(unittest.TestCase):
         self.assertEqual(self.TestAudio.frames(), 50)
 
 
-class FadeAudioTest(unittest.TestCase):
+class FadeAudioTest(globalTests):
 
     """Test audio fade in/out functionality."""
 
@@ -489,23 +407,11 @@ class FadeAudioTest(unittest.TestCase):
         """Create functions and variables before each test is run."""
         # Generate 2 second of ones at a samplerate of 44.1Khz
         self.test_audio = np.ones(88200)
-        self.TestAudio = AudioFile.gen_default_wav(
-            "./.TestAudio.wav", overwrite_existing=True
-        )
-
-    def check_setup(self):
-        """Check setup was correct."""
-        self.assertEquals(self.TestAudio.channels, 1)
-        self.assertEquals(self.TestAudio.pysndfile_object.channels(), 1)
-        self.assertEquals(self.TestAudio.mode, 'w')
-        self.assertEquals(self.TestAudio.samplerate, 44100)
-        self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
-        self.assertEquals(self.TestAudio.format, 65539)
-        self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
+        self.TestAudio = self.create_test_audio()
 
     def test_FadeIn(self):
         """Check that audio is faded in and out correctly and accuratley."""
-        self.check_setup()
+        self.check_setup(self.TestAudio, mode='w')
         faded_audio = self.TestAudio.fade_audio(
             self.test_audio,
             500,
@@ -540,6 +446,22 @@ class FadeAudioTest(unittest.TestCase):
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
         pathops.delete_if_exists("./.TestAudio.rename.wav")
+
+
+class GenerateADSRTests(globalTests):
+
+    """Tests generation of ADSR envelope arrays."""
+
+    def test_GenerateADSR(self):
+        """Check that function generates an array representing an envelope."""
+        envelope = AudioFile.gen_ADSR_envelope(1.0, 1.0, 0.5, 1.0, 1.0)
+        self.assertEqual(envelope[0], 0.0)
+        self.assertEqual(envelope[44100-1], 1.0)
+        self.assertEqual(envelope[88200-1], 0.5)
+        self.assertEqual(envelope[132300-1], 0.5)
+        self.assertEqual(envelope[176400-1], 0.0)
+        self.assertEqual(envelope.size, 176400)
+
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)

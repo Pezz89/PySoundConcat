@@ -7,9 +7,11 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +601 audiofile.py
-badd +118 analysis/RMSAnalysis.py
-badd +551 UnitTests/audiofile_tests.py
+badd +40 audiofile.py
+badd +55 analysis/RMSAnalysis.py
+badd +75 UnitTests/audiofile_tests.py
+badd +136 analysis/AttackAnalysis.py
+badd +1 analysis/audiograph.py
 argglobal
 silent! argdel *
 argadd audiofile.py

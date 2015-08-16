@@ -2,12 +2,15 @@ from __future__ import print_function
 import os
 import numpy as np
 import math
+import pdb
 
 import fileops.pathops as pathops
 
 
 class AttackAnalysis:
-    """ """
+
+    """Encapsulation of attack estimation analysis."""
+
     def __init__(self, AnalysedAudioFile, atkpath):
         self.AnalysedAudioFile = AnalysedAudioFile
         self.attackpath = atkpath
@@ -40,13 +43,15 @@ class AttackAnalysis:
 
     def create_attack_analysis(self, multiplier=3):
         """
-        Estimate the start and end of the attack of the audio
+        Estimate the start and end of the attack of the audio.
+
         Adaptive threshold method (weakest effort method) described here:
         http://recherche.ircam.fr/anasyn/peeters/ARTICLES/Peeters_2003_cuidadoaudiofeatures.pdf
         Stores values in a file at the attack path provided with the following
         format:
         attack_start attack_end
         """
+        pdb.set_trace()
         # Make sure RMS has been calculated
         if not self.AnalysedAudioFile.RMS:
             raise IOError("RMS analysis is required to estimate attack")
@@ -54,14 +59,19 @@ class AttackAnalysis:
             print("Creating attack estimation file:\t\t",
                   os.path.relpath(self.attackpath))
             rms_contour = self.AnalysedAudioFile.RMS.get_rms_from_file()
+            # Scale RMS contour to range so all calculations are performed in
+            # the range 0.0 to 1.0
+            # TODO: Should calculations be done in range of rms rather than
+            # converting for performance increase?
             rms_contour = self.scale_to_range(rms_contour)
+            # Create a grid of thresholds ranging from 0.0 to 1.0
             thresholds = np.arange(1, 11) * 0.1
             thresholds = thresholds.reshape(-1, 1)
             # Find first index of rms that is over the threshold for each
             # thresholds
             threshold_inds = np.argmax(rms_contour >= thresholds, axis=1)
 
-            # TODO:Need to make sure rms does not return to a lower threshold
+            # TODO: Need to make sure rms does not return to a lower threshold
             # after being > a threshold.
 
             # Calculate the time difference between each of the indexes
@@ -70,23 +80,27 @@ class AttackAnalysis:
             mean_ind_diff = np.mean(ind_diffs)
             # Calculate the start threshold by finding the first threshold that
             # goes below the average time * the multiplier
-            if np.any(ind_diffs < mean_ind_diff * multiplier):
-                attack_start_ind = threshold_inds[
-                    np.argmax(
-                        ind_diffs < mean_ind_diff *
-                        multiplier)]
-            else:
-                attack_end_ind = threshold_inds[0]
-            # Calculate the end threshold by thr same method except looking
-            # above the average time * the multiplier
-            if np.any(ind_diffs > mean_ind_diff * multiplier):
-                attack_end_ind = threshold_inds[
-                    np.argmax(
-                        ind_diffs > mean_ind_diff *
-                        multiplier)]
-            else:
-                attack_end_ind = threshold_inds[-1]
-            # Refine position by searching for local min and max of these
+            try:
+                # For each threshold value find the times where the signal goes
+                # from below the threshold to above the threshold
+
+                # find the smallest positive time between each threshold
+                # passing to the next threshold. each sucsessive time cannot be
+                # less than that of the previous times?
+
+                a = np.argmax(ind_diffs < (mean_ind_diff * multiplier))
+                attack_start_ind = threshold_inds[a]
+                # Calculate the end threshold by thr same method except looking
+                # above the average time * the multiplier
+                best_end_thresh = ind_diffs > (mean_ind_diff * multiplier)
+                if not best_end_thresh:
+                    attack_end_ind = threshold_inds[-1]
+                else:
+                    attack_end_ind = threshold_inds[np.argmax(best_end_thresh)]
+            except ValueError as err:
+                raise ValueError("Attack estimation failed: {0}".format(err))
+            print("START: {0}\nEND: {1}".format(attack_start_ind, attack_end_ind))
+            # TODO: Refine position by searching for local min and max of these
             # values
             self.attack_start = self.AnalysedAudioFile.samps_to_secs(
                 attack_start_ind)
@@ -110,7 +124,7 @@ class AttackAnalysis:
         self.logattacktime = math.log10(self.attackend-self.attackstart)
 
     def get_attack_from_file(self):
-        """Read the attack values from a previously generated file"""
+        """Read the attack values from a previously generated file."""
         # TODO:
         print("Reading attack estimation file:\t\t",
               os.path.relpath(self.attackpath))

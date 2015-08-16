@@ -100,8 +100,7 @@ class AudioFile(object):
 
     def read_frames(self, nframes=-1, dtype=np.float64):
         """
-        Read the given number of frames and put the data into a numpy
-        array of the requested dtype.
+        Read the given number of frames and fill numpy array.
 
         Parameters
         nframes: <int>
@@ -633,9 +632,9 @@ class AudioFile(object):
         sustain_array.fill(sustain)
         envelope = np.concatenate(
             (np.linspace(0.0, gain, attack*samplerate),
-             np.linspace(gain, sustain, decay*samplerate),
+             np.linspace(gain, sustain, (decay*samplerate)+1)[1:],
              sustain_array,
-             np.linspace(sustain, 0.0, release*samplerate)),
+             np.linspace(sustain, 0.0, (release*samplerate)+1)[1:]),
             axis=2
         )
         return envelope
