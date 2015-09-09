@@ -550,6 +550,32 @@ class AudioFile(object):
             self.mode = mode
 
     @staticmethod
+    def gen_window(window_type, window_size, sym=True):
+        """
+        Generates a window function of given size and type
+        Returns a 1D numpy array
+
+        sym: Used in the triangle window generation. When True (default),
+        generates a symmetric window, for use in filter design. When False,
+        generates a periodic window, for use in spectral analysis
+        """
+        if window_type is "hanning":
+            return np.hanning(window_size)
+        elif window_type is "hamming":
+            return np.hamming(window_size)
+        elif window_type is "bartlett":
+            return np.bartlett(window_size)
+        elif window_type is "blackman":
+            return np.blackman(window_size)
+        elif window_type is "kaiser":
+            return np.kaiser(window_size)
+        elif window_type is "triangle":
+            return signal.triang(window_size, sym=sym)
+        else:
+            raise ValueError("'{0}' is not a valid window"
+                             " type".format(window_type))
+
+    @staticmethod
     def plot_array_to_graph(array):
         plt.plot(array, 'r')
         plt.xlabel('Time (samples)')
@@ -729,31 +755,6 @@ class AnalysedAudioFile(AudioFile):
 
     # -------------------------------------------------------------------------
     # GENERAL ANALYSIS METHODS
-    @staticmethod
-    def gen_window(window_type, window_size, sym=True):
-        """
-        Generates a window function of given size and type
-        Returns a 1D numpy array
-
-        sym: Used in the triangle window generation. When True (default),
-        generates a symmetric window, for use in filter design. When False,
-        generates a periodic window, for use in spectral analysis
-        """
-        if window_type is "hanning":
-            return np.hanning(window_size)
-        elif window_type is "hamming":
-            return np.hamming(window_size)
-        elif window_type is "bartlett":
-            return np.bartlett(window_size)
-        elif window_type is "blackman":
-            return np.blackman(window_size)
-        elif window_type is "kaiser":
-            return np.kaiser(window_size)
-        elif window_type is "triangle":
-            return signal.triang(window_size, sym=sym)
-        else:
-            raise ValueError("'{0}' is not a valid window"
-                             " type".format(window_type))
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
