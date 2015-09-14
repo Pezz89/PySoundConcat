@@ -4,7 +4,7 @@ import numpy as np
 import math
 import pdb
 
-import fileops.pathops as pathops
+from fileops import pathops
 
 
 class AttackAnalysis:

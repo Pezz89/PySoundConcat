@@ -8,7 +8,7 @@ import pysndfile
 import matplotlib.pyplot as plt
 import pdb
 
-import fileops.pathops as pathops
+from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
