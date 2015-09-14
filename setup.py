@@ -13,7 +13,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name="pysound",
+    name="sppysound",
     version="0.1",
     author="Sam Perry",
     author_email="u1265119@unimail.hud.ac.uk",
