@@ -7,11 +7,15 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
+<<<<<<< HEAD
 badd +40 audiofile.py
 badd +55 analysis/RMSAnalysis.py
 badd +75 UnitTests/audiofile_tests.py
 badd +136 analysis/AttackAnalysis.py
 badd +1 analysis/audiograph.py
+=======
+badd +0 audiofile.py
+>>>>>>> master
 argglobal
 silent! argdel *
 argadd audiofile.py
@@ -31,11 +35,19 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
+<<<<<<< HEAD
 let s:l = 403 - ((56 * winheight(0) + 31) / 63)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 403
+=======
+let s:l = 1 - ((0 * winheight(0) + 23) / 46)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+>>>>>>> master
 normal! 0
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
