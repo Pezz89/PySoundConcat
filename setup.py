@@ -21,7 +21,8 @@ setup(
     license="GPL",
     keywords="synthesis audio",
     url="https://github.com/Pezz89/pysound",
-    packages=find_packages(),
+    package_dir={'': 'src'},
+    packages=find_packages(where='src', exclude=['tests']),
     setup_requires=['numpy'],
     install_requires=read('requirements.txt'),
 )
