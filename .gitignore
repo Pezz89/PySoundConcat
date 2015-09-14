@@ -2,4 +2,6 @@
 *.wav
 *.aiff
 *.aif
+Session.vim
+pip-selfcheck.json
 .DS_Store
