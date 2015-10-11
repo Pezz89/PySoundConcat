@@ -1,3 +1,10 @@
+Package installation:
+Simply run:
+pip install .
+from the package folder
+Alternatively:
+pip install -e .
+will install the package keeping it's contents in place in the folder so that they can be easily developed and tested.
 
 ======================
 SPPYSOUND README
