@@ -1,7 +1,7 @@
 """A set of unit tests to check the correct operation of the pysound module."""
 import unittest
 import numpy as np
-from pysound import AudioFile
+from sppysound import AudioFile
 from fileops import pathops
 import os
 
