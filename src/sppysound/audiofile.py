@@ -763,9 +763,20 @@ class AnalysedAudioFile(AudioFile):
         self.db_dir = kwargs.pop('db_dir', None)
         self.force_analysis = kwargs.pop('reanalyse', False)
 
-        self.rmspath = kwargs.pop('rmspath', None)
-        self.atkpath = kwargs.pop('atkpath', None)
-        self.zeroxpath =  kwargs.pop('zeroxpath', None)
+        # Analysis members. If an analysis is specified either as a tag, or as
+        # a filepath, it will be generated and either saved at the path
+        # specified or if one isn't specified, it will be created.
+        # A set containing tags for analyses to be created for the file
+        self.analyses = kwargs["analyses"]
+        # A dictionary of paths specifying where to store generated analyses.
+        analysis_paths = kwargs.pop("analysis_paths", {})
+
+        # Analysis paths can be explicitly set through the 'analysis_paths' key
+        # word argument. if specified this path will be used rather than
+        # creating a path using the database's working directory.
+        self.rmspath = analysis_paths.pop('rmspath', None)
+        self.atkpath = analysis_paths.pop('atkpath', None)
+        self.zeroxpath = analysis_paths.pop('zeroxpath', None)
 
     def __enter__(self):
         super(AnalysedAudioFile, self).__enter__()
@@ -777,21 +788,21 @@ class AnalysedAudioFile(AudioFile):
         # ---------------
         # Create RMS analysis object if file has an rms path or is part of a
         # database
-        if self.rmspath:
+        if self.rmspath or self.db_dir and 'rms' in self.analyses:
             self.RMS = RMSAnalysis(self, self.rmspath)
         else:
             print("No RMS path for: {0}".format(self.name))
             self.RMS = None
 
         # Create attack estimation analysis
-        if self.atkpath:
+        if self.atkpath or self.db_dir and 'atk' in self.analyses:
             self.Attack = AttackAnalysis(self, self.atkpath)
         else:
             print("No Attack path for: {0}".format(self.name))
             self.Attack = None
 
         # Create Zero crossing analysis
-        if self.zeroxpath:
+        if self.zeroxpath or self.db_dir and 'zerox' in self.analyses:
             self.ZeroX = ZeroXAnalysis(self, self.zeroxpath)
         else:
             print("No Zero crossing path for: {0}".format(self.name))
@@ -853,6 +864,7 @@ class AudioDatabase:
 
         # Wav directory must be created for storing the audiofiles
         analysis_list.append("wav")
+        analysis_list = set(analysis_list)
 
         print("*****************************************")
         print("Initialising Database...")
@@ -922,25 +934,29 @@ class AudioDatabase:
 
         valid_filetypes = {'.wav', '.aif', '.aiff'}
         # Move audio files to database
+        # For all files in the audio dirctory...
         for item in pathops.listdir_nohidden(audio_dir):
+            # If the file is a valid file type...
             if os.path.splitext(item)[1] in valid_filetypes:
+                # Get the full path for the file
                 wavpath = os.path.join(audio_dir, item)
+                # If the file isn't already in the database...
                 if not os.path.isfile(
-                    '/'.join(
-                        (subdir_paths["wav"], os.path.basename(wavpath))
-                    )
+                    '/'.join((subdir_paths["wav"], os.path.basename(wavpath)))
                 ):
+                    # Copy the file to the database
                     shutil.copy2(wavpath, subdir_paths["wav"])
                     print("Moved: ", item, "\tTo directory: ",
                           subdir_paths["wav"], "\n")
                 else:
                     print("File:  ", item, "\tAlready exists at: ",
                           subdir_paths["wav"])
+                # Add the file's path to the database content dictionary
                 db_content[os.path.splitext(item)[0]]["wav"] = (
                     os.path.join(subdir_paths["wav"], item)
                 )
 
-        # TODO: Create a dictionary of anlyses to be passed to the
+        # TODO: Create a dictionary of analyses to be passed to the
         # AnalysedAudioFile objects that determines which analyses will be
         # produced
         self.analysed_audio_list = []
@@ -951,13 +967,12 @@ class AudioDatabase:
                 continue
             try:
                 with AnalysedAudioFile(
-                        db_content[key]["wav"],
-                        'r',
-                        rmspath=db_content[key].pop("rms", None),
-                        zeroxpath=db_content[key].pop("zerox", None),
-                        name=key,
-                        db_dir=db_dir,
-                        reanalyse=True
+                    db_content[key]["wav"],
+                    'r',
+                    analyses=analysis_list,
+                    name=key,
+                    db_dir=db_dir,
+                    reanalyse=True
                 ) as AAF:
                     self.analysed_audio_list.append(AAF)
             except IOError as err:
