@@ -32,7 +32,7 @@ class globalTests(unittest.TestCase):
             overwrite_existing=True,
             mode=mode,
             channels=channels,
-        )
+        ).open()
 
 
 class FileCreationTests(globalTests):

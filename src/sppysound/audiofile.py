@@ -29,23 +29,17 @@ class AudioFile(object):
         # the file name without an extension
         self.name = name
         self.mode = mode
-        if mode == 'r':
-            self.samplerate = self.pysndfile_object.samplerate()
-            self.channels = self.pysndfile_object.channels()
-            self.format = self.pysndfile_object.format()
-
-        else:
-            self.samplerate = samplerate
-            self.format = format
-            self.channels = channels
+        self.samplerate = samplerate
+        self.format = format
+        self.channels = channels
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
-        if mode == 'r':
-            if not os.path.exists(wavpath):
+        if self.mode == 'r':
+            if not os.path.exists(self.wavpath):
                 raise IOError(
                     "Cannot open {0} for reading as it cannot be "
-                    "found.".format(wavpath)
+                    "found.".format(self.wavpath)
                 )
             self.pysndfile_object = pysndfile.PySndfile(
                 self.wavpath,
@@ -54,13 +48,19 @@ class AudioFile(object):
             return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
-                wavpath,
-                mode=mode,
-                format=format,
-                channels=channels,
-                samplerate=samplerate
+                self.wavpath,
+                mode=self.mode,
+                format=self.format,
+                channels=self.channels,
+                samplerate=self.samplerate
             )
             return self
+
+    def open(self):
+        return self.__enter__()
+
+    def close(self):
+        self.__exit__()
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
@@ -68,15 +68,17 @@ class AudioFile(object):
 
     def __if_open(method):
         """Handles error from using methods when the audio file is closed"""
-        try:
-            return method()
-        except AttributeError, err:
-            print "{0}: Audio file isn't open.".format(err)
+        def wrapper(*args, **kwargs):
+            try:
+                return method(*args, **kwargs)
+            except AttributeError, err:
+                print("{0}: Audio file isn't open".format(err))
+        return wrapper
 
     @__if_open
     def channels(self):
         """Return number of channels of sndfile."""
-            return self.pysndfile_object.channels()
+        return self.pysndfile_object.channels()
 
     @__if_open
     def encoding_str(self):
@@ -356,7 +358,7 @@ class AudioFile(object):
             format=self.format,
             channels=1,
             samplerate=self.samplerate
-        )
+        ).open()
         # Read current file in chunks and convert to mono by deviding all
         # samples by 2 and combining to create a single signal
         self.seek(0, 0)
@@ -424,7 +426,7 @@ class AudioFile(object):
             format=self.format,
             channels=1,
             samplerate=self.samplerate
-        )
+        ).open()
         # Read current file in chunks and convert to mono by deviding all
         # samples by 2 and combining to create a single signal
         self.seek(0, 0)
@@ -729,7 +731,7 @@ class AudioFile(object):
             format=pysndfile.construct_format("wav", "pcm24"),
             channels=channels,
             samplerate=44100
-        )
+        ).open()
 
     def __repr__(self):
         return 'AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath)
@@ -915,10 +917,10 @@ class AudioDatabase:
                 ):
                     shutil.copy2(wavpath, subdir_paths["wav"])
                     print("Moved: ", item, "\tTo directory: ",
-                            subdir_paths["wav"], "\n")
+                          subdir_paths["wav"], "\n")
                 else:
                     print("File:  ", item, "\tAlready exists at: ",
-                            subdir_paths["wav"])
+                          subdir_paths["wav"])
                 db_content[os.path.splitext(item)[0]]["wav"] = (
                     os.path.join(subdir_paths["wav"], item)
                 )
@@ -946,6 +948,6 @@ class AudioDatabase:
                 )
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
-                print("File cannot be analysed: {0}\nReason: {1}\nSkipping...".format(
-                    db_content[key]["wav"], err))
+                print("File cannot be analysed: {0}\nReason: {1}\n"
+                      "Skipping...".format(db_content[key]["wav"], err))
                 continue
