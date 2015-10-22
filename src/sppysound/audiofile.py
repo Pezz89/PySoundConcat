@@ -7,6 +7,8 @@ import numpy as np
 import pysndfile
 import matplotlib.pyplot as plt
 import pdb
+import sys
+import traceback
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -35,6 +37,7 @@ class AudioFile(object):
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
+        print("###Opening soundfile {0}###".format(self.wavpath))
         if self.mode == 'r':
             if not os.path.exists(self.wavpath):
                 raise IOError(
@@ -45,6 +48,9 @@ class AudioFile(object):
                 self.wavpath,
                 mode=self.mode
             )
+            self.samplerate = self.get_samplerate()
+            self.format = self.get_format()
+            self.channels = self.get_channels()
             return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
@@ -57,13 +63,16 @@ class AudioFile(object):
             return self
 
     def open(self):
+        print("###Opening soundfile {0}###".format(self.wavpath))
         return self.__enter__()
 
     def close(self):
-        self.__exit__()
+        print("###Closing soundfile {0}###".format(self.wavpath))
+        self.pysndfile_object = None
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
+        print("###Closing soundfile {0}###".format(self.wavpath))
         self.pysndfile_object = None
 
     def __if_open(method):
@@ -72,11 +81,12 @@ class AudioFile(object):
             try:
                 return method(*args, **kwargs)
             except AttributeError, err:
-                print("{0}: Audio file isn't open".format(err))
+                raise IOError, "{0}: Audio file isn't open.".format(err), sys.exc_info()[2]
+
         return wrapper
 
     @__if_open
-    def channels(self):
+    def get_channels(self):
         """Return number of channels of sndfile."""
         return self.pysndfile_object.channels()
 
@@ -96,7 +106,7 @@ class AudioFile(object):
         return self.pysndfile_object.error()
 
     @__if_open
-    def format(self):
+    def get_format(self):
         """Return raw format specification from sndfile."""
         return self.pysndfile_object.format()
 
@@ -150,7 +160,7 @@ class AudioFile(object):
         return self.pysndfile_object.format(mode)
 
     @__if_open
-    def samplerate(self):
+    def get_samplerate(self):
         """Return the samplerate of the file."""
         return self.pysndfile_object.samplerate()
 
@@ -390,7 +400,7 @@ class AudioFile(object):
         specified.
         """
         pathops.file_must_exist(replacement_filename)
-        del self.pysndfile_object
+        self.close()
         os.remove(self.wavpath)
         os.rename(replacement_filename, self.wavpath)
         replacement_file = pysndfile.PySndfile(
@@ -419,13 +429,16 @@ class AudioFile(object):
         if os.path.exists(mono_filename):
             self.replace_audiofile(mono_filename)
             return None
+        # If the file is already mono then stop
+        if self.channels == 1:
+            return None
         # Create the empty mono file object
         mono_file = AudioFile(
             mono_filename,
             mode='w',
-            format=self.format,
+            format=self.get_format(),
             channels=1,
-            samplerate=self.samplerate
+            samplerate=self.get_samplerate()
         ).open()
         # Read current file in chunks and convert to mono by deviding all
         # samples by 2 and combining to create a single signal
@@ -804,8 +817,8 @@ class AnalysedAudioFile(AudioFile):
         return ('AnalysedAudioFile(name={0}, wav={1}, '
                 'rms={2}, attack={3}, zerox={4})'.format(self.name,
                                                          self.wavpath,
-                                                         self.rmspath,
-                                                         self.attackpath,
+                                                         self.RMS.rmspath,
+                                                         self.Attack.attackpath,
                                                          self.zeroxpath))
 
 
@@ -935,8 +948,7 @@ class AudioDatabase:
             if not db_content[key]["wav"]:
                 continue
             try:
-                self.analysed_audio_list.append(
-                    AnalysedAudioFile(
+                with AnalysedAudioFile(
                         db_content[key]["wav"],
                         'r',
                         rmspath=db_content[key].pop("rms", None),
@@ -944,10 +956,14 @@ class AudioDatabase:
                         name=key,
                         db_dir=db_dir,
                         reanalyse=True
-                    )
-                )
+                ) as AAF:
+                    print(AAF)
+                    self.analysed_audio_list.append(AAF)
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
                 print("File cannot be analysed: {0}\nReason: {1}\n"
                       "Skipping...".format(db_content[key]["wav"], err))
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(exc_type, exc_value, exc_traceback,
+                                          file=sys.stdout)
                 continue
