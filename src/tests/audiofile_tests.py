@@ -1,7 +1,7 @@
 """A set of unit tests to check the correct operation of the pysound module."""
 import unittest
 import numpy as np
-from pysound import AudioFile
+from sppysound import AudioFile
 from fileops import pathops
 import os
 
@@ -461,6 +461,18 @@ class GenerateADSRTests(globalTests):
         self.assertEqual(envelope[132300-1], 0.5)
         self.assertEqual(envelope[176400-1], 0.0)
         self.assertEqual(envelope.size, 176400)
+
+class RMSAnalysisTests(globalTests):
+
+    """Tests RMS analysis generation"""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        self.TestAudio = self.create_test_audio()
+        self.TestAudio.write_frames()
+
+    def test_GenerateRMS(self):
+        """Check that RMS values generated are the expected values"""
 
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
