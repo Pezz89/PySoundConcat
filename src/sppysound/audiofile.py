@@ -30,19 +30,28 @@ class AudioFile(object):
         self.name = name
         self.mode = mode
         if mode == 'r':
+            self.samplerate = self.pysndfile_object.samplerate()
+            self.channels = self.pysndfile_object.channels()
+            self.format = self.pysndfile_object.format()
+
+        else:
+            self.samplerate = samplerate
+            self.format = format
+            self.channels = channels
+
+    def __enter__(self):
+        """Allow AudioFile object to be opened by 'with' statements"""
+        if mode == 'r':
             if not os.path.exists(wavpath):
                 raise IOError(
                     "Cannot open {0} for reading as it cannot be "
                     "found.".format(wavpath)
                 )
             self.pysndfile_object = pysndfile.PySndfile(
-                wavpath,
-                mode=mode
+                self.wavpath,
+                mode=self.mode
             )
-            self.samplerate = self.pysndfile_object.samplerate()
-            self.channels = self.pysndfile_object.channels()
-            self.format = self.pysndfile_object.format()
-
+            return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
                 wavpath,
@@ -51,14 +60,25 @@ class AudioFile(object):
                 channels=channels,
                 samplerate=samplerate
             )
-            self.samplerate = samplerate
-            self.format = format
-            self.channels = channels
+            return self
 
+    def __exit__(self, type, value, traceback):
+        """Closes sound file when exiting 'with' statement."""
+        self.pysndfile_object = None
+
+    def __if_open(method):
+        """Handles error from using methods when the audio file is closed"""
+        try:
+            return method()
+        except AttributeError, err:
+            print "{0}: Audio file isn't open.".format(err)
+
+    @__if_open
     def channels(self):
         """Return number of channels of sndfile."""
-        return self.pysndfile_object.channels()
+            return self.pysndfile_object.channels()
 
+    @__if_open
     def encoding_str(self):
         """
         Return string representation of encoding (e.g. pcm16).
@@ -68,18 +88,22 @@ class AudioFile(object):
         """
         return self.pysndfile_object.encoding_str()
 
+    @__if_open
     def error(self):
         """Report error numbers related to the current sound file."""
         return self.pysndfile_object.error()
 
+    @__if_open
     def format(self):
         """Return raw format specification from sndfile."""
         return self.pysndfile_object.format()
 
+    @__if_open
     def frames(self):
         """Return number of frames in file (number of samples per channel)."""
         return self.pysndfile_object.frames()
 
+    @__if_open
     def get_strings(self):
         """
         get all stringtypes from the sound file.
@@ -89,6 +113,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.get_strings()
 
+    @__if_open
     def major_format_str(self):
         """
         return short string representation of major format.
@@ -98,6 +123,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.major_format_str()
 
+    @__if_open
     def read_frames(self, nframes=-1, dtype=np.float64):
         """
         Read the given number of frames and fill numpy array.
@@ -113,6 +139,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.read_frames(nframes, dtype)
 
+    @__if_open
     def rewind(self, mode='rw'):
         """
         Rewind read/write/read and write position given by mode to
@@ -120,10 +147,12 @@ class AudioFile(object):
         """
         return self.pysndfile_object.format(mode)
 
+    @__if_open
     def samplerate(self):
         """Return the samplerate of the file."""
         return self.pysndfile_object.samplerate()
 
+    @__if_open
     def seek(self, offset, whence=0, mode='rw'):
         """
         Seek into audio file: similar to python seek function,
@@ -152,10 +181,12 @@ class AudioFile(object):
         """
         return self.pysndfile_object.seek(offset, whence, mode)
 
+    @__if_open
     def seekable(self):
         """Return true for soundfiles that support seeking."""
         return self.seekable()
 
+    @__if_open
     def set_auto_clipping(self, arg=True):
         """
         Enable auto clipping when reading/writing samples from/to sndfile.
@@ -171,6 +202,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.set_auto_clipping(arg)
 
+    @__if_open
     def set_string(self, stringtype_name, string):
         """
         Set one of the stringtypes to the strig given as argument.
@@ -180,10 +212,12 @@ class AudioFile(object):
         """
         return self.pysndfile_object.set_string(stringtype_name, string)
 
+    @__if_open
     def strError(self):
         """Report error strings related to the current sound file."""
         return self.pysndfile_object.strError()
 
+    @__if_open
     def writeSync(self):
         """
         Call the operating system's function to force the writing of all file
@@ -192,6 +226,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.writeSync()
 
+    @__if_open
     def write_frames(self, input):
         """
         write 1 or 2 dimensional array into sndfile.
@@ -209,6 +244,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.write_frames(input)
 
+    @__if_open
     def construct_format(self, major, encoding):
         """
         construct a format specification for libsndfile from major format
@@ -216,10 +252,12 @@ class AudioFile(object):
         """
         return self.pysndfile_object.construct_format(major, encoding)
 
+    @__if_open
     def get_pysndfile_version(self):
         """return tuple describing the version of pysndfile"""
         return self.pysndfile_object.get_pysndfile_version()
 
+    @__if_open
     def get_sndfile_version(self):
         """
         return a tuple of ints representing the version of the libsdnfile that
@@ -227,6 +265,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.get_sndfile_version()
 
+    @__if_open
     def get_sndfile_formats(self):
         """
         Return lists of available file formats supported by libsndfile and
@@ -234,6 +273,7 @@ class AudioFile(object):
         """
         return self.pysndfile_object.get_sndfile_formats()
 
+    @__if_open
     def get_sndfile_encodings(self, major):
         """
         Return lists of available encoding for the given sndfile format.
@@ -266,6 +306,7 @@ class AudioFile(object):
         print('Errors?:                 ', self.error())
         print('*************************************************')
 
+    @__if_open
     def read_grain(self, start_index, grain_size, padding=True):
         """
         Read a grain of audio from the file. if grain ends after the end of
@@ -405,6 +446,7 @@ class AudioFile(object):
         else:
             return mono_file
 
+    @__if_open
     def rename_file(self, filename):
         """
         Renames the audio file associated with the object to the name
@@ -718,21 +760,21 @@ class AnalysedAudioFile(AudioFile):
 
         # Create RMS analysis object if file has an rms path or is part of a
         # database
-        if "rmspath" in kwargs or self.db_dir:
+        if "rmspath" in kwargs:
             self.RMS = RMSAnalysis(self, kwargs.pop('rmspath', None))
         else:
             print("No RMS path for: {0}".format(self.name))
             self.RMS = None
 
         # Create attack estimation analysis
-        if "atkpath" in kwargs or self.db_dir:
+        if "atkpath" in kwargs:
             self.Attack = AttackAnalysis(self, kwargs.pop('atkpath', None))
         else:
             print("No Attack path for: {0}".format(self.name))
             self.Attack = None
 
         # Create Zero crossing analysis
-        if "zeroxpath" in kwargs or self.db_dir:
+        if "zeroxpath" in kwargs:
             self.ZeroX = ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
         else:
             print("No Zero crossing path for: {0}".format(self.name))
@@ -895,8 +937,8 @@ class AudioDatabase:
                     AnalysedAudioFile(
                         db_content[key]["wav"],
                         'r',
-                        rmspath=db_content[key]["rms"],
-                        zeroxpath=db_content[key]["zerox"],
+                        rmspath=db_content[key].pop("rms", None),
+                        zeroxpath=db_content[key].pop("zerox", None),
                         name=key,
                         db_dir=db_dir,
                         reanalyse=True
