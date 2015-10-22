@@ -763,34 +763,36 @@ class AnalysedAudioFile(AudioFile):
         self.db_dir = kwargs.pop('db_dir', None)
         self.force_analysis = kwargs.pop('reanalyse', False)
 
+        self.rmspath = kwargs.pop('rmspath', None)
+        self.atkpath = kwargs.pop('atkpath', None)
+        self.zeroxpath =  kwargs.pop('zeroxpath', None)
+
+    def __enter__(self):
+        super(AnalysedAudioFile, self).__enter__()
         if not self.check_valid(force_mono=True):
             raise IOError(
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
 
         # ---------------
-        # Initialise f0 variables
-        # Stores the path to the f0 file
-        self.f0path = kwargs.pop('f0path', None)
-
         # Create RMS analysis object if file has an rms path or is part of a
         # database
-        if "rmspath" in kwargs:
-            self.RMS = RMSAnalysis(self, kwargs.pop('rmspath', None))
+        if self.rmspath:
+            self.RMS = RMSAnalysis(self, self.rmspath)
         else:
             print("No RMS path for: {0}".format(self.name))
             self.RMS = None
 
         # Create attack estimation analysis
-        if "atkpath" in kwargs:
-            self.Attack = AttackAnalysis(self, kwargs.pop('atkpath', None))
+        if self.atkpath:
+            self.Attack = AttackAnalysis(self, self.atkpath)
         else:
             print("No Attack path for: {0}".format(self.name))
             self.Attack = None
 
         # Create Zero crossing analysis
-        if "zeroxpath" in kwargs:
-            self.ZeroX = ZeroXAnalysis(self, kwargs.pop('zeroxpath', None))
+        if self.zeroxpath:
+            self.ZeroX = ZeroXAnalysis(self, self.zeroxpath)
         else:
             print("No Zero crossing path for: {0}".format(self.name))
             self.ZeroX = None
@@ -957,7 +959,6 @@ class AudioDatabase:
                         db_dir=db_dir,
                         reanalyse=True
                 ) as AAF:
-                    print(AAF)
                     self.analysed_audio_list.append(AAF)
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
