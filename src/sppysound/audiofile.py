@@ -9,11 +9,14 @@ import matplotlib.pyplot as plt
 import pdb
 import sys
 import traceback
+import logging
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
+
+logger = logging.getLogger(__name__)
 
 
 class AudioFile(object):
@@ -25,6 +28,8 @@ class AudioFile(object):
                  channels=None,
                  samplerate=None,
                  name=None, *args, **kwargs):
+        self.logger = logging.getLogger(__name__ + '.AudioFile')
+        self.logger.info("Initialised AudioFile")
 
         self.wavpath = wavpath
         # TODO: If a name isn't provided then create a default name based on
@@ -756,6 +761,7 @@ class AnalysedAudioFile(AudioFile):
 
     def __init__(self, *args, **kwargs):
         # Initialise the AudioFile parent class
+        self.logger = logging.getLogger('audiofile.AnalysedAudioFile')
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
         # Initialise database variables
@@ -854,6 +860,7 @@ class AudioDatabase:
         db_dir:
         analysis_list:
         """
+        self.logger = logging.getLogger('audiofile.AudioDatabase')
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
@@ -866,10 +873,11 @@ class AudioDatabase:
         analysis_list.append("wav")
         analysis_list = set(analysis_list)
 
-        print("*****************************************")
-        print("Initialising Database...")
-        print("*****************************************")
-        print("")
+        self.logger.info(
+            "*****************************************\n"
+            "Initialising Database...\n"
+            "*****************************************\n"
+        )
         # define a list of sub-directory names for each of the analysis
         # parameters
 
@@ -903,12 +911,12 @@ class AudioDatabase:
             try:
                 # If it doesn't, Create it.
                 os.mkdir(directory)
-                print("Created directory: ", directory)
+                self.logger.info("Created directory: ", directory)
             except OSError as err:
                 # If it does exist, add it's content to the database content
                 # dictionary.
                 if os.path.exists(directory):
-                    print("{0} directory already exists:")
+                    self.logger.warning("{0} directory already exists:")
                     "\t\t{1}".format(dirkey, os.path.relpath(directory))
                     for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
@@ -920,17 +928,20 @@ class AudioDatabase:
 
         # Create a sub directory for every key in the analysis list
         # store reference to this in dictionary
-        print("*****************************************")
-        print("Creating sub-directories...")
-        print("*****************************************")
+        self.logger.info(
+            "*****************************************\n"
+            "Creating sub-directories...\n"
+            "*****************************************\n"
+        )
         subdir_paths = {
             key: initialise_subdir(key, db_dir) for key in analysis_list
         }
 
-        print("")
-        print("*****************************************")
-        print("Moving any audio to sub directory...")
-        print("*****************************************")
+        self.logger.info(
+            "*****************************************\n"
+            "Moving any audio to sub directory...\n"
+            "*****************************************\n"
+        )
 
         valid_filetypes = {'.wav', '.aif', '.aiff'}
         # Move audio files to database
