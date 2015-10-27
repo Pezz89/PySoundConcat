@@ -16,7 +16,7 @@ import analysis.RMSAnalysis as RMSAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class AudioFile(object):
@@ -42,7 +42,7 @@ class AudioFile(object):
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
-        print("###Opening soundfile {0}###".format(self.wavpath))
+        self.logger.info("Opening soundfile {0}".format(self.wavpath))
         if self.mode == 'r':
             if not os.path.exists(self.wavpath):
                 raise IOError(
@@ -68,16 +68,16 @@ class AudioFile(object):
             return self
 
     def open(self):
-        print("###Opening soundfile {0}###".format(self.wavpath))
+        self.logger.info("Opening soundfile {0}".format(self.wavpath))
         return self.__enter__()
 
     def close(self):
-        print("###Closing soundfile {0}###".format(self.wavpath))
+        self.logger.info("Closing soundfile {0}".format(self.wavpath))
         self.pysndfile_object = None
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
-        print("###Closing soundfile {0}###".format(self.wavpath))
+        self.logger.info("Closing soundfile {0}".format(self.wavpath))
         self.pysndfile_object = None
 
     def __if_open(method):
@@ -570,7 +570,7 @@ class AudioFile(object):
             # zero any samples after the fade in
             audio[position+fade.size:] *= 0
         else:
-            print("{0} is not a valid fade option. Use either \"in\" or "
+            self.logger.exception("{0} is not a valid fade option. Use either \"in\" or "
                   "\"out\"".format(mode))
             raise ValueError
         return audio
@@ -797,21 +797,21 @@ class AnalysedAudioFile(AudioFile):
         if self.rmspath or self.db_dir and 'rms' in self.analyses:
             self.RMS = RMSAnalysis(self, self.rmspath)
         else:
-            print("No RMS path for: {0}".format(self.name))
+            self.logger.warning("No RMS path for: {0}".format(self.name))
             self.RMS = None
 
         # Create attack estimation analysis
         if self.atkpath or self.db_dir and 'atk' in self.analyses:
             self.Attack = AttackAnalysis(self, self.atkpath)
         else:
-            print("No Attack path for: {0}".format(self.name))
+            self.logger.warning("No Attack path for: {0}".format(self.name))
             self.Attack = None
 
         # Create Zero crossing analysis
         if self.zeroxpath or self.db_dir and 'zerox' in self.analyses:
             self.ZeroX = ZeroXAnalysis(self, self.zeroxpath)
         else:
-            print("No Zero crossing path for: {0}".format(self.name))
+            self.logger.warning("No Zero crossing path for: {0}".format(self.name))
             self.ZeroX = None
 
     def plot_rms_to_graph(self):
@@ -860,7 +860,7 @@ class AudioDatabase:
         db_dir:
         analysis_list:
         """
-        self.logger = logging.getLogger('audiofile.AudioDatabase')
+        self.logger = logging.getLogger(__name__ + '.AudioDatabase')
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
@@ -873,11 +873,7 @@ class AudioDatabase:
         analysis_list.append("wav")
         analysis_list = set(analysis_list)
 
-        self.logger.info(
-            "*****************************************\n"
-            "Initialising Database...\n"
-            "*****************************************\n"
-        )
+        self.logger.info("Initialising Database...")
         # define a list of sub-directory names for each of the analysis
         # parameters
 
@@ -928,20 +924,12 @@ class AudioDatabase:
 
         # Create a sub directory for every key in the analysis list
         # store reference to this in dictionary
-        self.logger.info(
-            "*****************************************\n"
-            "Creating sub-directories...\n"
-            "*****************************************\n"
-        )
+        self.logger.info("Creating sub-directories...")
         subdir_paths = {
             key: initialise_subdir(key, db_dir) for key in analysis_list
         }
 
-        self.logger.info(
-            "*****************************************\n"
-            "Moving any audio to sub directory...\n"
-            "*****************************************\n"
-        )
+        self.logger.info("Moving any audio to sub directory...")
 
         valid_filetypes = {'.wav', '.aif', '.aiff'}
         # Move audio files to database
@@ -957,10 +945,10 @@ class AudioDatabase:
                 ):
                     # Copy the file to the database
                     shutil.copy2(wavpath, subdir_paths["wav"])
-                    print("Moved: ", item, "\tTo directory: ",
+                    self.logger.info("Moved: ", item, "\tTo directory: ",
                           subdir_paths["wav"], "\n")
                 else:
-                    print("File:  ", item, "\tAlready exists at: ",
+                    self.logger.info("File:  ", item, "\tAlready exists at: ",
                           subdir_paths["wav"])
                 # Add the file's path to the database content dictionary
                 db_content[os.path.splitext(item)[0]]["wav"] = (
@@ -988,7 +976,7 @@ class AudioDatabase:
                     self.analysed_audio_list.append(AAF)
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
-                print("File cannot be analysed: {0}\nReason: {1}\n"
+                self.logger.warning("File cannot be analysed: {0}\nReason: {1}\n"
                       "Skipping...".format(db_content[key]["wav"], err))
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_exception(exc_type, exc_value, exc_traceback,

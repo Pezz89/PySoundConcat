@@ -1,8 +1,11 @@
 from __future__ import print_function
 import os
 import numpy as np
+import logging
 
 from fileops import pathops
+
+logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class RMSAnalysis:
@@ -20,6 +23,7 @@ class RMSAnalysis:
     """
 
     def __init__(self, AnalysedAudioFile, rmspath):
+        self.logger = logging.getLogger(__name__ + '.RMSAnalysis')
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
@@ -56,7 +60,7 @@ class RMSAnalysis:
                 with open(self.rmspath, 'r') as rmsfile:
                     # If an RMS file is provided then count the number of lines
                     # (1 for each window)
-                    print("Reading RMS file:\t\t\t",
+                    self.logger.info("Reading RMS file:\t\t\t",
                           os.path.relpath(self.rmspath))
                     self.rms_window_count = sum(1 for line in rmsfile)
             except IOError:
@@ -79,8 +83,7 @@ class RMSAnalysis:
         i = 0
         try:
             with open(self.rmspath, 'w') as rms_file:
-                print('Creating RMS file:\t\t\t',
-                      os.path.relpath(self.rmspath))
+                self.logger.info('Creating RMS file: '+os.path.relpath(self.rmspath))
                 self.rms_window_count = 0
                 # For all frames in the file, read overlapping windows and
                 # calculate the rms values for each window then write the data
@@ -106,7 +109,7 @@ class RMSAnalysis:
         Read values from RMS file between start and end points provided (in
         samples)
         """
-        print("Reading RMS file: {0}".format(self.rmspath))
+        self.logger.info("Reading RMS file: {0}".format(self.rmspath))
         # Convert negative numbers to the end of the file offset by that value
         if end < 0:
             end = self.AnalysedAudioFile.frames() + end + 1

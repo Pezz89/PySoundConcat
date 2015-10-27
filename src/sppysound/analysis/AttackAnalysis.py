@@ -3,8 +3,11 @@ import os
 import numpy as np
 import math
 import pdb
+import logging
 
 from fileops import pathops
+
+logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class AttackAnalysis:
@@ -12,6 +15,7 @@ class AttackAnalysis:
     """Encapsulation of attack estimation analysis."""
 
     def __init__(self, AnalysedAudioFile, atkpath):
+        self.logger = logging.getLogger(__name__ + '.AttackAnalysis')
         self.AnalysedAudioFile = AnalysedAudioFile
         self.attackpath = atkpath
         self.attack_start = None
@@ -56,7 +60,7 @@ class AttackAnalysis:
         if not self.AnalysedAudioFile.RMS:
             raise IOError("RMS analysis is required to estimate attack")
         with open(self.attackpath, 'w') as attackfile:
-            print("Creating attack estimation file:\t\t",
+            self.logger.info("Creating attack estimation file:\t\t",
                   os.path.relpath(self.attackpath))
             rms_contour = self.AnalysedAudioFile.RMS.get_rms_from_file()
             # Scale RMS contour to range so all calculations are performed in
@@ -99,7 +103,7 @@ class AttackAnalysis:
                     attack_end_ind = threshold_inds[np.argmax(best_end_thresh)]
             except ValueError as err:
                 raise ValueError("Attack estimation failed: {0}".format(err))
-            print("START: {0}\nEND: {1}".format(attack_start_ind, attack_end_ind))
+            self.logger.info("START: {0}\nEND: {1}".format(attack_start_ind, attack_end_ind))
             # TODO: Refine position by searching for local min and max of these
             # values
             self.attack_start = self.AnalysedAudioFile.samps_to_secs(
@@ -126,7 +130,7 @@ class AttackAnalysis:
     def get_attack_from_file(self):
         """Read the attack values from a previously generated file."""
         # TODO:
-        print("Reading attack estimation file:\t\t",
+        self.logger.info("Reading attack estimation file:\t\t",
               os.path.relpath(self.attackpath))
         with open(self.attackpath, 'r') as attackfile:
             for line in attackfile:

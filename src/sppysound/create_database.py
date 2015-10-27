@@ -11,17 +11,20 @@ from fileops import loggerops
 # File open and closing monitoring
 import __builtin__
 
+logger = loggerops.create_logger()
+'''
 openfiles = set()
 oldfile = __builtin__.file
+
 class newfile(oldfile):
     def __init__(self, *args):
         self.x = args[0]
-        print "### OPENING %s ###" % str(self.x)
+        logger.info("### OPENING %s ###" % str(self.x))
         oldfile.__init__(self, *args)
         openfiles.add(self)
 
     def close(self):
-        print "### CLOSING %s ###" % str(self.x)
+        logger.info("### CLOSING %s ###" % str(self.x))
         oldfile.close(self)
         openfiles.remove(self)
 oldopen = __builtin__.open
@@ -31,15 +34,14 @@ __builtin__.file = newfile
 __builtin__.open = newopen
 
 def printOpenFiles():
-    print "### %d OPEN FILES: [%s]" % (len(openfiles), ", ".join(f.x for f in openfiles))
+    logger.info("### %d OPEN FILES: [%s]" % (len(openfiles), ", ".join(f.x for f in openfiles)))
 
 ###########################################################################
+'''
 
 def main():
-    logger = loggerops.create_logger(__name__)
-    logger.info('Started')
-
     """Parse arguments then generate database."""
+    logger.info('Started')
     parser = argparse.ArgumentParser(
         description='Generate a database at argument 1 based on files in '
         'argument 2.'
