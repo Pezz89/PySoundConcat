@@ -3,9 +3,10 @@ import os
 import numpy as np
 import logging
 
+from AnalysisTools import ButterFilter
 from fileops import pathops
 
-logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
 
 
 class RMSAnalysis:
@@ -52,23 +53,27 @@ class RMSAnalysis:
         # If forcing new analysis creation then delete old analysis and create
         # a new one
         if self.AnalysedAudioFile.force_analysis:
+            self.logger.warning("Force re-analysis is enabled. "
+                                "deleting: {0}".format(self.rmspath))
             pathops.delete_if_exists(self.rmspath)
             self.rmspath = self.create_rms_analysis()
         else:
             # Check if analysis file already exists.
             try:
                 with open(self.rmspath, 'r') as rmsfile:
+                    self.logger.info("Analysis already exists. "
+                                     "Reading from: {0}".format(self.rmspath))
                     # If an RMS file is provided then count the number of lines
                     # (1 for each window)
-                    self.logger.info("Reading RMS file:\t\t\t",
-                          os.path.relpath(self.rmspath))
+                    self.logger.info("Reading RMS file: ",
+                                     os.path.relpath(self.rmspath))
                     self.rms_window_count = sum(1 for line in rmsfile)
             except IOError:
                 # If it doesn't then generate a new file
                 self.rmspath = self.create_rms_analysis()
 
-    def create_rms_analysis(self, window_size=25, window_type='triangle',
-                            window_overlap=8):
+    def create_rms_analysis(self, window_size=100, window_type='triangle',
+                            window_overlap=1):
         """
         Generate an energy contour analysis.
 
@@ -76,6 +81,11 @@ class RMSAnalysis:
         save to disk.
         """
         # TODO: Add low pass filter that relates to the window size
+        # Calculate the period of the window in hz
+        lowest_freq = 1.0 / window_size
+        filter = ButterFilter()
+        filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
+
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         # Generate a window function to apply to rms windows before analysis
         window_function = self.AnalysedAudioFile.gen_window(window_type,
@@ -90,6 +100,7 @@ class RMSAnalysis:
                 # to file
                 while i < self.AnalysedAudioFile.frames():
                     frames = self.AnalysedAudioFile.read_grain(i, window_size)
+                    frames = filter.filter_butter(frames)
                     frames = frames * window_function
                     rms = np.sqrt(np.mean(np.square(frames)))
                     rms_file.write('{0} {1:6f}\n'.format(

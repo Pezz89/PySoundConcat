@@ -86,7 +86,8 @@ class AudioFile(object):
             try:
                 return method(*args, **kwargs)
             except AttributeError, err:
-                raise IOError, "{0}: Audio file isn't open.".format(err), sys.exc_info()[2]
+                raise IOError("{0}: Audio file isn't open.".format(err),
+                              sys.exc_info()[2])
 
         return wrapper
 
