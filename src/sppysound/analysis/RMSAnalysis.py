@@ -50,7 +50,7 @@ class RMSAnalysis:
             self.rmspath = os.path.join(
                 self.AnalysedAudioFile.db_dir,
                 'rms',
-                self.AnalysedAudioFile.name + '.lab'
+                self.AnalysedAudioFile.name + '.npz'
             )
 
         # If forcing new analysis creation then delete old analysis and create
@@ -93,8 +93,9 @@ class RMSAnalysis:
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         # Generate a window function to apply to rms windows before analysis
 
-        frames = self.AnalysedAudioFile.read_frames()
-        frames = filter.filter_butter(frames)
+        frames = self.AnalysedAudioFile.read_grain()
+        # TODO: Fix filter
+        # frames = filter.filter_butter(frames)
 
         win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
@@ -115,10 +116,15 @@ class RMSAnalysis:
 
         frames *= win
         rms = np.sqrt(np.mean(np.square(frames), axis=1))
+        rms_times = self.calc_rms_frame_times(
+            rms,
+            samples,
+            self.AnalysedAudioFile.samplerate
+        )
 
         try:
             self.logger.info('Creating RMS file: '+os.path.relpath(self.rmspath))
-            np.save(self.rmspath, rms)
+            np.savez(self.rmspath, frames=rms, times=rms_times)
 
             return self.rmspath
         # If the rms file couldn't be opened then raise an error
@@ -166,3 +172,17 @@ class RMSAnalysis:
         # Interpolate between window values to get per-sample values
         rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
         return rms_contour
+
+    def calc_rms_frame_times(self, rmsframes, sample_frames, samplerate):
+        """Calculate times for frames using sample size and samplerate."""
+
+        # Get number of frames for time and frequency
+        timebins, freqbins = np.shape(rmsframes)
+        # Create array ranging from 0 to number of time frames
+        scale = np.arange(timebins+1)
+        # divide the number of samples by the total number of frames, then
+        # multiply by the frame numbers.
+        rms_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        # Divide by the samplerate to give times in seconds
+        rms_times = rms_times / samplerate
+        return rms_times
