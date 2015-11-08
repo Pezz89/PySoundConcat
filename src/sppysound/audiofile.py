@@ -15,6 +15,7 @@ from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
+import analysis.FFTAnalysis as FFTAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -781,6 +782,7 @@ class AnalysedAudioFile(AudioFile):
         # Analysis paths can be explicitly set through the 'analysis_paths' key
         # word argument. if specified this path will be used rather than
         # creating a path using the database's working directory.
+        self.fftpath = analysis_paths.pop('fftpath', None)
         self.rmspath = analysis_paths.pop('rmspath', None)
         self.atkpath = analysis_paths.pop('atkpath', None)
         self.zeroxpath = analysis_paths.pop('zeroxpath', None)
@@ -791,6 +793,12 @@ class AnalysedAudioFile(AudioFile):
             raise IOError(
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
+
+        if self.fftpath or self.db_dir and 'fft' in self.analyses:
+            self.FFT = FFTAnalysis(self, self.rmspath)
+        else:
+            self.logger.warning("No FFT path for: {0}".format(self.name))
+            self.FFT = None
 
         # ---------------
         # Create RMS analysis object if file has an rms path or is part of a
@@ -814,6 +822,10 @@ class AnalysedAudioFile(AudioFile):
         else:
             self.logger.warning("No Zero crossing path for: {0}".format(self.name))
             self.ZeroX = None
+        return self
+
+    def open(self):
+        return self
 
     def plot_rms_to_graph(self):
         """
@@ -850,7 +862,8 @@ class AudioDatabase:
         self,
         audio_dir,
         db_dir=None,
-        analysis_list=["rms", "atk", "zerox"]
+        analysis_list=["rms", "atk", "zerox", "fft"],
+        reanalyse=False
     ):
         """
         Create the folder hierachy for the database of files to be stored in.
@@ -865,10 +878,10 @@ class AudioDatabase:
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'atk'}
+        valid_analyses = {'rms', 'zerox', 'atk', 'fft'}
         for analysis in analysis_list:
             if analysis not in valid_analyses:
-                raise ValueError("{0} is not a valid analysis type")
+                raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))
 
         # Wav directory must be created for storing the audiofiles
         analysis_list.append("wav")
@@ -913,8 +926,8 @@ class AudioDatabase:
                 # If it does exist, add it's content to the database content
                 # dictionary.
                 if os.path.exists(directory):
-                    self.logger.warning("{0} directory already exists:")
-                    "\t\t{1}".format(dirkey, os.path.relpath(directory))
+                    self.logger.warning("{0} directory already exists:"
+                    " {1}".format(dirkey, os.path.relpath(directory)))
                     for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
@@ -938,6 +951,7 @@ class AudioDatabase:
         for item in pathops.listdir_nohidden(audio_dir):
             # If the file is a valid file type...
             if os.path.splitext(item)[1] in valid_filetypes:
+                self.logger.debug(''.join(("File added to database content: ", item)))
                 # Get the full path for the file
                 wavpath = os.path.join(audio_dir, item)
                 # If the file isn't already in the database...
@@ -946,11 +960,11 @@ class AudioDatabase:
                 ):
                     # Copy the file to the database
                     shutil.copy2(wavpath, subdir_paths["wav"])
-                    self.logger.info("Moved: ", item, "\tTo directory: ",
-                          subdir_paths["wav"], "\n")
+                    self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
+                          subdir_paths["wav"], "\n")))
                 else:
-                    self.logger.info("File:  ", item, "\tAlready exists at: ",
-                          subdir_paths["wav"])
+                    self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
+                          subdir_paths["wav"])))
                 # Add the file's path to the database content dictionary
                 db_content[os.path.splitext(item)[0]]["wav"] = (
                     os.path.join(subdir_paths["wav"], item)
@@ -964,6 +978,7 @@ class AudioDatabase:
             print("--------------------------------------------------")
             # if there is no wav file then skip
             if not db_content[key]["wav"]:
+                self.logger.warning(''.join(("No audio path for: ", key)))
                 continue
             try:
                 with AnalysedAudioFile(
@@ -972,7 +987,7 @@ class AudioDatabase:
                     analyses=analysis_list,
                     name=key,
                     db_dir=db_dir,
-                    reanalyse=True
+                    reanalyse=reanalyse
                 ) as AAF:
                     self.analysed_audio_list.append(AAF)
             except IOError as err:
@@ -983,3 +998,5 @@ class AudioDatabase:
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                                           file=sys.stdout)
                 continue
+        with self.analysed_audio_list[0].open() as AAF:
+            AAF.FFT.plotstft(AAF.read_frames(), AAF.get_samplerate())

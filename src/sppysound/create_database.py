@@ -62,8 +62,8 @@ def main():
         '-a',
         nargs='*',
         help='Specify analyses to be created. Valid analyses are: \'rms\''
-        '\'f0\' \'atk\'',
-        default=["rms", "zerox", "atk"]
+        '\'f0\' \'atk\' \'fft\'',
+        default=["rms", "zerox", "fft"]
     )
     parser.add_argument(
         '--rms',
@@ -80,12 +80,23 @@ def main():
         nargs='+',
         help='Specify arguments for creating zero-crossing analyses'
     )
+    parser.add_argument(
+        '--fft',
+        nargs='+',
+        help='Specify arguments for creating zero-crossing analyses'
+    )
+    parser.add_argument(
+        "--reanalyse", action="store_true",
+        help="Force re-analysis of all analyses, overwriting any existing "
+        "analyses"
+    )
     args = parser.parse_args()
 
     audiofile.AudioDatabase(
         args.source,
         args.target,
-        analysis_list=args.analyse
+        analysis_list=args.analyse,
+        reanalyse=args.reanalyse
     )
 
 if __name__ == "__main__":

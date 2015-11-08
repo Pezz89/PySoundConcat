@@ -80,9 +80,9 @@ class RMSAnalysis:
         Calculate the RMS values of windowed segments of the audio file and
         save to disk.
         """
-        # TODO: Add low pass filter that relates to the window size
         # Calculate the period of the window in hz
         lowest_freq = 1.0 / window_size
+        # Filter frequencies lower than the period of the window
         filter = ButterFilter()
         filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
 
