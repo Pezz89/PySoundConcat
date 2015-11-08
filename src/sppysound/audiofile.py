@@ -326,7 +326,7 @@ class AudioFile(object):
         print('*************************************************')
 
     @__if_open
-    def read_grain(self, start_index, grain_size, padding=True):
+    def read_grain(self, start_index=0, grain_size=None, padding=True):
         """
         Read a grain of audio from the file. if grain ends after the end of
         the file, the grain can be padded with zeros using the padding
@@ -336,6 +336,8 @@ class AudioFile(object):
         self.switch_mode('r')
         if start_index < 0:
             start_index = self.frames() + start_index
+        if not grain_size:
+            grain_size = self.frames()
         position = self.get_seek_position()
         # Read grain
         index = self.pysndfile_object.seek(start_index, 0)
@@ -998,5 +1000,5 @@ class AudioDatabase:
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                                           file=sys.stdout)
                 continue
-        with self.analysed_audio_list[0].open() as AAF:
-            AAF.FFT.plotstft(AAF.read_frames(), AAF.get_samplerate())
+        with self.analysed_audio_list[48].open() as AAF:
+            AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))

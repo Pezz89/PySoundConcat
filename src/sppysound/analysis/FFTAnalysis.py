@@ -44,7 +44,7 @@ class FFTAnalysis:
             self.fftpath = os.path.join(
                 self.AnalysedAudioFile.db_dir,
                 'fft',
-                self.AnalysedAudioFile.name + '.npy'
+                self.AnalysedAudioFile.name + '.npz'
             )
 
         # If forcing new analysis creation then delete old analysis and create
@@ -60,7 +60,7 @@ class FFTAnalysis:
             try:
                 self.fft_analysis = np.load(self.fftpath, mmap_mode='r')
                 self.logger.info("Analysis already exists. "
-                                    "Reading from: {0}".format(self.fftpath))
+                                 "Reading from: {0}".format(self.fftpath))
                 # If an FFT file is provided then count the number of lines
                 # (1 for each window)
                 self.logger.info(''.join(("Reading FFT file: ",
@@ -84,10 +84,15 @@ class FFTAnalysis:
 
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         try:
-            frames = self.AnalysedAudioFile.read_frames()
-            frames = filter.filter_butter(frames)
+            frames = self.AnalysedAudioFile.read_grain()
+            # frames = filter.filter_butter(frames)
             stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
-            np.save(self.fftpath, stft)
+            frame_times = self.calc_fft_frame_times(
+                stft,
+                frames,
+                self.AnalysedAudioFile.samplerate
+            )
+            np.savez(self.fftpath, frames=stft, times=frame_times)
 
             return self.fftpath
         # If the fft file couldn't be opened then raise an error
@@ -120,23 +125,35 @@ class FFTAnalysis:
 
     def logscale_spec(self, spec, sr=44100, factor=20.):
         """Scale frequency axis logarithmically."""
+        # Get a count of times and frequencies from fft frames
         timebins, freqbins = np.shape(spec)
 
+        # Create array from 0 to 1 with values for each frequency bin.
+        # Scale by a power of the factor provided.
         scale = np.linspace(0, 1, freqbins) ** factor
+        # Scale to the number of frequency bins
         scale *= (freqbins-1)/max(scale)
+        # Round to the nearest whole number and reduce to only unique numbers.
         scale = np.unique(np.round(scale))
 
-        # create spectrogram with new freq bins
+        # Create a new complex number array with the number of time frames and
+        # the new number of frequency bins
         newspec = np.complex128(np.zeros([timebins, len(scale)]))
+        # For each of the frequency bins
         for i in range(0, len(scale)):
+            # If it is the highest frequency bin...
             if i == len(scale)-1:
-                newspec[:,i] = np.sum(spec[:,scale[i]:], axis=1)
+                # Sum all frequency bins from the scale index upwards
+                newspec[:, i] = np.sum(spec[:, scale[i]:], axis=1)
             else:
-                newspec[:,i] = np.sum(spec[:,scale[i]:scale[i+1]], axis=1)
+                # Sum all frequency bins from the current scale index up to the
+                # next scale index
+                newspec[:, i] = np.sum(spec[:, scale[i]:scale[i+1]], axis=1)
 
-        # list center freq of bins
+        # List the center frequency of bins
         allfreqs = np.abs(np.fft.fftfreq(freqbins*2, 1./sr)[:freqbins+1])
         freqs = []
+        # For each of the frequency bins
         for i in range(0, len(scale)):
             if i == len(scale)-1:
                 freqs += [np.mean(allfreqs[scale[i]:])]
@@ -145,29 +162,38 @@ class FFTAnalysis:
 
         return newspec, freqs
 
-    def plotstft(self, samples, fs, binsize=2**10, plotpath=None, colormap="jet"):
+    def plotstft(self, samples, fs, binsize=2**10, plotpath=None,
+                 colormap="jet"):
         """Plot spectrogram."""
-        s = self.fft_analysis[:]
+        # Get all fft frames
+        s = self.fft_analysis['frames'][:]
 
+        print(fs)
         sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)
 
         # Amplitude to decibel
         ims = 20.*np.log10(np.abs(sshow)/10e-6)
 
+        # Get the dimensions of the fft
         timebins, freqbins = np.shape(ims)
 
         plt.figure(figsize=(15, 7.5))
         plt.imshow(np.transpose(ims), origin="lower", aspect="auto",
                    cmap=colormap)
+        # Add a colour bar to the side of the spectrogram.
         plt.colorbar()
 
+        # Set spectrogram labels
         plt.xlabel("time (s)")
         plt.ylabel("frequency (hz)")
         plt.xlim([0, timebins-1])
         plt.ylim([0, freqbins])
 
+        # Create an array of 5 values from 0 to the number of times
         xlocs = np.float32(np.linspace(0, timebins-1, 5))
+        # Display time values at 5 points along the x axis of the graph
         plt.xticks(xlocs, ["%.02f" % l for l in ((xlocs*len(samples)/timebins)+(0.5*binsize))/fs])
+        # Display frequency values at 10 points along the y axis of the graph
         ylocs = np.int16(np.round(np.linspace(0, freqbins-1, 10)))
         plt.yticks(ylocs, ["%.02f" % freq[i] for i in ylocs])
 
@@ -177,3 +203,19 @@ class FFTAnalysis:
             plt.show()
 
         plt.clf()
+
+    def calc_fft_frame_times(self, fftframes, sample_frames, samplerate):
+        """Calculate times for frames using sample size and samplerate."""
+
+        # Get number of frames for time and frequency
+        timebins, freqbins = np.shape(fftframes)
+        # Create array ranging from 0 to number of time frames
+        scale = np.arange(timebins+1)
+        # divide the number of samples by the total number of frames, then
+        # multiply by the frame numbers.
+        fft_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        # Divide by the samplerate to give times in seconds
+        fft_times = fft_times / samplerate
+        return fft_times
+
+
