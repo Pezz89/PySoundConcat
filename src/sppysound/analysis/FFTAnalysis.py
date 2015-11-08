@@ -84,8 +84,9 @@ class FFTAnalysis:
 
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         try:
-            stft = self.stft(self.AnalysedAudioFile.read_frames(),
-                      window_size, overlapFac=1/window_overlap)
+            frames = self.AnalysedAudioFile.read_frames()
+            frames = filter.filter_butter(frames)
+            stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
             np.save(self.fftpath, stft)
 
             return self.fftpath
@@ -157,7 +158,7 @@ class FFTAnalysis:
 
         plt.figure(figsize=(15, 7.5))
         plt.imshow(np.transpose(ims), origin="lower", aspect="auto",
-                   cmap=colormap, interpolation="none")
+                   cmap=colormap)
         plt.colorbar()
 
         plt.xlabel("time (s)")

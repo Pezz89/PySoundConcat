@@ -2,6 +2,9 @@ from __future__ import print_function
 import os
 import numpy as np
 import logging
+from scipy import signal
+from numpy.lib import stride_tricks
+
 
 from AnalysisTools import ButterFilter
 from fileops import pathops
@@ -72,8 +75,9 @@ class RMSAnalysis:
                 # If it doesn't then generate a new file
                 self.rmspath = self.create_rms_analysis()
 
-    def create_rms_analysis(self, window_size=100, window_type='triangle',
-                            window_overlap=1):
+    def create_rms_analysis(self, window_size=100,
+                            window=signal.triang,
+                            overlapFac=0.5):
         """
         Generate an energy contour analysis.
 
@@ -88,32 +92,39 @@ class RMSAnalysis:
 
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         # Generate a window function to apply to rms windows before analysis
-        window_function = self.AnalysedAudioFile.gen_window(window_type,
-                                                            window_size)
-        i = 0
+
+        frames = self.AnalysedAudioFile.read_frames()
+        frames = filter.filter_butter(frames)
+
+        win = window(window_size)
+        hopSize = int(window_size - np.floor(overlapFac * window_size))
+
+        # zeros at beginning (thus center of 1st window should be for sample nr. 0)
+        samples = np.append(np.zeros(np.floor(window_size/2.0)), frames)
+
+        # cols for windowing
+        cols = np.ceil((len(samples) - window_size) / float(hopSize)) + 1
+        # zeros at end (thus samples can be fully covered by frames)
+        samples = np.append(samples, np.zeros(window_size))
+
+        frames = stride_tricks.as_strided(
+            samples,
+            shape=(cols, window_size),
+            strides=(samples.strides[0]*hopSize, samples.strides[0])
+        ).copy()
+
+        frames *= win
+        rms = np.sqrt(np.mean(np.square(frames), axis=1))
+
         try:
-            with open(self.rmspath, 'w') as rms_file:
-                self.logger.info('Creating RMS file: '+os.path.relpath(self.rmspath))
-                self.rms_window_count = 0
-                # For all frames in the file, read overlapping windows and
-                # calculate the rms values for each window then write the data
-                # to file
-                while i < self.AnalysedAudioFile.frames():
-                    frames = self.AnalysedAudioFile.read_grain(i, window_size)
-                    frames = filter.filter_butter(frames)
-                    frames = frames * window_function
-                    rms = np.sqrt(np.mean(np.square(frames)))
-                    rms_file.write('{0} {1:6f}\n'.format(
-                        i + int(round(window_size / 2.0)), rms)
-                    )
-                    i += int(round(window_size / window_overlap))
-                    self.rms_window_count += 1
+            self.logger.info('Creating RMS file: '+os.path.relpath(self.rmspath))
+            np.save(self.rmspath, rms)
 
             return self.rmspath
         # If the rms file couldn't be opened then raise an error
         except IOError:
             # TODO: Sort this. This isn't right I don't think.
-            return False
+            return None
 
     def get_rms_from_file(self, start=0, end=-1):
         """
@@ -124,8 +135,10 @@ class RMSAnalysis:
         # Convert negative numbers to the end of the file offset by that value
         if end < 0:
             end = self.AnalysedAudioFile.frames() + end + 1
+        self.rms_analysis = np.load(self.rmspath, mmap_mode='r')
         # Create empty array with a size equal to the maximum possible RMS
         # values
+        '''
         rms_array = np.empty((2, self.rms_window_count))
         # Open the RMS file
         if os.stat(self.rmspath).st_size == 0:
@@ -149,6 +162,7 @@ class RMSAnalysis:
             # The last value will be rounded up to the end
             rms_array[0][i] = end
         rms_array = rms_array[:, start:start+i]
+        '''
         # Interpolate between window values to get per-sample values
         rms_contour = np.interp(np.arange(end), rms_array[0], rms_array[1])
         return rms_contour
