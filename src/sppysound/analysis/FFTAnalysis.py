@@ -44,7 +44,7 @@ class FFTAnalysis:
             self.fftpath = os.path.join(
                 self.AnalysedAudioFile.db_dir,
                 'fft',
-                self.AnalysedAudioFile.name + '.npz'
+                self.AnalysedAudioFile.name + '.npy'
             )
 
         # If forcing new analysis creation then delete old analysis and create
@@ -92,7 +92,7 @@ class FFTAnalysis:
                 frames,
                 self.AnalysedAudioFile.samplerate
             )
-            np.savez(self.fftpath, frames=stft, times=frame_times)
+            np.save(self.fftpath, stft)
 
             return self.fftpath
         # If the fft file couldn't be opened then raise an error

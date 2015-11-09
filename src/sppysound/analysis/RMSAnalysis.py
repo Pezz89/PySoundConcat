@@ -31,7 +31,7 @@ class RMSAnalysis:
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
-        # Store the path to the rms file if it already exists
+        # Store the path to the RMS file if it already exists
         self.rmspath = rmspath
 
         # Stores the number of RMS window values when calculating the RMS
@@ -45,7 +45,7 @@ class RMSAnalysis:
             if not self.AnalysedAudioFile.db_dir:
                 # If it isn't part of a database and doesn't have a path then
                 # there is no where to write the rms data to.
-                raise IOError('Analysed Audio object must have an RMS file'
+                raise IOError('Analysed Audio object must have an rms file'
                               'path or be part of a database')
             self.rmspath = os.path.join(
                 self.AnalysedAudioFile.db_dir,
@@ -60,20 +60,24 @@ class RMSAnalysis:
                                 "deleting: {0}".format(self.rmspath))
             pathops.delete_if_exists(self.rmspath)
             self.rmspath = self.create_rms_analysis()
+            self.rms_analysis = np.load(self.rmspath, mmap_mode='r')
         else:
             # Check if analysis file already exists.
             try:
-                with open(self.rmspath, 'r') as rmsfile:
-                    self.logger.info("Analysis already exists. "
-                                     "Reading from: {0}".format(self.rmspath))
-                    # If an RMS file is provided then count the number of lines
-                    # (1 for each window)
-                    self.logger.info("Reading RMS file: ",
-                                     os.path.relpath(self.rmspath))
-                    self.rms_window_count = sum(1 for line in rmsfile)
+                self.rms_analysis = np.load(self.rmspath, mmap_mode='r')
+                self.logger.info("Analysis already exists. "
+                                 "Reading from: {0}".format(self.rmspath))
+                # If an rms file is provided then count the number of lines
+                # (1 for each window)
+                self.logger.info(''.join(("Reading RMS file: ",
+                                    os.path.relpath(self.rmspath))))
+                self.rms_window_count = self.rms_analysis['times'].size
+                self.logger.debug(''.join(("RMS Window Count: ",
+                                           str(self.rms_window_count))))
             except IOError:
                 # If it doesn't then generate a new file
                 self.rmspath = self.create_rms_analysis()
+                self.rms_analysis = np.load(self.rmspath, mmap_mode='r')
 
     def create_rms_analysis(self, window_size=100,
                             window=signal.triang,
@@ -177,7 +181,7 @@ class RMSAnalysis:
         """Calculate times for frames using sample size and samplerate."""
 
         # Get number of frames for time and frequency
-        timebins, freqbins = np.shape(rmsframes)
+        timebins = rmsframes.shape[0]
         # Create array ranging from 0 to number of time frames
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
