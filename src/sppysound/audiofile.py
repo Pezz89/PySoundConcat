@@ -770,8 +770,15 @@ class AnalysedAudioFile(AudioFile):
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
         # Initialise database variables
-        # Stores the path to the database
+        # Stores the path to the database if object is part of a database.
         self.db_dir = kwargs.pop('db_dir', None)
+
+        # Refferences the HDF5 file object to use for storing analysis data.
+        analysis_file = kwargs.pop('data_file', None)
+
+        self.create_analysis_group(analysis_file)
+
+        # If True then files are re-analysed, discarding any previous analysis.
         self.force_analysis = kwargs.pop('reanalyse', False)
 
         # Analysis members. If an analysis is specified either as a tag, or as
@@ -779,16 +786,37 @@ class AnalysedAudioFile(AudioFile):
         # specified or if one isn't specified, it will be created.
         # A set containing tags for analyses to be created for the file
         self.analyses = kwargs["analyses"]
-        # A dictionary of paths specifying where to store generated analyses.
-        analysis_paths = kwargs.pop("analysis_paths", {})
 
-        # Analysis paths can be explicitly set through the 'analysis_paths' key
-        # word argument. if specified this path will be used rather than
-        # creating a path using the database's working directory.
-        self.fftpath = analysis_paths.pop('fftpath', None)
-        self.rmspath = analysis_paths.pop('rmspath', None)
-        self.atkpath = analysis_paths.pop('atkpath', None)
-        self.zeroxpath = analysis_paths.pop('zeroxpath', None)
+    def create_analysis_group(self, analysis_file):
+        """
+        Create group for object to store analyses.
+
+        Audio file analyses are organized in groups per audio file.
+        This function creates a group in the analysis HDF5 file with the name
+        of the audio file. Analyses of this file are stored in analysis
+        sub-groups.
+        """
+        # If an analysis file object is not provided, try to create on based on
+        # the object's name and audio file location.
+        if not analysis_file:
+            if self.db_dir:
+                # Raise error as database should have analysis file.
+                raise IOError("Database doesn't have an analysis file.")
+            else:
+                # Attempt to create a new analysis file using the name of the
+                # audiofile.
+                path = os.path.split(self.wavpath)[0]
+                name = '_'.join((os.path.splitext(self.name)[0], 'analysis_data.hdf5'))
+                datapath = os.path.join(path, name)
+                analysis_file = h5py.File(datapath, 'a')
+        # Create a group to store analyses for this file in
+        try:
+            self.analysis_group = analysis_file.create_group(self.name)
+        except ValueError:
+            self.logger.warning("A file with the same name ({0}) already "
+                                "exists in the analysis data. Using data from "
+                                "this file.".format(self.name))
+            self.analysis_group = analysis_file[self.name]
 
     def __enter__(self):
         super(AnalysedAudioFile, self).__enter__()
@@ -797,33 +825,26 @@ class AnalysedAudioFile(AudioFile):
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
 
-        if self.fftpath or self.db_dir and 'fft' in self.analyses:
-            self.FFT = FFTAnalysis(self, self.rmspath)
+        if 'fft' in self.analyses:
+            self.FFT = FFTAnalysis(self, self.analysis_group)
         else:
-            self.logger.warning("No FFT path for: {0}".format(self.name))
+            self.logger.info("Skipping FFT analysis.")
             self.FFT = None
 
         # ---------------
         # Create RMS analysis object if file has an rms path or is part of a
         # database
-        if self.rmspath or self.db_dir and 'rms' in self.analyses:
-            self.RMS = RMSAnalysis(self, self.rmspath)
+        if 'rms' in self.analyses:
+            self.RMS = RMSAnalysis(self, self.analysis_data)
         else:
-            self.logger.warning("No RMS path for: {0}".format(self.name))
+            self.logger.info("Skipping RMS analysis.")
             self.RMS = None
 
-        # Create attack estimation analysis
-        if self.atkpath or self.db_dir and 'atk' in self.analyses:
-            self.Attack = AttackAnalysis(self, self.atkpath)
-        else:
-            self.logger.warning("No Attack path for: {0}".format(self.name))
-            self.Attack = None
-
         # Create Zero crossing analysis
-        if self.zeroxpath or self.db_dir and 'zerox' in self.analyses:
-            self.ZeroX = ZeroXAnalysis(self, self.zeroxpath)
+        if 'zerox' in self.analyses:
+            self.ZeroX = ZeroXAnalysis(self, self.analysis_data)
         else:
-            self.logger.warning("No Zero crossing path for: {0}".format(self.name))
+            self.logger.info("Skipping zero-crossing analysis.")
             self.ZeroX = None
         return self
 
@@ -893,9 +914,12 @@ class AudioDatabase:
         # parameters
 
         # Create a dictionary to store reference to the content of the database
+        self.audio_file_list = []
+        """
         db_content = collections.defaultdict(
             lambda: {i: None for i in {'audio', 'data'}}
         )
+        """
 
         # Check that audio directory exists
         if not os.path.exists(audio_dir):
@@ -929,10 +953,15 @@ class AudioDatabase:
                 if os.path.exists(directory):
                     self.logger.warning("\'{0}\' directory already exists:"
                     " {1}".format(dirkey, os.path.relpath(directory)))
+                    if dirkey == 'audio':
+                        for item in pathops.listdir_nohidden(directory):
+                            self.audio_file_list.append(item)
+                    """
                     for item in pathops.listdir_nohidden(directory):
                         db_content[os.path.splitext(item)[0]][dirkey] = (
                             os.path.join(directory, item)
                         )
+                    """
                 else:
                     raise err
             return directory
@@ -968,7 +997,7 @@ class AudioDatabase:
                     self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
                           subdir_paths["audio"])))
                 # Add the file's path to the database content dictionary
-                db_content[os.path.splitext(item)[0]]["audio"] = (
+                self.audio_file_list.append(
                     os.path.join(subdir_paths["audio"], item)
                 )
 
@@ -976,21 +1005,16 @@ class AudioDatabase:
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
         self.data = h5py.File(datapath, 'a')
 
-        print(db_content)
-        exit()
-        self.analysed_audio_list = []
-        for key in db_content.viewkeys():
+        for item in self.audio_file_list:
+            filepath = os.path.join(subdir_paths['audio'], item)
             print("--------------------------------------------------")
             # if there is no wav file then skip
-            if not db_content[key]["audio"]:
-                self.logger.warning(''.join(("No audio path for: ", key)))
-                continue
             try:
                 with AnalysedAudioFile(
-                    db_content[key]["audio"],
+                    filepath,
                     'r',
                     analyses=analysis_list,
-                    name=key,
+                    name=os.path.basename(item),
                     db_dir=db_dir,
                     data_file=self.data,
                     reanalyse=reanalyse
@@ -999,7 +1023,7 @@ class AudioDatabase:
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
                 self.logger.warning("File cannot be analysed: {0}\nReason: {1}\n"
-                      "Skipping...".format(db_content[key]["wav"], err))
+                      "Skipping...".format(item, err))
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                                           file=sys.stdout)

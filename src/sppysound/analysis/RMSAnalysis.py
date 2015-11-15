@@ -26,13 +26,13 @@ class RMSAnalysis:
     member as other such analyses are. Use get_rms_from_file.
     """
 
-    def __init__(self, AnalysedAudioFile, rmspath):
+    def __init__(self, AnalysedAudioFile, analysis_data):
         self.logger = logging.getLogger(__name__ + '.RMSAnalysis')
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
-        # Store the path to the RMS file if it already exists
-        self.rmspath = rmspath
+        # Store refference to the analysis data HDF5 file.
+        self.analysis_data = analysis_data
 
         # Stores the number of RMS window values when calculating the RMS
         # contour

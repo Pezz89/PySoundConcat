@@ -18,34 +18,29 @@ logger = logging.getLogger(__name__)
 
 
 class FFTAnalysis:
-    """An encapsulation of the FFT analysis of audio."""
+    """
+    An encapsulation of the FFT analysis of audio.
 
-    def __init__(self, AnalysedAudioFile, fftpath):
+    Arguments:
+        AnalysedAudioFile - File object to perform the analysis on
+        analysis_data - HDF5 file object used to store analysis
+    """
+
+    def __init__(self, AnalysedAudioFile, analysis_group):
         self.logger = logging.getLogger(__name__ + '.FFTAnalysis')
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
         # Store the path to the FFT file if it already exists
-        self.fftpath = fftpath
+        try:
+            self.analysis_data = analysis_group.create_group('fft')
+        except ValueError:
+            self.logger.warning("FFT analysis group already exists")
+            self.analysis_group = analysis_file['fft']
 
         # Stores the number of FFT window values when calculating the FFT
         # contour
         self.fft_window_count = None
-
-        # Check that the class file has a path to write the fft file to
-        if not self.fftpath:
-            # If it doesn't then attampt to generate a path based on the
-            # location of the database that the object is a part of.
-            if not self.AnalysedAudioFile.db_dir:
-                # If it isn't part of a database and doesn't have a path then
-                # there is no where to write the fft data to.
-                raise IOError('Analysed Audio object must have an FFT file'
-                              'path or be part of a database')
-            self.fftpath = os.path.join(
-                self.AnalysedAudioFile.db_dir,
-                'fft',
-                self.AnalysedAudioFile.name + '.npy'
-            )
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one
