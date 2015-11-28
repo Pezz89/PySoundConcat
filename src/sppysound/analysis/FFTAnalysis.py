@@ -34,7 +34,7 @@ class FFTAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         self.analysis_group = analysis_group
-        self.create_analysis(self.create_fft_analysis, window_size = 200)
+        self.create_analysis(self.create_fft_analysis)
         self.fft_window_count = None
 
 
@@ -60,7 +60,6 @@ class FFTAnalysis(Analysis):
         self.analysis_data.create_dataset('data', data=stft)
         self.analysis_data.create_dataset('times', data=frame_times)
 
-        return stft
 
     def stft(self, sig, frameSize, overlapFac=0.5, window=np.hanning):
         """Short time fourier transform of audio signal."""
@@ -128,7 +127,7 @@ class FFTAnalysis(Analysis):
                  colormap="jet"):
         """Plot spectrogram."""
         # Get all fft frames
-        s = self.analysis[:]
+        s = self.analysis_data['data'][:]
 
         sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)
 

@@ -10,10 +10,12 @@ import pdb
 from AnalysisTools import ButterFilter
 from fileops import pathops
 
+from Analysis import Analysis
+
 logger = logging.getLogger(__name__)
 
 
-class RMSAnalysis:
+class RMSAnalysis(Analysis):
 
     """
     An encapsulation of the RMS analysis of an AnalysedAudioFile.
@@ -28,45 +30,13 @@ class RMSAnalysis:
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group):
-        self.logger = logging.getLogger(__name__ + '.RMSAnalysis')
+        super(RMSAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'RMS')
+        self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
-        # Stores the number of RMS window values when calculating the RMS
-        # contour
-        self.rms_window_count = None
-
-        try:
-            self.analysis_data = analysis_group.create_group('rms')
-        except ValueError:
-            self.logger.warning("rms analysis group already exists")
-            self.analysis_data = analysis_group['rms']
-
-        # If forcing new analysis creation then delete old analysis and create
-        # a new one
-        if self.AnalysedAudioFile.force_analysis:
-            self.logger.warning("Force re-analysis is enabled. "
-                                "deleting: {0}".format(self.analysis_data.name))
-            # Delete all pre-existing data in database.
-            for i in self.analysis_data.iterkeys():
-                del self.analysis_data[i]
-            self.rms_analysis = self.create_rms_analysis()
-        else:
-            # Check if analysis file already exists.
-            try:
-                self.rms_analysis = self.analysis_data['data']
-                self.logger.info("Analysis already exists. "
-                                 "Reading from: {0}".format(self.analysis_data.name))
-                # If an RMS file is provided then count the number of lines
-                # (1 for each window)
-                self.logger.info(''.join(("Reading RMS data: (HDF5 File)",
-                                          self.analysis_data.name)))
-                self.rms_window_count = self.rms_analysis.size
-                self.logger.debug(''.join(("RMS Window Count: ",
-                                           str(self.rms_window_count))))
-            except KeyError:
-                # If it doesn't then generate a new file
-                self.rms_analysis = self.create_rms_analysis()
+        self.analysis_group = analysis_group
+        self.create_analysis(self.create_rms_analysis)
 
 
     def create_rms_analysis(self, window_size=100,

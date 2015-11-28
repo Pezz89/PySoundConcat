@@ -42,21 +42,21 @@ class Analysis(object):
             # Delete all pre-existing data in database.
             for i in self.analysis_data.iterkeys():
                 del self.analysis_data[i]
-            self.analysis = analysis_function(*args, **kwargs)
+            analysis_function(*args, **kwargs)
         else:
             # Check if analysis file already exists.
             try:
-                self.analysis = self.analysis_data['data']
-                self.logger.info("Analysis already exists. "
-                                 "Reading from: {0}".format(self.analysis_data.name))
-                # If an analysis file is provided then count the number of lines
-                # (1 for each window)
-                self.logger.info(''.join(("Reading {0} data: "
-                                          "(HDF5 File)".format(self.name),
-                                          self.analysis_data.name)))
-                self.window_count = self.analysis.size
-                self.logger.debug(''.join(("{0} Window Count: ".format(self.name),
-                                           str(self.window_count))))
+                if self.analysis_data['data']:
+                    self.logger.info("Analysis already exists. "
+                                    "Reading from: {0}".format(self.analysis_data.name))
+                    # If an analysis file is provided then count the number of lines
+                    # (1 for each window)
+                    self.logger.info(''.join(("Reading {0} data: "
+                                            "(HDF5 File)".format(self.name),
+                                            self.analysis_data.name)))
+                    self.window_count = self.analysis_data['data'].size
+                    self.logger.debug(''.join(("{0} Window Count: ".format(self.name),
+                                            str(self.window_count))))
             except KeyError:
                 # If it doesn't then generate a new file
-                self.analysis = analysis_function(*args, **kwargs)
+                analysis_function(*args, **kwargs)

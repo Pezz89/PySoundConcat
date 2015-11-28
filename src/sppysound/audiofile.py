@@ -17,6 +17,7 @@ import analysis.RMSAnalysis as RMSAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 import analysis.FFTAnalysis as FFTAnalysis
+import analysis.SpectralCentroidAnalysis as SpectralCentroidAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -825,15 +826,14 @@ class AnalysedAudioFile(AudioFile):
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
 
+        # Create the analysis objects for analyses that have been specified in
+        # the analyses member variable.
         if 'fft' in self.analyses:
             self.FFT = FFTAnalysis(self, self.analysis_group)
         else:
             self.logger.info("Skipping FFT analysis.")
             self.FFT = None
 
-        # ---------------
-        # Create RMS analysis object if file has an rms path or is part of a
-        # database
         if 'rms' in self.analyses:
             self.RMS = RMSAnalysis(self, self.analysis_group)
         else:
@@ -846,6 +846,13 @@ class AnalysedAudioFile(AudioFile):
         else:
             self.logger.info("Skipping zero-crossing analysis.")
             self.ZeroX = None
+
+        if 'spccntr' in self.analyses:
+            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping Spectral Centroid analysis.")
+            self.SpectralCentroid = None
+
         return self
 
     def open(self):
@@ -902,7 +909,7 @@ class AudioDatabase:
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'atk', 'fft'}
+        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr'}
         for analysis in analysis_list:
             if analysis not in valid_analyses:
                 raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))

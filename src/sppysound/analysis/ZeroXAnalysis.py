@@ -20,7 +20,7 @@ class ZeroXAnalysis(Analysis):
         self.analysis_group = analysis_group
         self.create_analysis(self.create_zerox_analysis)
 
-        self.zerox_window_count = self.analysis.size
+        self.zerox_window_count = self.analysis_data['data'].size
 
 
     def create_zerox_analysis(self, *args, **kwargs):
