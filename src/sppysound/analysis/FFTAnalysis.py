@@ -36,7 +36,7 @@ class FFTAnalysis:
             self.analysis_data = analysis_group.create_group('fft')
         except ValueError:
             self.logger.warning("FFT analysis group already exists")
-            self.analysis_group = analysis_file['fft']
+            self.analysis_data = analysis_group['fft']
 
         # Stores the number of FFT window values when calculating the FFT
         # contour
@@ -46,27 +46,29 @@ class FFTAnalysis:
         # a new one
         if self.AnalysedAudioFile.force_analysis:
             self.logger.warning("Force re-analysis is enabled. "
-                                "deleting: {0}".format(self.fftpath))
-            pathops.delete_if_exists(self.fftpath)
-            self.fftpath = self.create_fft_analysis()
-            self.fft_analysis = np.load(self.fftpath, mmap_mode='r')
+                                "deleting: {0}".format(self.analysis_data.name))
+            # Delete all pre-existing data in database.
+            for i in self.analysis_data.iterkeys():
+                del self.analysis_data[i]
+
+            self.fft_analysis = self.create_fft_analysis()
         else:
             # Check if analysis file already exists.
             try:
-                self.fft_analysis = np.load(self.fftpath, mmap_mode='r')
+                self.fft_analysis = self.analysis_data['data']
                 self.logger.info("Analysis already exists. "
-                                 "Reading from: {0}".format(self.fftpath))
+                                 "Reading from: {0}".format(self.analysis_data.name))
                 # If an FFT file is provided then count the number of lines
                 # (1 for each window)
-                self.logger.info(''.join(("Reading FFT file: ",
-                                    os.path.relpath(self.fftpath))))
+                self.logger.info(''.join(("Reading FFT data: (HDF5 File)",
+                                          self.analysis_data.name)))
                 self.fft_window_count = self.fft_analysis.size
                 self.logger.debug(''.join(("FFT Window Count: ",
                                            str(self.fft_window_count))))
-            except IOError:
+            except KeyError:
                 # If it doesn't then generate a new file
-                self.fftpath = self.create_fft_analysis()
-                self.fft_analysis = np.load(self.fftpath, mmap_mode='r')
+                self.fft_analysis = self.create_fft_analysis()
+
 
     def create_fft_analysis(self, window_size=100, window_overlap=2,
                             window_type='hanning'):
@@ -74,8 +76,8 @@ class FFTAnalysis:
         # Calculate the period of the window in hz
         lowest_freq = 1.0 / window_size
         # Filter frequencies lower than the period of the window
-        filter = ButterFilter()
-        filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
+        # filter = ButterFilter()
+        # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
 
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         try:
@@ -87,9 +89,10 @@ class FFTAnalysis:
                 frames,
                 self.AnalysedAudioFile.samplerate
             )
-            np.save(self.fftpath, stft)
+            self.analysis_data.create_dataset('data', data=stft)
+            self.analysis_data.create_dataset('times', data=frame_times)
 
-            return self.fftpath
+            return stft
         # If the fft file couldn't be opened then raise an error
         except IOError:
             # TODO: Sort this. This isn't right I don't think.
@@ -161,9 +164,8 @@ class FFTAnalysis:
                  colormap="jet"):
         """Plot spectrogram."""
         # Get all fft frames
-        s = self.fft_analysis['frames'][:]
+        s = self.fft_analysis[:]
 
-        print(fs)
         sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)
 
         # Amplitude to decibel

@@ -776,7 +776,7 @@ class AnalysedAudioFile(AudioFile):
         # Refferences the HDF5 file object to use for storing analysis data.
         analysis_file = kwargs.pop('data_file', None)
 
-        self.create_analysis_group(analysis_file)
+        self.analysis_group = self.create_analysis_group(analysis_file)
 
         # If True then files are re-analysed, discarding any previous analysis.
         self.force_analysis = kwargs.pop('reanalyse', False)
@@ -789,7 +789,7 @@ class AnalysedAudioFile(AudioFile):
 
     def create_analysis_group(self, analysis_file):
         """
-        Create group for object to store analyses.
+        Create group for object to store analyses for this audio file.
 
         Audio file analyses are organized in groups per audio file.
         This function creates a group in the analysis HDF5 file with the name
@@ -811,12 +811,12 @@ class AnalysedAudioFile(AudioFile):
                 analysis_file = h5py.File(datapath, 'a')
         # Create a group to store analyses for this file in
         try:
-            self.analysis_group = analysis_file.create_group(self.name)
+            return analysis_file.create_group(self.name)
         except ValueError:
             self.logger.warning("A file with the same name ({0}) already "
                                 "exists in the analysis data. Using data from "
                                 "this file.".format(self.name))
-            self.analysis_group = analysis_file[self.name]
+            return analysis_file[self.name]
 
     def __enter__(self):
         super(AnalysedAudioFile, self).__enter__()
@@ -835,14 +835,14 @@ class AnalysedAudioFile(AudioFile):
         # Create RMS analysis object if file has an rms path or is part of a
         # database
         if 'rms' in self.analyses:
-            self.RMS = RMSAnalysis(self, self.analysis_data)
+            self.RMS = RMSAnalysis(self, self.analysis_group)
         else:
             self.logger.info("Skipping RMS analysis.")
             self.RMS = None
 
         # Create Zero crossing analysis
         if 'zerox' in self.analyses:
-            self.ZeroX = ZeroXAnalysis(self, self.analysis_data)
+            self.ZeroX = ZeroXAnalysis(self, self.analysis_group)
         else:
             self.logger.info("Skipping zero-crossing analysis.")
             self.ZeroX = None
@@ -1004,6 +1004,7 @@ class AudioDatabase:
         # Create data file for storing analysis data for the database
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
         self.data = h5py.File(datapath, 'a')
+        self.analysed_audio_list = []
 
         for item in self.audio_file_list:
             filepath = os.path.join(subdir_paths['audio'], item)
