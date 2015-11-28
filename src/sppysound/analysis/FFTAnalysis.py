@@ -12,12 +12,13 @@ from numpy.lib import stride_tricks
 import os
 from matplotlib import pyplot as plt
 from AnalysisTools import ButterFilter
+from Analysis import Analysis
 import pdb
 
 logger = logging.getLogger(__name__)
 
 
-class FFTAnalysis:
+class FFTAnalysis(Analysis):
     """
     An encapsulation of the FFT analysis of audio.
 
@@ -27,51 +28,19 @@ class FFTAnalysis:
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group):
-        self.logger = logging.getLogger(__name__ + '.FFTAnalysis')
+        super(FFTAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'FFT')
+        self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
-        # Store the path to the FFT file if it already exists
-        try:
-            self.analysis_data = analysis_group.create_group('fft')
-        except ValueError:
-            self.logger.warning("FFT analysis group already exists")
-            self.analysis_data = analysis_group['fft']
-
-        # Stores the number of FFT window values when calculating the FFT
-        # contour
+        self.analysis_group = analysis_group
+        self.create_analysis(self.create_fft_analysis, window_size = 200)
         self.fft_window_count = None
 
-        # If forcing new analysis creation then delete old analysis and create
-        # a new one
-        if self.AnalysedAudioFile.force_analysis:
-            self.logger.warning("Force re-analysis is enabled. "
-                                "deleting: {0}".format(self.analysis_data.name))
-            # Delete all pre-existing data in database.
-            for i in self.analysis_data.iterkeys():
-                del self.analysis_data[i]
-
-            self.fft_analysis = self.create_fft_analysis()
-        else:
-            # Check if analysis file already exists.
-            try:
-                self.fft_analysis = self.analysis_data['data']
-                self.logger.info("Analysis already exists. "
-                                 "Reading from: {0}".format(self.analysis_data.name))
-                # If an FFT file is provided then count the number of lines
-                # (1 for each window)
-                self.logger.info(''.join(("Reading FFT data: (HDF5 File)",
-                                          self.analysis_data.name)))
-                self.fft_window_count = self.fft_analysis.size
-                self.logger.debug(''.join(("FFT Window Count: ",
-                                           str(self.fft_window_count))))
-            except KeyError:
-                # If it doesn't then generate a new file
-                self.fft_analysis = self.create_fft_analysis()
 
 
     def create_fft_analysis(self, window_size=100, window_overlap=2,
-                            window_type='hanning'):
+                            window_type='hanning', *args, **kwargs):
         """Create a spectral analysis for overlapping frames of audio."""
         # Calculate the period of the window in hz
         lowest_freq = 1.0 / window_size
@@ -80,23 +49,18 @@ class FFTAnalysis:
         # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
 
         window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
-        try:
-            frames = self.AnalysedAudioFile.read_grain()
-            # frames = filter.filter_butter(frames)
-            stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
-            frame_times = self.calc_fft_frame_times(
-                stft,
-                frames,
-                self.AnalysedAudioFile.samplerate
-            )
-            self.analysis_data.create_dataset('data', data=stft)
-            self.analysis_data.create_dataset('times', data=frame_times)
+        frames = self.AnalysedAudioFile.read_grain()
+        # frames = filter.filter_butter(frames)
+        stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
+        frame_times = self.calc_fft_frame_times(
+            stft,
+            frames,
+            self.AnalysedAudioFile.samplerate
+        )
+        self.analysis_data.create_dataset('data', data=stft)
+        self.analysis_data.create_dataset('times', data=frame_times)
 
-            return stft
-        # If the fft file couldn't be opened then raise an error
-        except IOError:
-            # TODO: Sort this. This isn't right I don't think.
-            return None
+        return stft
 
     def stft(self, sig, frameSize, overlapFac=0.5, window=np.hanning):
         """Short time fourier transform of audio signal."""
@@ -164,7 +128,7 @@ class FFTAnalysis:
                  colormap="jet"):
         """Plot spectrogram."""
         # Get all fft frames
-        s = self.fft_analysis[:]
+        s = self.analysis[:]
 
         sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)
 

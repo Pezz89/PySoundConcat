@@ -1,21 +1,19 @@
 from __future__ import print_function
-import os
 import numpy as np
 import logging
 from Analysis import Analysis
 import pdb
 
-from fileops import pathops
-
 logger = logging.getLogger(__name__)
+
 
 class ZeroXAnalysis(Analysis):
 
-    """ """
+    """Zero-crossing analysis class. """
 
     def __init__(self, AnalysedAudioFile, analysis_group):
-        super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'name')
-        self.logger = logging.getLogger('audiofile.{0}'.format(self.name))
+        super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'ZeroCrossing')
+        self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         self.zerox_window_count = None
         self.logger.debug(''.join(("zero-crossing Window Count: ",
                                     str(self.zerox_window_count))))

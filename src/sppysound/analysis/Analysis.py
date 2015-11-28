@@ -42,7 +42,7 @@ class Analysis(object):
             # Delete all pre-existing data in database.
             for i in self.analysis_data.iterkeys():
                 del self.analysis_data[i]
-            self.analysis = analysis_function(args, kwargs)
+            self.analysis = analysis_function(*args, **kwargs)
         else:
             # Check if analysis file already exists.
             try:
@@ -59,4 +59,4 @@ class Analysis(object):
                                            str(self.window_count))))
             except KeyError:
                 # If it doesn't then generate a new file
-                self.analysis = analysis_function(args, kwargs)
+                self.analysis = analysis_function(*args, **kwargs)
