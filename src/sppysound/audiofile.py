@@ -788,6 +788,34 @@ class AnalysedAudioFile(AudioFile):
         # A set containing tags for analyses to be created for the file
         self.analyses = kwargs["analyses"]
 
+    def create_analysis(self):
+        # Create the analysis objects for analyses that have been specified in
+        # the analyses member variable.
+        if 'fft' in self.analyses:
+            self.FFT = FFTAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping FFT analysis.")
+            self.FFT = None
+
+        if 'rms' in self.analyses:
+            self.RMS = RMSAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping RMS analysis.")
+            self.RMS = None
+
+        # Create Zero crossing analysis
+        if 'zerox' in self.analyses:
+            self.ZeroX = ZeroXAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping zero-crossing analysis.")
+            self.ZeroX = None
+
+        if 'spccntr' in self.analyses:
+            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping Spectral Centroid analysis.")
+            self.SpectralCentroid = None
+
     def create_analysis_group(self, analysis_file):
         """
         Create group for object to store analyses for this audio file.
@@ -825,33 +853,6 @@ class AnalysedAudioFile(AudioFile):
             raise IOError(
                 "File isn't valid: {0}\nCheck that file is mono and isn't "
                 "empty".format(self.name))
-
-        # Create the analysis objects for analyses that have been specified in
-        # the analyses member variable.
-        if 'fft' in self.analyses:
-            self.FFT = FFTAnalysis(self, self.analysis_group)
-        else:
-            self.logger.info("Skipping FFT analysis.")
-            self.FFT = None
-
-        if 'rms' in self.analyses:
-            self.RMS = RMSAnalysis(self, self.analysis_group)
-        else:
-            self.logger.info("Skipping RMS analysis.")
-            self.RMS = None
-
-        # Create Zero crossing analysis
-        if 'zerox' in self.analyses:
-            self.ZeroX = ZeroXAnalysis(self, self.analysis_group)
-        else:
-            self.logger.info("Skipping zero-crossing analysis.")
-            self.ZeroX = None
-
-        if 'spccntr' in self.analyses:
-            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analysis_group)
-        else:
-            self.logger.info("Skipping Spectral Centroid analysis.")
-            self.SpectralCentroid = None
 
         return self
 
@@ -1027,6 +1028,7 @@ class AudioDatabase:
                     data_file=self.data,
                     reanalyse=reanalyse
                 ) as AAF:
+                    AAF.create_analysis()
                     self.analysed_audio_list.append(AAF)
             except IOError as err:
                 # Skip any audio file objects that can't be analysed
@@ -1036,8 +1038,13 @@ class AudioDatabase:
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                                           file=sys.stdout)
                 continue
-        with self.analysed_audio_list[48].open() as AAF:
-            AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
+        print("--------------------------------------------------")
+        self.logger.debug("Analysis Finished.")
+        for i in self.analysed_audio_list:
+            with i as AAF:
+                print(i.SpectralCentroid.analysis['data'])
+        # with self.analysed_audio_list[48] as AAF:
+            # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
 
     def close(self):
         self.data.close()

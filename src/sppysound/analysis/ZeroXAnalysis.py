@@ -20,12 +20,12 @@ class ZeroXAnalysis(Analysis):
         self.analysis_group = analysis_group
         self.create_analysis(self.create_zerox_analysis)
 
-        self.zerox_window_count = self.analysis_data['data'].size
+        self.zerox_window_count = self.analysis['data'].size
 
 
     def create_zerox_analysis(self, *args, **kwargs):
         """Generate zero crossing detections for windows of the signal"""
         zero_crossings = np.where(np.diff(np.sign(
             self.AnalysedAudioFile.read_grain())))[0]
-        self.analysis_data.create_dataset('data', data=zero_crossings)
+        self.analysis.create_dataset('data', data=zero_crossings)
         return zero_crossings

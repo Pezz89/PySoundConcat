@@ -24,7 +24,7 @@ class FFTAnalysis(Analysis):
 
     Arguments:
         AnalysedAudioFile - File object to perform the analysis on
-        analysis_data - HDF5 file object used to store analysis
+        analysis - HDF5 file object used to store analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group):
@@ -39,7 +39,7 @@ class FFTAnalysis(Analysis):
 
 
 
-    def create_fft_analysis(self, window_size=100, window_overlap=2,
+    def create_fft_analysis(self, window_size=512, window_overlap=2,
                             window_type='hanning', *args, **kwargs):
         """Create a spectral analysis for overlapping frames of audio."""
         # Calculate the period of the window in hz
@@ -48,7 +48,6 @@ class FFTAnalysis(Analysis):
         # filter = ButterFilter()
         # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
 
-        window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
         frames = self.AnalysedAudioFile.read_grain()
         # frames = filter.filter_butter(frames)
         stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
@@ -57,8 +56,11 @@ class FFTAnalysis(Analysis):
             frames,
             self.AnalysedAudioFile.samplerate
         )
-        self.analysis_data.create_dataset('data', data=stft)
-        self.analysis_data.create_dataset('times', data=frame_times)
+        self.analysis.create_dataset('data', data=stft)
+        self.analysis.create_dataset('times', data=frame_times)
+        self.analysis.attrs['win_size'] = window_size
+        self.analysis.attrs['overlap'] = window_overlap
+        self.analysis.attrs['win_type'] = window_type
 
 
     def stft(self, sig, frameSize, overlapFac=0.5, window=np.hanning):
@@ -127,7 +129,7 @@ class FFTAnalysis(Analysis):
                  colormap="jet"):
         """Plot spectrogram."""
         # Get all fft frames
-        s = self.analysis_data['data'][:]
+        s = self.analysis['data'][:]
 
         sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)
 

@@ -86,8 +86,8 @@ class RMSAnalysis(Analysis):
             self.AnalysedAudioFile.samplerate
         )
 
-        self.analysis_data.create_dataset('data', data=rms)
-        self.analysis_data.create_dataset('times', data=rms_times)
+        self.analysis.create_dataset('data', data=rms)
+        self.analysis.create_dataset('times', data=rms_times)
 
         return rms, rms_times
 

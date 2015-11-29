@@ -29,32 +29,32 @@ class Analysis(object):
         """
 
         try:
-            self.analysis_data = self.analysis_group.create_group(self.name)
+            self.analysis = self.analysis_group.create_group(self.name)
         except ValueError:
             self.logger.warning("{0} analysis group already exists".format(self.name))
-            self.analysis_data = self.analysis_group[self.name]
+            self.analysis = self.analysis_group[self.name]
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one
         if self.AnalysedAudioFile.force_analysis:
             self.logger.warning("Force re-analysis is enabled. "
-                                "deleting: {0}".format(self.analysis_data.name))
+                                "deleting: {0}".format(self.analysis.name))
             # Delete all pre-existing data in database.
-            for i in self.analysis_data.iterkeys():
-                del self.analysis_data[i]
+            for i in self.analysis.iterkeys():
+                del self.analysis[i]
             analysis_function(*args, **kwargs)
         else:
             # Check if analysis file already exists.
             try:
-                if self.analysis_data['data']:
+                if self.analysis['data']:
                     self.logger.info("Analysis already exists. "
-                                    "Reading from: {0}".format(self.analysis_data.name))
+                                    "Reading from: {0}".format(self.analysis.name))
                     # If an analysis file is provided then count the number of lines
                     # (1 for each window)
                     self.logger.info(''.join(("Reading {0} data: "
                                             "(HDF5 File)".format(self.name),
-                                            self.analysis_data.name)))
-                    self.window_count = self.analysis_data['data'].size
+                                            self.analysis.name)))
+                    self.window_count = self.analysis['data'].size
                     self.logger.debug(''.join(("{0} Window Count: ".format(self.name),
                                             str(self.window_count))))
             except KeyError:
