@@ -20,7 +20,7 @@ class Analysis(object):
         self.analysis_group = analysis_group
         self.name = name
 
-    def create_analysis(self, analysis_function, *args, **kwargs):
+    def create_analysis(self, *args, **kwargs):
         """
         Create the analysis and save to the HDF5 file.
 
@@ -42,7 +42,13 @@ class Analysis(object):
             # Delete all pre-existing data in database.
             for i in self.analysis.iterkeys():
                 del self.analysis[i]
-            analysis_function(*args, **kwargs)
+            # Run the analysis function and format it's returned data ready to
+            # be saved in the HDF5 file
+            data_dict, attrs_dict = self.hdf5_dataset_formatter(*args, **kwargs)
+            for key, value in data_dict.iteritems():
+                self.analysis.create_dataset(key, data=value)
+            for key, value in attrs_dict.iteritems():
+                self.analysis.attrs[key] = value
         else:
             # Check if analysis file already exists.
             try:
@@ -59,4 +65,22 @@ class Analysis(object):
                                             str(self.window_count))))
             except KeyError:
                 # If it doesn't then generate a new file
-                analysis_function(*args, **kwargs)
+                # Run the analysis function and format it's returned data ready to
+                # be saved in the HDF5 file
+                data_dict, attrs_dict = self.hdf5_dataset_formatter(*args, **kwargs)
+                for key, value in data_dict.iteritems():
+                    self.analysis.create_dataset(key, data=value)
+                for key, value in attrs_dict.iteritems():
+                    self.analysis.attrs[key] = value
+
+    def hdf5_dataset_formatter(analysis_method, *args, **kwargs):
+        '''
+        Formats the output from the analysis method to save to the HDF5 file.
+
+        Places data and attributes in 2 dictionaries to be stored in the HDF5
+        file.
+        Note: This is a generic formatter designed as a template to be
+        overwritten by a descriptor sub-class.
+        '''
+        output = analysis_method(*args, **kwargs)
+        return ({'data' : output}, {'attrs' : None})

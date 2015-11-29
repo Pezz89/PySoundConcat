@@ -36,10 +36,11 @@ class RMSAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         self.analysis_group = analysis_group
-        self.create_analysis(self.create_rms_analysis)
+        frames = self.AnalysedAudioFile.read_grain()
+        self.create_analysis(frames)
 
-
-    def create_rms_analysis(self, window_size=100,
+    @staticmethod
+    def create_rms_analysis(frames, window_size=512,
                             window=signal.triang,
                             overlapFac=0.5):
         """
@@ -49,18 +50,14 @@ class RMSAnalysis(Analysis):
         save to disk.
         """
         # Calculate the period of the window in hz
-        lowest_freq = 1.0 / window_size
+        # lowest_freq = 1.0 / window_size
         # Filter frequencies lower than the period of the window
         # filter = ButterFilter()
         # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
-
-        window_size = self.AnalysedAudioFile.ms_to_samps(window_size)
-        # Generate a window function to apply to rms windows before analysis
-
-        frames = self.AnalysedAudioFile.read_grain()
         # TODO: Fix filter
         # frames = filter.filter_butter(frames)
 
+        # Generate a window function to apply to rms windows before analysis
         win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
@@ -80,18 +77,20 @@ class RMSAnalysis(Analysis):
 
         frames *= win
         rms = np.sqrt(np.mean(np.square(frames), axis=1))
-        rms_times = self.calc_rms_frame_times(
-            rms,
-            samples,
-            self.AnalysedAudioFile.samplerate
-        )
 
-        self.analysis.create_dataset('data', data=rms)
-        self.analysis.create_dataset('times', data=rms_times)
+        return rms
 
-        return rms, rms_times
+    def hdf5_dataset_formatter(self, *args, **kwargs):
+        '''
+        Formats the output from the analysis method to save to the HDF5 file.
+        '''
+        samplerate = self.AnalysedAudioFile.samplerate
+        rms = self.create_rms_analysis(*args, **kwargs)
+        rms_times = self.calc_rms_frame_times(rms, args[0], samplerate)
+        return ({'frames': rms, 'times': rms_times}, {})
 
-    def calc_rms_frame_times(self, rmsframes, sample_frames, samplerate):
+    @staticmethod
+    def calc_rms_frame_times(rmsframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
 

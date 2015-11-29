@@ -1042,7 +1042,7 @@ class AudioDatabase:
         self.logger.debug("Analysis Finished.")
         for i in self.analysed_audio_list:
             with i as AAF:
-                print(i.SpectralCentroid.analysis['data'])
+                print(i.SpectralCentroid.analysis['frames'])
         # with self.analysed_audio_list[48] as AAF:
             # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
 

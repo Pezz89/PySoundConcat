@@ -1,8 +1,9 @@
 """A set of unit tests to check the correct operation of the pysound module."""
 import unittest
 import numpy as np
-from sppysound import AudioFile
+from sppysound import AudioFile, analysis
 from fileops import pathops
+import pdb
 import os
 
 
@@ -51,8 +52,6 @@ class FileCreationTests(globalTests):
         self.assertEquals(self.TestAudio.pysndfile_object.samplerate(), 44100)
         self.assertEquals(self.TestAudio.format, 65539)
         self.assertEquals(self.TestAudio.pysndfile_object.format(), 65539)
-        del self.TestAudio
-        os.remove("./.TestAudio.wav")
 
     def test_ReadFail(self):
         """Check that opening a file that doesn't exist for reading fails."""
@@ -61,6 +60,15 @@ class FileCreationTests(globalTests):
                 "./.TestAudio.wav",
                 mode='r'
             )
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        pathops.delete_if_exists("./.TestAudio.wav")
 
 
 class SwitchModeTests(globalTests):
@@ -467,14 +475,43 @@ class RMSAnalysisTests(globalTests):
     """Tests RMS analysis generation"""
 
     def setUp(self):
+        # TODO: Write this test...
         """Create functions and variables before each test is run."""
         self.TestAudio = self.create_test_audio()
-        self.TestAudio.write_frames()
 
     def test_GenerateRMS(self):
         """Check that RMS values generated are the expected values"""
 
+class SpectralCentroidAnalysisTests(globalTests):
 
+    """Tests Spectral Centroid analysis generation"""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        self.TestAudio = self.create_test_audio()
+        # Specify frequency of the sine wave
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(88200)
+        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+
+    def test_GenerateSpectralCentroid(self):
+        fft = analysis.FFTAnalysis.stft(self.sine_wave, 512)
+        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr)
+        average_output = np.median(output)
+        self.assertTrue(self.f-2 <= average_output <= self.f+2)
+
+
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        del self.TestAudio
+        pathops.delete_if_exists("./.TestAudio.wav")
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)
 FileCreationSuite = unittest.TestLoader().loadTestsFromTestCase(

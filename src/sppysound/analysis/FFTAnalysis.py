@@ -34,13 +34,13 @@ class FFTAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         self.analysis_group = analysis_group
-        self.create_analysis(self.create_fft_analysis)
+        self.create_analysis()
         self.fft_window_count = None
 
 
 
     def create_fft_analysis(self, window_size=512, window_overlap=2,
-                            window_type='hanning', *args, **kwargs):
+                            window_type='hanning'):
         """Create a spectral analysis for overlapping frames of audio."""
         # Calculate the period of the window in hz
         lowest_freq = 1.0 / window_size
@@ -56,14 +56,37 @@ class FFTAnalysis(Analysis):
             frames,
             self.AnalysedAudioFile.samplerate
         )
+        return (stft, frame_times)
         self.analysis.create_dataset('data', data=stft)
         self.analysis.create_dataset('times', data=frame_times)
         self.analysis.attrs['win_size'] = window_size
         self.analysis.attrs['overlap'] = window_overlap
         self.analysis.attrs['win_type'] = window_type
 
+    def hdf5_dataset_formatter(self, *args, **kwargs):
+        '''
+        Formats the output from the analysis method to save to the HDF5 file.
 
-    def stft(self, sig, frameSize, overlapFac=0.5, window=np.hanning):
+        Places data and attributes in 2 dictionaries to be stored in the HDF5
+        file.
+        Note: This is a generic formatter designed as a template to be
+        overwritten by a descriptor sub-class.
+        '''
+        frames, frame_times = self.create_fft_analysis(*args, **kwargs)
+        return (
+            {
+                'frames': frames,
+                'frame_times': frame_times
+            },
+            {
+                'win_size': kwargs.pop('window_size', 512),
+                'overlap': kwargs.pop('overlap', 2),
+                'window_type': kwargs.pop('window_type', 'hanning')
+            }
+        )
+
+    @staticmethod
+    def stft(sig, frameSize, overlapFac=0.5, window=np.hanning):
         """Short time fourier transform of audio signal."""
         win = window(frameSize)
         hopSize = int(frameSize - np.floor(overlapFac * frameSize))

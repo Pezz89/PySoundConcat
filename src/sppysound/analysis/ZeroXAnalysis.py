@@ -20,12 +20,17 @@ class ZeroXAnalysis(Analysis):
         self.analysis_group = analysis_group
         self.create_analysis(self.create_zerox_analysis)
 
-        self.zerox_window_count = self.analysis['data'].size
-
-
-    def create_zerox_analysis(self, *args, **kwargs):
+    @staticmethod
+    def create_zerox_analysis(samples, *args, **kwargs):
         """Generate zero crossing detections for windows of the signal"""
-        zero_crossings = np.where(np.diff(np.sign(
-            self.AnalysedAudioFile.read_grain())))[0]
-        self.analysis.create_dataset('data', data=zero_crossings)
+        # TODO: window across audiofile.
+        zero_crossings = np.where(np.diff(np.sign(samples)))[0]
         return zero_crossings
+
+    def hdf5_dataset_formatter(self, *args, **kwargs):
+        '''
+        Formats the output from the analysis method to save to the HDF5 file.
+        '''
+        samples = self.AnalysedAudioFile.read_grain()
+        frames = self.create_zerox_analysis(samples, *args, **kwargs)
+        return ({'frames': frames}, {})
