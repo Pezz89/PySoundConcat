@@ -57,11 +57,6 @@ class FFTAnalysis(Analysis):
             self.AnalysedAudioFile.samplerate
         )
         return (stft, frame_times)
-        self.analysis.create_dataset('data', data=stft)
-        self.analysis.create_dataset('times', data=frame_times)
-        self.analysis.attrs['win_size'] = window_size
-        self.analysis.attrs['overlap'] = window_overlap
-        self.analysis.attrs['win_type'] = window_type
 
     def hdf5_dataset_formatter(self, *args, **kwargs):
         '''

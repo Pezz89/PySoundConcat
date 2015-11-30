@@ -18,6 +18,7 @@ import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 import analysis.FFTAnalysis as FFTAnalysis
 import analysis.SpectralCentroidAnalysis as SpectralCentroidAnalysis
+import analysis.SpectralSpreadAnalysis as SpectralSpreadAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -816,6 +817,12 @@ class AnalysedAudioFile(AudioFile):
             self.logger.info("Skipping Spectral Centroid analysis.")
             self.SpectralCentroid = None
 
+        if 'spcsprd' in self.analyses:
+            self.SpectralSpread = SpectralSpreadAnalysis(self, self.analysis_group)
+        else:
+            self.logger.info("Skipping Spectral Spread analysis.")
+            self.SpectralSpread = None
+
     def create_analysis_group(self, analysis_file):
         """
         Create group for object to store analyses for this audio file.
@@ -894,7 +901,7 @@ class AudioDatabase:
         self,
         audio_dir,
         db_dir=None,
-        analysis_list=["rms", "atk", "zerox", "fft"],
+        analysis_list=["rms", "atk", "zerox", "fft", "spccntr", "spcsprd"],
         reanalyse=False
     ):
         """
@@ -910,7 +917,7 @@ class AudioDatabase:
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr'}
+        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr', 'spcsprd'}
         for analysis in analysis_list:
             if analysis not in valid_analyses:
                 raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))

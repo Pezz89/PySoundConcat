@@ -61,7 +61,7 @@ def main():
         nargs='*',
         help='Specify analyses to be created. Valid analyses are: \'rms\''
         '\'f0\' \'atk\' \'fft\'',
-        default=["rms", "zerox", "fft", "spccntr"]
+        default=["rms", "zerox", "fft", "spccntr", "spcsprd"]
     )
     parser.add_argument(
         '--rms',
