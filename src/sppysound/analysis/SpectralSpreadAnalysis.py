@@ -53,10 +53,12 @@ class SpectralSpreadAnalysis(Analysis):
         # Calculate the centre frequency of each rfft bin.
         freqs = np.fft.rfftfreq(length, 1.0/samplerate)
 
-        for i in spectral_centroid
-        pdb.set_trace()
 
-        np.power(freqs-spectral_centroid)
+        pdb.set_trace()
+        a = np.power(freqs-spectral_centroid)
+        mag_sqrd = np.power(magnitudes)
         # Calculate the weighted mean
-        y = np.sum(magnitudes, axis=1) / np.sum(magnitudes, axis=1)
+        y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / np.sum(mag_sqrd, axis=1))
+
+        pdb.set_trace()
         return y

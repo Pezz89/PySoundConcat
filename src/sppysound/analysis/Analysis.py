@@ -50,20 +50,11 @@ class Analysis(object):
             for key, value in attrs_dict.iteritems():
                 self.analysis.attrs[key] = value
         else:
-            # Check if analysis file already exists.
-            try:
-                if self.analysis['data']:
-                    self.logger.info("Analysis already exists. "
-                                    "Reading from: {0}".format(self.analysis.name))
-                    # If an analysis file is provided then count the number of lines
-                    # (1 for each window)
-                    self.logger.info(''.join(("Reading {0} data: "
-                                            "(HDF5 File)".format(self.name),
-                                            self.analysis.name)))
-                    self.window_count = self.analysis['data'].size
-                    self.logger.debug(''.join(("{0} Window Count: ".format(self.name),
-                                            str(self.window_count))))
-            except KeyError:
+
+            if self.analysis.items():
+                self.logger.info("Analysis already exists. Reading from: "
+                                 "{0}".format(self.analysis.name))
+            else:
                 # If it doesn't then generate a new file
                 # Run the analysis function and format it's returned data ready to
                 # be saved in the HDF5 file
@@ -82,5 +73,5 @@ class Analysis(object):
         Note: This is a generic formatter designed as a template to be
         overwritten by a descriptor sub-class.
         '''
-        output = analysis_method(*args, **kwargs)
-        return ({'data' : output}, {'attrs' : None})
+        output, attributes = analysis_method(*args, **kwargs)
+        return ({'data': output}, {'attrs': attributes})

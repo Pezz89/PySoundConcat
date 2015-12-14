@@ -64,8 +64,6 @@ class FFTAnalysis(Analysis):
 
         Places data and attributes in 2 dictionaries to be stored in the HDF5
         file.
-        Note: This is a generic formatter designed as a template to be
-        overwritten by a descriptor sub-class.
         '''
         frames, frame_times = self.create_fft_analysis(*args, **kwargs)
         return (
