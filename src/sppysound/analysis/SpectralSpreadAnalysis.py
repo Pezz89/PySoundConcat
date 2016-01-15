@@ -39,26 +39,33 @@ class SpectralSpreadAnalysis(Analysis):
         return ({'frames': output}, {})
 
     @staticmethod
-    def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate):
+    def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate, output_format = "ind"):
         '''
         Calculate the spectral centroid of the fft frames.
 
         fft: Real fft frames.
-        spectral_centroid: spectral centroid frames.
+        spectral_centroid: spectral centroid frames (in index format).
         length: the length of the window used to calculate the FFT.
         samplerate: the samplerate of the audio analysed.
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
-        # Calculate the centre frequency of each rfft bin.
-        freqs = np.fft.rfftfreq(length, 1.0/samplerate)
+        magnitudes = magnitudes / np.max(magnitudes);
+        # Get the index for each bin
+        if output_format == "ind":
+            freqs = np.arange(np.size(fft, axis=1))
+        if output_format == "freq":
+            freqs = np.fft.rfftfreq(length, 1.0/samplerate)
+        else:
+            raise ValueError("\'{0}\' is not a valid output "
+                             "format.".format(output_format))
 
+        spectral_centroid = np.vstack(spectral_centroid)
 
+        a = np.power(freqs-spectral_centroid, 2)
         pdb.set_trace()
-        a = np.power(freqs-spectral_centroid)
-        mag_sqrd = np.power(magnitudes)
+        mag_sqrd = np.power(magnitudes, 2)
         # Calculate the weighted mean
         y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / np.sum(mag_sqrd, axis=1))
 
-        pdb.set_trace()
         return y

@@ -12,6 +12,7 @@ class SpectralCentroidAnalysis(Analysis):
 
     def __init__(self, AnalysedAudioFile, analysis_group):
         super(SpectralCentroidAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcCntr')
+        # Create logger for module
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -35,17 +36,27 @@ class SpectralCentroidAnalysis(Analysis):
         return ({'frames': output}, {})
 
     @staticmethod
-    def create_spccntr_analysis(fft, length, samplerate):
+    def create_spccntr_analysis(fft, length, samplerate, output_format = "freq"):
         '''
         Calculate the spectral centroid of the fft frames.
 
         length: the length of the window used to calculate the FFT.
         samplerate: the samplerate of the audio analysed.
+        output_format = Choose either "freq" for output in Hz or "ind" for bin
+        index output
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
+        magnitudes = magnitudes / np.max(magnitudes);
         # Calculate the centre frequency of each rfft bin.
-        freqs = np.fft.rfftfreq(length, 1.0/samplerate)
+        if output_format == "freq":
+            freqs = np.fft.rfftfreq(length, 1.0/samplerate)
+        elif output_format == "ind":
+            freqs = np.arange(np.size(fft, axis=1))
+        else:
+            raise ValueError("\'{0}\' is not a valid output "
+                             "format.".format(output_format))
         # Calculate the weighted mean
         y = np.sum(magnitudes*freqs, axis=1) / np.sum(magnitudes, axis=1)
+        # Convert from index to Hz
         return y

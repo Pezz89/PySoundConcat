@@ -4,6 +4,7 @@ from ZeroXAnalysis import ZeroXAnalysis
 from FFTAnalysis import FFTAnalysis
 from SpectralCentroidAnalysis import SpectralCentroidAnalysis
 from SpectralSpreadAnalysis import SpectralSpreadAnalysis
+from F0Analysis import F0Analysis
 import AnalysisTools
 __all__ = [
     "ZeroXAnalysis",
@@ -12,5 +13,6 @@ __all__ = [
     "AnalysisTools",
     "FFTAnalysis",
     "SpectralCentroidAnalysis",
-    "SpectralSpreadAnalysis"
+    "SpectralSpreadAnalysis",
+    "F0Analysis"
 ]
