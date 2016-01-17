@@ -23,7 +23,6 @@ import analysis.F0Analysis as F0Analysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-
 class AudioFile(object):
 
     """Object for storing and accessing basic information for an audio file."""
@@ -91,8 +90,7 @@ class AudioFile(object):
             try:
                 return method(*args, **kwargs)
             except AttributeError, err:
-                raise IOError("{0}: Audio file isn't open.".format(err),
-                              sys.exc_info()[2])
+                raise IOError("{0}: Audio file isn't open.".format(err), sys.exc_info()[2])
 
         return wrapper
 

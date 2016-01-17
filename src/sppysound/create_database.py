@@ -6,12 +6,15 @@ import argparse
 import audiofile
 import logging
 from fileops import loggerops
+import pdb
+import os
+import __builtin__
+
+filename = os.path.splitext(__file__)[0]
+logger = loggerops.create_logger(log_filename='./{0}.log'.format(filename))
 
 ###########################################################################
 # File open and closing monitoring
-import __builtin__
-
-logger = loggerops.create_logger()
 openfiles = set()
 oldfile = __builtin__.file
 

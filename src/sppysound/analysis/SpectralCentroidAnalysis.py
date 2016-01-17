@@ -36,7 +36,7 @@ class SpectralCentroidAnalysis(Analysis):
         return ({'frames': output}, {})
 
     @staticmethod
-    def create_spccntr_analysis(fft, length, samplerate, output_format = "freq"):
+    def create_spccntr_analysis(fft, length, samplerate, output_format="freq"):
         '''
         Calculate the spectral centroid of the fft frames.
 
@@ -47,7 +47,7 @@ class SpectralCentroidAnalysis(Analysis):
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
-        magnitudes = magnitudes / np.max(magnitudes);
+        magnitudes = magnitudes / np.max(magnitudes)
         # Calculate the centre frequency of each rfft bin.
         if output_format == "freq":
             freqs = np.fft.rfftfreq(length, 1.0/samplerate)
