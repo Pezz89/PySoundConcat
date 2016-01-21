@@ -8,8 +8,8 @@ def my_first_DFT(input, window_size=4096):
     # Create arrays at half the size of the sample provided.
     # These will store the real and imaginary values as amplitudes of sine and
     # cosine waves for each frequency bin
-    window = np.hamming(window_size)
-    input = input*window
+    #window = np.hamming(window_size)
+    #input = input*window
     real_values = np.zeros(window_size/2+1)
     imaginary_values = np.zeros(window_size/2+1)
 
@@ -131,24 +131,25 @@ if __name__ == "__main__":
     # these values as 2 arrays with size == samples/2
     output = my_first_DFT(test_wave, window_size=samples.size)
 
-    impulse = my_first_IDFT(np.hstack((np.zeros(110), [1], np.zeros(145))), np.zeros(256), window_size=512)
-    windowed_impulse = impulse*np.hamming(512)
+    impulse = my_first_IDFT(np.hstack(([1], np.zeros(255))), np.zeros(256), window_size=512)
 
-    window_dft = my_first_DFT(windowed_impulse, window_size=512)
-    polar_values = rect_to_pol(window_dft[0], window_dft[1])
-
-    amp_to_dB(polar_values[0])
-    plt.subplot(211)
-    plt.plot(polar_values[0])
+    # amp_to_dB(polar_values[0])
     window_dft = my_first_DFT(impulse, window_size=512)
     polar_values = rect_to_pol(window_dft[0], window_dft[1])
+    plt.subplot(211)
+    plt.yscale('log')
+    plt.plot(polar_values[0])
+
+    windowed_impulse = impulse*np.hamming(512)
+    window_dft = my_first_DFT(windowed_impulse, window_size=512)
+    polar_values = rect_to_pol(window_dft[0], window_dft[1])
     plt.subplot(212)
+    plt.yscale('log')
     plt.plot(polar_values[0])
     plt.show()
     exit()
 
     # Plot output arrays to show
-    y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
     plt.subplot(312)
     plt.title('Real values')
     plt.axis((0, output[0].size, -1.2, 1.2))
