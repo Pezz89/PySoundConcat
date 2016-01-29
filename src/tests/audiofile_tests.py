@@ -556,6 +556,22 @@ class SpectralSpreadAnalysisTests(globalTests):
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
 
+class F0AnalysisTests(globalTests):
+    """Tests Spectral Spread analysis generation."""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        self.TestAudio = self.create_test_audio()
+        # Specify frequency of the sine wave
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(88200)
+        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        self.white_noise = np.random.random(88200)
+
+    def test_Generatef0(self):
+        f0analysis = analysis.F0Analysis.create_f0_analysis(self.sine_wave, self.sr)
+
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)
 FileCreationSuite = unittest.TestLoader().loadTestsFromTestCase(
@@ -565,3 +581,5 @@ FileCreationSuite = unittest.TestLoader().loadTestsFromTestCase(
 AllTestsSuite = unittest.TestSuite(
     [ReadGrainSuite, SwitchModeSuite, FileCreationSuite]
 )
+if __name__ == "__main__":
+    unittest.main()
