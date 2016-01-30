@@ -565,7 +565,7 @@ class F0AnalysisTests(globalTests):
         # Specify frequency of the sine wave
         self.sr = 44100
         self.f = 440
-        x = np.arange(88200)
+        x = np.arange(88200)+1
         self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
         self.white_noise = np.random.random(88200)
 
