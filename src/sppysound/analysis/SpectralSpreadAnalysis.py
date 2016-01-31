@@ -54,7 +54,7 @@ class SpectralSpreadAnalysis(Analysis):
         # Get the index for each bin
         if output_format == "ind":
             freqs = np.arange(np.size(fft, axis=1))
-        if output_format == "freq":
+        elif output_format == "freq":
             freqs = np.fft.rfftfreq(length, 1.0/samplerate)
         else:
             raise ValueError("\'{0}\' is not a valid output "

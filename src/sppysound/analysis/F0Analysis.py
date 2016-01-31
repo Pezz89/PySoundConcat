@@ -7,8 +7,10 @@ from numpy.lib import stride_tricks
 from Analysis import Analysis
 from scipy import signal
 from numpy.fft import fft, ifft, fftshift
+import warnings
 
 from numpy import polyfit, arange
+
 class F0Analysis(Analysis):
 
     """
@@ -136,7 +138,7 @@ class F0Analysis(Analysis):
 
             if not m0:
                 # estimate m0 (as the first zero crossing of R)
-                m0 = np.argmin(np.diff(np.sign(R)))
+                m0 = np.argmin(np.diff(np.sign(R[1:])))
             if M > R.size:
                 M = R.size
             Gamma = np.zeros(M)
@@ -149,16 +151,16 @@ class F0Analysis(Analysis):
                 f0 = 0
             else:
                 # compute T0 and harmonic ratio:
-                if not Gamma.size:
+                if np.isnan(Gamma).any():
                     HR=1
-                    blag=0
-                    Gamma=np.zeros(M,1)
+                    f0 = 0
+                    Gamma=np.zeros(M)
                 else:
                     blag = np.argmax(Gamma)
                     HR = Gamma[blag]
-                interp = parabolic(Gamma, blag)[0]
-                # get fundamental frequency:
-                f0 = samplerate / interp
+                    interp = parabolic(Gamma, blag)[0]
+                    # get fundamental frequency:
+                    f0 = samplerate / interp
 
             return f0, HR
 
