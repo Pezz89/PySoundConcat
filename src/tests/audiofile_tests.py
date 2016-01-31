@@ -530,20 +530,17 @@ class SpectralSpreadAnalysisTests(globalTests):
         fft = analysis.FFTAnalysis.stft(self.sine_wave, 512)
         output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr, output_format = 'freq')
         average_output = np.median(output)
-        pdb.set_trace()
         output = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis(fft, output, 512, self.sr, output_format='freq')
         output = output / (44100/2.0)
         average_output = np.median(output)
-        pdb.set_trace()
 
-        # self.assertTrue(0 <= average_output <= 2)
+        self.assertTrue(0 <= average_output <= 2)
         fft = analysis.FFTAnalysis.stft(self.white_noise, 512)
         output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr, output_format = 'ind')
         output = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis(fft, output, 512, self.sr, output_format='freq')
         average_output = np.median(output)
         output = output / (44100/2.0)
         average_output = np.median(output)
-        pdb.set_trace()
         # self.assertTrue(8000 <= average_output)
 
     def tearDown(self):
@@ -570,7 +567,10 @@ class F0AnalysisTests(globalTests):
         self.white_noise = np.random.random(88200)
 
     def test_Generatef0(self):
-        f0analysis = analysis.F0Analysis.create_f0_analysis(self.sine_wave, self.sr)
+        output = analysis.F0Analysis.create_f0_analysis(self.sine_wave, self.sr)
+        average_output = np.median(output[:, 0])
+        a = (average_output >= 437) & (average_output <= 443)
+        self.assertTrue(a.all())
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)

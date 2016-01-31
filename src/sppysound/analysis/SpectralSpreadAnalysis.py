@@ -63,7 +63,6 @@ class SpectralSpreadAnalysis(Analysis):
         spectral_centroid = np.vstack(spectral_centroid)
 
         a = np.power(freqs-spectral_centroid, 2)
-        pdb.set_trace()
         mag_sqrd = np.power(magnitudes, 2)
         # Calculate the weighted mean
         y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / np.sum(mag_sqrd, axis=1))
