@@ -999,27 +999,29 @@ class AudioDatabase:
         valid_filetypes = {'.wav', '.aif', '.aiff'}
         # Move audio files to database
         # For all files in the audio dirctory...
-        for item in pathops.listdir_nohidden(audio_dir):
-            # If the file is a valid file type...
-            if os.path.splitext(item)[1] in valid_filetypes:
-                self.logger.debug(''.join(("File added to database content: ", item)))
-                # Get the full path for the file
-                wavpath = os.path.join(audio_dir, item)
-                # If the file isn't already in the database...
-                if not os.path.isfile(
-                    '/'.join((subdir_paths["audio"], os.path.basename(wavpath)))
-                ):
-                    # Copy the file to the database
-                    shutil.copy2(wavpath, subdir_paths["audio"])
-                    self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
-                          subdir_paths["audio"], "\n")))
-                else:
-                    self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
-                          subdir_paths["audio"])))
-                # Add the file's path to the database content dictionary
-                self.audio_file_list.append(
-                    os.path.join(subdir_paths["audio"], item)
-                )
+        for root, directories, filenames in os.walk(audio_dir):
+            for item in filenames:
+                # If the file is a valid file type...
+                item = os.path.join(root,item)
+                if os.path.splitext(item)[1] in valid_filetypes:
+                    self.logger.debug(''.join(("File added to database content: ", item)))
+                    # Get the full path for the file
+                    wavpath = os.path.join(audio_dir, item)
+                    # If the file isn't already in the database...
+                    if not os.path.isfile(
+                        '/'.join((subdir_paths["audio"], os.path.basename(wavpath)))
+                    ):
+                        # Copy the file to the database
+                        shutil.copy2(wavpath, subdir_paths["audio"])
+                        self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
+                            subdir_paths["audio"], "\n")))
+                    else:
+                        self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
+                            subdir_paths["audio"])))
+                    # Add the file's path to the database content dictionary
+                    self.audio_file_list.append(
+                        os.path.join(subdir_paths["audio"], item)
+                    )
 
         # Create data file for storing analysis data for the database
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
@@ -1054,7 +1056,7 @@ class AudioDatabase:
         self.logger.debug("Analysis Finished.")
         for i in self.analysed_audio_list:
             with i as AAF:
-                print(i.SpectralCentroid.analysis['frames'])
+                print(i.F0Analysis.analysis['frames'])
         # with self.analysed_audio_list[48] as AAF:
             # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
 

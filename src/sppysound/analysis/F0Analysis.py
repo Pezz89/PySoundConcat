@@ -112,6 +112,9 @@ class F0Analysis(Analysis):
             Out[4]: (3.2142857142857144, 6.1607142857142856)
 
             """
+            if x >= f.size-1 or x <= 0:
+                return x, f[x]
+
             xv = 1/2. * (f[x-1] - f[x+1]) / (f[x-1] - 2 * f[x] + f[x+1]) + x
             yv = f[x] - 1/4. * (f[x-1] - f[x+1]) * (xv - x)
             return (xv, yv)
@@ -130,6 +133,11 @@ class F0Analysis(Analysis):
             return ret
 
         def per_frame_f0(frames, m0, M):
+            if not frames.any():
+                HR = 0
+                f0 = 0
+                return f0, HR
+
             R=autocorr([frames])
             R = R[0]
             g=R[frames.size]
@@ -138,7 +146,9 @@ class F0Analysis(Analysis):
 
             if not m0:
                 # estimate m0 (as the first zero crossing of R)
-                m0 = np.argmin(np.diff(np.sign(R[1:])))
+                m0 = np.argmin(np.diff(np.sign(R[1:])))+1
+            if m0 == 1:
+                m0 = R.size
             if M > R.size:
                 M = R.size
             Gamma = np.zeros(M)
@@ -152,15 +162,23 @@ class F0Analysis(Analysis):
             else:
                 # compute T0 and harmonic ratio:
                 if np.isnan(Gamma).any():
-                    HR=1
+                    HR=0
                     f0 = 0
-                    Gamma=np.zeros(M)
                 else:
                     blag = np.argmax(Gamma)
                     HR = Gamma[blag]
-                    interp = parabolic(Gamma, blag)[0]
-                    # get fundamental frequency:
-                    f0 = samplerate / interp
+                    interp, HR = parabolic(Gamma, blag)
+                    if not interp:
+                        f0 = 0
+                        HR = 0
+                    else:
+                        # get fundamental frequency:
+                        f0 = samplerate / interp
+            print(f0, HR)
+            if f0 >= 22000:
+                pdb.set_trace()
+            if HR >= 1:
+                pdb.set_trace()
 
             return f0, HR
 
