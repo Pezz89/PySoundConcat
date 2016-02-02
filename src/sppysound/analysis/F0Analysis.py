@@ -112,7 +112,7 @@ class F0Analysis(Analysis):
             Out[4]: (3.2142857142857144, 6.1607142857142856)
 
             """
-            if x >= f.size-1 or x <= 0:
+            if x >= f.size-1 or x <= 2:
                 return x, f[x]
 
             xv = 1/2. * (f[x-1] - f[x+1]) / (f[x-1] - 2 * f[x] + f[x+1]) + x
@@ -147,10 +147,10 @@ class F0Analysis(Analysis):
             if not m0:
                 # estimate m0 (as the first zero crossing of R)
                 m0 = np.argmin(np.diff(np.sign(R[1:])))+1
-            if m0 <= 1:
-                m0 = R.size
+            if m0 == 1:
+                m0 = R.size-1
             if M > R.size:
-                M = R.size
+                M = R.size-1
             Gamma = np.zeros(M)
 
             CSum = np.cumsum(frames*frames)
@@ -175,8 +175,7 @@ class F0Analysis(Analysis):
                     else:
                         # get fundamental frequency:
                         f0 = samplerate / interp
-            print(f0, HR)
-            if f0 >= 22000:
+            if f0 > samplerate/2:
                 pdb.set_trace()
             if HR >= 1:
                 pdb.set_trace()
