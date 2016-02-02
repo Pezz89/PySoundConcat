@@ -140,18 +140,19 @@ class F0Analysis(Analysis):
 
             R=autocorr([frames])
             R = R[0]
-            g=R[frames.size]
+            g=R[frames.size-1]
 
-            R=R[frames.size-1:]
+            R=R[frames.size:]
 
             if not m0:
                 # estimate m0 (as the first zero crossing of R)
                 m0 = np.argmin(np.diff(np.sign(R[1:])))+1
-            if m0 == 1:
+            if m0 <= 1:
                 m0 = R.size
             if M > R.size:
                 M = R.size
             Gamma = np.zeros(M)
+
             CSum = np.cumsum(frames*frames)
 
             Gamma[m0:M] = R[m0:M] / (np.sqrt([g*CSum[-m0:-M:-1]])+np.finfo(float).eps)
