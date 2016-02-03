@@ -23,6 +23,7 @@ class SpectralSpreadAnalysis(Analysis):
                              "analysis.")
 
         self.analysis_group = analysis_group
+        self.logger.info("Creating Spectral Spread analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
             self.AnalysedAudioFile.FFT.analysis['frames'][:],
             self.AnalysedAudioFile.SpectralCentroid.analysis['frames'][:],

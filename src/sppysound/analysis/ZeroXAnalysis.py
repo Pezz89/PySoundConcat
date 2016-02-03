@@ -15,6 +15,7 @@ class ZeroXAnalysis(Analysis):
         super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'ZeroCrossing')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         self.analysis_group = analysis_group
+        self.logger.info("Creating zero crossing analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(self.create_zerox_analysis)
 
     @staticmethod

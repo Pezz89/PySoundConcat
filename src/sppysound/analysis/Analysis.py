@@ -31,13 +31,13 @@ class Analysis(object):
         try:
             self.analysis = self.analysis_group.create_group(self.name)
         except ValueError:
-            self.logger.warning("{0} analysis group already exists".format(self.name))
+            self.logger.info("{0} analysis group already exists".format(self.name))
             self.analysis = self.analysis_group[self.name]
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one
         if self.AnalysedAudioFile.force_analysis:
-            self.logger.warning("Force re-analysis is enabled. "
+            self.logger.info("Force re-analysis is enabled. "
                                 "deleting: {0}".format(self.analysis.name))
             # Delete all pre-existing data in database.
             for i in self.analysis.iterkeys():

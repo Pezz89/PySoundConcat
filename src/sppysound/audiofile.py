@@ -28,7 +28,7 @@ class AudioFile(object):
 
     """Object for storing and accessing basic information for an audio file."""
 
-    def __init__(self, wavpath, mode,
+    def __init__(self, filepath, mode,
                  format=None,
                  channels=None,
                  samplerate=None,
@@ -36,7 +36,7 @@ class AudioFile(object):
         self.logger = logging.getLogger(__name__ + '.AudioFile')
         self.logger.info("Initialised AudioFile")
 
-        self.wavpath = wavpath
+        self.filepath = filepath
         # TODO: If a name isn't provided then create a default name based on
         # the file name without an extension
         self.name = name
@@ -47,15 +47,15 @@ class AudioFile(object):
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
-        self.logger.info("Opening soundfile {0}".format(self.wavpath))
+        self.logger.info("Opening soundfile {0}".format(self.filepath))
         if self.mode == 'r':
-            if not os.path.exists(self.wavpath):
+            if not os.path.exists(self.filepath):
                 raise IOError(
                     "Cannot open {0} for reading as it cannot be "
-                    "found.".format(self.wavpath)
+                    "found.".format(self.filepath)
                 )
             self.pysndfile_object = pysndfile.PySndfile(
-                self.wavpath,
+                self.filepath,
                 mode=self.mode
             )
             self.samplerate = self.get_samplerate()
@@ -64,7 +64,7 @@ class AudioFile(object):
             return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
-                self.wavpath,
+                self.filepath,
                 mode=self.mode,
                 format=self.format,
                 channels=self.channels,
@@ -73,16 +73,16 @@ class AudioFile(object):
             return self
 
     def open(self):
-        self.logger.info("Opening soundfile {0}".format(self.wavpath))
+        self.logger.info("Opening soundfile {0}".format(self.filepath))
         return self.__enter__()
 
     def close(self):
-        self.logger.info("Closing soundfile {0}".format(self.wavpath))
+        self.logger.info("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
-        self.logger.info("Closing soundfile {0}".format(self.wavpath))
+        self.logger.info("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __if_open(method):
@@ -317,7 +317,7 @@ class AudioFile(object):
     def audio_file_info(self):
         """ Prints audio information """
         print('*************************************************')
-        print('File:                    ', os.path.relpath(self.wavpath))
+        print('File:                    ', os.path.relpath(self.filepath))
         print('No. channels:            ', self.channels())
         print('Samplerate:              ', self.samplerate())
         print('Format:                  ', self.format())
@@ -362,7 +362,7 @@ class AudioFile(object):
         """Normalizes the entire file"""
         # Get current file name and it's extension
         (current_filename, current_fileextension) = (
-            os.path.splitext(self.wavpath)
+            os.path.splitext(self.filepath)
         )
         # Create a seperate filepath to use for the mono file to be created
         normalized_filename = ''.join(
@@ -413,10 +413,10 @@ class AudioFile(object):
         """
         pathops.file_must_exist(replacement_filename)
         self.close()
-        os.remove(self.wavpath)
-        os.rename(replacement_filename, self.wavpath)
+        os.remove(self.filepath)
+        os.rename(replacement_filename, self.filepath)
         replacement_file = pysndfile.PySndfile(
-            self.wavpath,
+            self.filepath,
             mode='r',
         )
         self.channels = replacement_file.channels()
@@ -430,7 +430,7 @@ class AudioFile(object):
 
         # Get current file name and it's extension
         (current_filename, current_fileextension) = (
-            os.path.splitext(self.wavpath)
+            os.path.splitext(self.filepath)
         )
         # Create a seperate filepath to use for the mono file to be created
         mono_filename = ''.join(
@@ -488,7 +488,7 @@ class AudioFile(object):
             raise ValueError("The filepath: {0} does not point to an existing "
                              "directory".format(filename))
         # Check name has the same extension as previous file
-        old_ext = os.path.splitext(self.wavpath)[1]
+        old_ext = os.path.splitext(self.filepath)[1]
         new_ext = os.path.splitext(filename)[1]
         if old_ext != new_ext:
             raise ValueError("The renamed file's extension ({0})"
@@ -498,7 +498,7 @@ class AudioFile(object):
         seek = self.get_seek_position()
         del self.pysndfile_object
         # Rename file
-        os.rename(self.wavpath, filename)
+        os.rename(self.filepath, filename)
         # Reinitialize pysndfile object
         self.pysndfile_object = pysndfile.PySndfile(
             filename,
@@ -507,7 +507,7 @@ class AudioFile(object):
             samplerate=self.samplerate,
             channels=self.channels
         )
-        self.wavpath = filename
+        self.filepath = filename
         # Re-set seek position to previous position
         self.seek(seek, 0)
 
@@ -609,7 +609,7 @@ class AudioFile(object):
             seek = self.get_seek_position()
             del self.pysndfile_object
             self.pysndfile_object = pysndfile.PySndfile(
-                self.wavpath,
+                self.filepath,
                 mode=mode,
                 format=self.format,
                 channels=self.channels,
@@ -759,7 +759,7 @@ class AudioFile(object):
         ).open()
 
     def __repr__(self):
-        return 'AudioFile(name={0}, wav={1})'.format(self.name, self.wavpath)
+        return 'AudioFile(name={0}, wav={1})'.format(self.name, self.filepath)
 
 
 class AnalysedAudioFile(AudioFile):
@@ -847,18 +847,19 @@ class AnalysedAudioFile(AudioFile):
             else:
                 # Attempt to create a new analysis file using the name of the
                 # audiofile.
-                path = os.path.split(self.wavpath)[0]
+                path = os.path.split(self.filepath)[0]
                 name = '_'.join((os.path.splitext(self.name)[0], 'analysis_data.hdf5'))
                 datapath = os.path.join(path, name)
                 analysis_file = h5py.File(datapath, 'a')
         # Create a group to store analyses for this file in
         try:
-            return analysis_file.create_group(self.name)
+            analysis_file.create_group(self.name)
         except ValueError:
             self.logger.warning("A file with the same name ({0}) already "
                                 "exists in the analysis data. Using data from "
                                 "this file.".format(self.name))
-            return analysis_file[self.name]
+        analysis_file[self.name].attrs['filepath'] = self.filepath
+        return analysis_file[self.name]
 
     def __enter__(self):
         super(AnalysedAudioFile, self).__enter__()
@@ -891,18 +892,15 @@ class AnalysedAudioFile(AudioFile):
     # GENERAL ANALYSIS METHODS
 
     def __repr__(self):
-        return ('AnalysedAudioFile(name={0}, wav={1}, '
-                'rms={2}, attack={3}, zerox={4})'.format(self.name,
-                                                         self.wavpath,
-                                                         self.RMS.rmspath,
-                                                         self.Attack.attackpath,
-                                                         self.zeroxpath))
+        return ('AnalysedAudioFile(name={0}'.format(self.name))
 
 
 class AudioDatabase:
 
     """A class for encapsulating a database of AnalysedAudioFile objects."""
 
+    def read_database(self):
+        """Read from a pre-existing database"""
     def __init__(
         self,
         audio_dir,
@@ -920,7 +918,6 @@ class AudioDatabase:
         analysis_list:
         """
         self.logger = logging.getLogger(__name__ + '.AudioDatabase')
-        pool = mp.Pool()
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid
@@ -1008,13 +1005,13 @@ class AudioDatabase:
                 if os.path.splitext(item)[1] in valid_filetypes:
                     self.logger.debug(''.join(("File added to database content: ", item)))
                     # Get the full path for the file
-                    wavpath = os.path.join(audio_dir, item)
+                    filepath = os.path.join(audio_dir, item)
                     # If the file isn't already in the database...
                     if not os.path.isfile(
-                        '/'.join((subdir_paths["audio"], os.path.basename(wavpath)))
+                        '/'.join((subdir_paths["audio"], os.path.basename(filepath)))
                     ):
                         # Copy the file to the database
-                        shutil.copy2(wavpath, subdir_paths["audio"])
+                        shutil.copy2(filepath, subdir_paths["audio"])
                         self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
                             subdir_paths["audio"], "\n")))
                     else:
@@ -1057,8 +1054,7 @@ class AudioDatabase:
         print("--------------------------------------------------")
         self.logger.debug("Analysis Finished.")
         for i in self.analysed_audio_list:
-            with i as AAF:
-                print(i.F0Analysis.analysis['frames'])
+            print(i.F0.analysis['frames'])
         # with self.analysed_audio_list[48] as AAF:
             # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
 

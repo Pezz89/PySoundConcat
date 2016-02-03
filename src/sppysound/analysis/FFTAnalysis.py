@@ -34,6 +34,7 @@ class FFTAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         self.analysis_group = analysis_group
+        self.logger.info("Creating FFT analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis()
         self.fft_window_count = None
 

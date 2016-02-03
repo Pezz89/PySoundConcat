@@ -20,6 +20,7 @@ class SpectralCentroidAnalysis(Analysis):
             raise ValueError("FFT analysis is required for spectral centroid analysis.")
 
         self.analysis_group = analysis_group
+        self.logger.info("Creating Spectral Centroid analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
             self.create_spccntr_analysis,
             self.AnalysedAudioFile.FFT.analysis['frames'][:],

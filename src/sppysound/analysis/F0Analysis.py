@@ -33,6 +33,7 @@ class F0Analysis(Analysis):
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
+        self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, self.AnalysedAudioFile.samplerate)
 
     @staticmethod
