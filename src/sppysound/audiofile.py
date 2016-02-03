@@ -11,6 +11,7 @@ import sys
 import traceback
 import logging
 import h5py
+import multiprocessing as mp
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -919,6 +920,7 @@ class AudioDatabase:
         analysis_list:
         """
         self.logger = logging.getLogger(__name__ + '.AudioDatabase')
+        pool = mp.Pool()
         # TODO: Check that analysis strings in analysis_list are valid analyses
 
         # Check that all analysis list args are valid

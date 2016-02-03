@@ -178,8 +178,7 @@ class F0Analysis(Analysis):
             if f0 > samplerate/2:
                 pdb.set_trace()
             if HR >= 1:
-                pdb.set_trace()
-
+                HR = 1
             return f0, HR
 
         return np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
