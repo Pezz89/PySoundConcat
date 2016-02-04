@@ -352,7 +352,7 @@ class RenameFileTests(globalTests):
         self.TestAudio.rename_file("./.TestAudio.rename.wav")
         # Check file has new name
         self.assertTrue(os.path.exists("./.TestAudio.rename.wav"))
-        self.assertEqual(self.TestAudio.wavpath, "./.TestAudio.rename.wav")
+        self.assertEqual(self.TestAudio.filepath, "./.TestAudio.rename.wav")
         # Check new file has correct data
         self.assertEqual(self.TestAudio.frames(), original_framecount)
         self.assertEqual(self.TestAudio.channels, original_channels)
@@ -403,7 +403,7 @@ class ReplaceFileTests(globalTests):
         # Check that currently open object is now refferencing the replacement
         # file and that it has been renamed correctly
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
-        self.assertTrue(self.TestAudio.wavpath, "./.TestAudio.wav")
+        self.assertTrue(self.TestAudio.filepath, "./.TestAudio.wav")
         self.assertEqual(self.TestAudio.frames(), 50)
 
 

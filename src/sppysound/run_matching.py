@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Command line interface for generating an analysed audio file database."""
+"""Command line interface for matching databases"""
 
 import argparse
 import audiofile
@@ -50,13 +50,12 @@ def main():
     parser.add_argument(
         'source',
         type=str,
-        help='Directory of audio files to be added to the database'
+        help='Source database directory'
     )
     parser.add_argument(
         'target',
         type=str,
-        help='Directory to generate the database in. If the directory does not'
-        ' exist then it will be created if possible'
+        help='Target database directory'
     )
     parser.add_argument(
         '--analyse',
@@ -66,41 +65,20 @@ def main():
         '\'f0\' \'atk\' \'fft\'',
         default=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"]
     )
-    parser.add_argument(
-        '--rms',
-        nargs='+',
-        help='Specify arguments for creating RMS analyses'
-    )
-    parser.add_argument(
-        '--atk',
-        nargs='+',
-        help='Specify arguments for creating attack analyses'
-    )
-    parser.add_argument(
-        '--zerox',
-        nargs='+',
-        help='Specify arguments for creating zero-crossing analyses'
-    )
-    parser.add_argument(
-        '--fft',
-        nargs='+',
-        help='Specify arguments for creating zero-crossing analyses'
-    )
-    parser.add_argument(
-        "--reanalyse", action="store_true",
-        help="Force re-analysis of all analyses, overwriting any existing "
-        "analyses"
-    )
     args = parser.parse_args()
-
-    # Create database object
-    database = audiofile.AudioDatabase(
+    src_database = audiofile.AudioDatabase(
         args.source,
+        analysis_list=args.analyse,
+    )
+    # Create/load a pre-existing database
+    src_database.load_database(reanalyse=False)
+
+    tar_database = audiofile.AudioDatabase(
         args.target,
         analysis_list=args.analyse,
     )
     # Create/load a pre-existing database
-    database.load_database(reanalyse=args.reanalyse)
+    tar_database.load_database(reanalyse=False)
 
 if __name__ == "__main__":
     main()
