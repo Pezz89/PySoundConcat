@@ -8,6 +8,7 @@ import logging
 from fileops import loggerops
 import pdb
 import os
+from database import AudioDatabase
 import __builtin__
 
 filename = os.path.splitext(__file__)[0]
@@ -94,7 +95,7 @@ def main():
     args = parser.parse_args()
 
     # Create database object
-    database = audiofile.AudioDatabase(
+    database = AudioDatabase(
         args.source,
         args.target,
         analysis_list=args.analyse,

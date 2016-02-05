@@ -1,4 +1,5 @@
-from audiofile import AudioFile, AnalysedAudioFile, AudioDatabase
+from audiofile import AudioFile, AnalysedAudioFile
+from database import AudioDatabase
 import analysis
 import synthesis
 __all__ = [

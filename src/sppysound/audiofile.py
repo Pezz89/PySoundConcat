@@ -618,6 +618,23 @@ class AudioFile(object):
             self.pysndfile_object.seek(seek)
             self.mode = mode
 
+    def generate_grain_times(self, grain_length, overlap):
+        """
+        Generates an array of start and finish pairs.
+
+        Note that only full grains within the size of the sample are returned.
+        incomplete grains found at the end of files are ignored.
+        grain_length: length of each grain in seconds.
+        overlap: the factor by which grains overlap (integer)
+        """
+        length = self.samps_to_ms(self.frames())
+
+        grain_count = length / (grain_length / overlap)
+        pdb.set_trace()
+
+
+
+
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
         """
@@ -778,7 +795,7 @@ class AnalysedAudioFile(AudioFile):
         # Refferences the HDF5 file object to use for storing analysis data.
         analysis_file = kwargs.pop('data_file', None)
 
-        self.analysis_group = self.create_analysis_group(analysis_file)
+        self.analyses = self.create_analysis_group(analysis_file)
 
         # If True then files are re-analysed, discarding any previous analysis.
         self.force_analysis = kwargs.pop('reanalyse', False)
@@ -787,44 +804,44 @@ class AnalysedAudioFile(AudioFile):
         # a filepath, it will be generated and either saved at the path
         # specified or if one isn't specified, it will be created.
         # A set containing tags for analyses to be created for the file
-        self.analyses = kwargs["analyses"]
+        self.available_analyses = kwargs["analyses"]
 
     def create_analysis(self):
         # Create the analysis objects for analyses that have been specified in
         # the analyses member variable.
-        if 'fft' in self.analyses:
-            self.FFT = FFTAnalysis(self, self.analysis_group)
+        if 'fft' in self.available_analyses:
+            self.FFT = FFTAnalysis(self, self.analyses)
         else:
             self.logger.info("Skipping FFT analysis.")
             self.FFT = None
 
-        if 'rms' in self.analyses:
-            self.RMS = RMSAnalysis(self, self.analysis_group)
+        if 'rms' in self.available_analyses:
+            self.RMS = RMSAnalysis(self, self.analyses)
         else:
             self.logger.info("Skipping RMS analysis.")
             self.RMS = None
 
         # Create Zero crossing analysis
-        if 'zerox' in self.analyses:
-            self.ZeroX = ZeroXAnalysis(self, self.analysis_group)
+        if 'zerox' in self.available_analyses:
+            self.ZeroX = ZeroXAnalysis(self, self.analyses)
         else:
             self.logger.info("Skipping zero-crossing analysis.")
             self.ZeroX = None
 
-        if 'spccntr' in self.analyses:
-            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analysis_group)
+        if 'spccntr' in self.available_analyses:
+            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analyses)
         else:
             self.logger.info("Skipping Spectral Centroid analysis.")
             self.SpectralCentroid = None
 
-        if 'spcsprd' in self.analyses:
-            self.SpectralSpread = SpectralSpreadAnalysis(self, self.analysis_group)
+        if 'spcsprd' in self.available_analyses:
+            self.SpectralSpread = SpectralSpreadAnalysis(self, self.analyses)
         else:
             self.logger.info("Skipping Spectral Spread analysis.")
             self.SpectralSpread = None
 
-        if 'f0' in self.analyses:
-            self.F0 = F0Analysis(self, self.analysis_group)
+        if 'f0' in self.available_analyses:
+            self.F0 = F0Analysis(self, self.analyses)
         else:
             self.logger.info("Skipping Fundamental Frequency analysis.")
             self.F0 = None
@@ -892,194 +909,7 @@ class AnalysedAudioFile(AudioFile):
     # GENERAL ANALYSIS METHODS
 
     def __repr__(self):
-        return ('AnalysedAudioFile(name={0}'.format(self.name))
+        return ('AnalysedAudioFile(name={0})'.format(self.name))
 
 
-class AudioDatabase:
-
-    """A class for encapsulating a database of AnalysedAudioFile objects."""
-
-    def __init__(
-        self,
-        audio_dir=None,
-        db_dir=None,
-        analysis_list=[],
-    ):
-        """
-        Create the folder hierachy for the database of files to be stored in.
-
-        Adds any pre existing audio files and analyses to the object
-        automatically.
-        audio_dir:
-        self.db_dir:
-        analysis_list:
-        """
-        self.db_dir = db_dir
-        self.audio_dir = audio_dir
-        self.analysis_list = analysis_list
-        self.logger = logging.getLogger(__name__ + '.AudioDatabase')
-
-        # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr', 'spcsprd', 'f0'}
-        for analysis in analysis_list:
-            if analysis not in valid_analyses:
-                raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))
-
-        self.analysis_list = set(self.analysis_list)
-
-        self.logger.info("Initialising Database...")
-
-        # Create empty list to fill with audio file paths
-        self.audio_file_list = []
-
-    def load_database(self, reanalyse=False):
-        """Create/Read from a pre-existing database"""
-
-        # Check that audio directory exists
-        if not os.path.exists(self.audio_dir):
-            raise IOError("The audio directory provided ({0}) doesn't "
-                          "exist").format(self.audio_dir)
-
-        subdir_paths = self.create_subdirs()
-
-        if self.audio_dir:
-            self.organize_audio(subdir_paths)
-
-        analysed_audio_list = self.analyse_database(subdir_paths, reanalyse)
-
-        # with self.analysed_audio_list[48] as AAF:
-            # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
-
-    def analyse_database(self, subdir_paths, reanalyse):
-        # Create data file for storing analysis data for the database
-        datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
-        self.data = h5py.File(datapath, 'a')
-        self.analysed_audio_list = []
-
-        for item in self.audio_file_list:
-            filepath = os.path.join(subdir_paths['audio'], item)
-            print("--------------------------------------------------")
-            # if there is no wav file then skip
-            try:
-                with AnalysedAudioFile(
-                    filepath,
-                    'r',
-                    analyses=self.analysis_list,
-                    name=os.path.basename(item),
-                    db_dir=self.db_dir,
-                    data_file=self.data,
-                    reanalyse=reanalyse
-                ) as AAF:
-                    AAF.create_analysis()
-                    self.analysed_audio_list.append(AAF)
-            except IOError as err:
-                # Skip any audio file objects that can't be analysed
-                self.logger.warning("File cannot be analysed: {0}\nReason: {1}\n"
-                      "Skipping...".format(item, err))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                          file=sys.stdout)
-                continue
-        print("--------------------------------------------------")
-        self.logger.debug("Analysis Finished.")
-
-    def create_subdirs(self):
-
-        # If the database directory isnt specified then the directory where the
-        # audio files are stored will be used
-        if not self.db_dir:
-            if not self.audio_dir:
-                raise IOError("No database location specified. Either a "
-                              "database ocation or audio file location must be"
-                              " specified.")
-            self.db_dir = self.audio_dir
-
-
-        # Check to see if the database directory already exists
-        # Create if not
-        pathops.dir_must_exist(self.db_dir)
-
-        def initialise_subdir(dirkey):
-            """
-            Create a subdirectory in the database with the name of the key
-            provided.
-            Returns the path to the created subdirectory.
-            """
-            # Make sure database subdirectory exists
-            directory = os.path.join(self.db_dir, dirkey)
-            try:
-                # If it doesn't, Create it.
-                os.mkdir(directory)
-                self.logger.info(''.join(("Created directory: ", directory)))
-            except OSError as err:
-                # If it does exist, add it's content to the database content
-                # dictionary.
-                if os.path.exists(directory):
-                    self.logger.warning("\'{0}\' directory already exists:"
-                    " {1}".format(dirkey, os.path.relpath(directory)))
-                    if dirkey == 'audio':
-                        for item in pathops.listdir_nohidden(directory):
-                            self.audio_file_list.append(item)
-                    """
-                    for item in pathops.listdir_nohidden(directory):
-                        db_content[os.path.splitext(item)[0]][dirkey] = (
-                            os.path.join(directory, item)
-                        )
-                    """
-                else:
-                    raise err
-            return directory
-
-        # Create a sub directory for every key in the analysis list
-        # store reference to this in dictionary
-        self.logger.info("Creating sub-directories...")
-        directory_set = {'audio', 'data'}
-        subdir_paths = {
-            key: initialise_subdir(key) for key in directory_set
-        }
-        return subdir_paths
-
-    def organize_audio(self, subdir_paths, symlink=True):
-        self.logger.info("Moving any audio to sub directory...")
-
-        valid_filetypes = {'.wav', '.aif', '.aiff'}
-        # Move audio files to database
-        # For all files in the audio dirctory...
-        for root, directories, filenames in os.walk(self.audio_dir):
-            for item in filenames:
-                # If the file is a valid file type...
-                item = os.path.join(root,item)
-                if os.path.splitext(item)[1] in valid_filetypes:
-                    self.logger.debug(''.join(("File added to database content: ", item)))
-                    # Get the full path for the file
-                    filepath = os.path.join(self.audio_dir, item)
-                    # If the file isn't already in the database...
-                    if not os.path.isfile(
-                        '/'.join((subdir_paths["audio"], os.path.basename(filepath)))
-                    ):
-                        # Copy the file to the database
-                        if symlink:
-                            filename = os.path.basename(filepath)
-                            os.symlink(filepath, os.path.join(subdir_paths["audio"], filename))
-                            self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
-                                subdir_paths["audio"], "\n")))
-                        else:
-                            shutil.copy2(filepath, subdir_paths["audio"])
-                            self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
-                                subdir_paths["audio"], "\n")))
-
-                    else:
-                        self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
-                            subdir_paths["audio"])))
-                    # Add the file's path to the database content dictionary
-                    self.audio_file_list.append(
-                        os.path.join(subdir_paths["audio"], item)
-                    )
-
-    def close(self):
-        self.data.close()
-    def __enter__(self):
-        return self
-    def __exit__(self):
-        self.close()
 

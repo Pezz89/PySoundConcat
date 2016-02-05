@@ -9,6 +9,7 @@ from fileops import loggerops
 import pdb
 import os
 import __builtin__
+from database import AudioDatabase, Matcher
 
 filename = os.path.splitext(__file__)[0]
 logger = loggerops.create_logger(log_filename='./{0}.log'.format(filename))
@@ -66,19 +67,22 @@ def main():
         default=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"]
     )
     args = parser.parse_args()
-    src_database = audiofile.AudioDatabase(
+    source_db = AudioDatabase(
         args.source,
         analysis_list=args.analyse,
     )
     # Create/load a pre-existing database
-    src_database.load_database(reanalyse=False)
+    source_db.load_database(reanalyse=False)
 
-    tar_database = audiofile.AudioDatabase(
+    target_db = AudioDatabase(
         args.target,
         analysis_list=args.analyse,
     )
     # Create/load a pre-existing database
-    tar_database.load_database(reanalyse=False)
+    target_db.load_database(reanalyse=False)
+
+    matcher = Matcher(source_db, target_db)
+    matcher.brute_force_match()
 
 if __name__ == "__main__":
     main()
