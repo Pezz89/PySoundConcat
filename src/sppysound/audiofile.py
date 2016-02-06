@@ -34,7 +34,7 @@ class AudioFile(object):
                  samplerate=None,
                  name=None, *args, **kwargs):
         self.logger = logging.getLogger(__name__ + '.AudioFile')
-        self.logger.info("Initialised AudioFile")
+        self.logger.debug("Initialised AudioFile")
 
         self.filepath = filepath
         # TODO: If a name isn't provided then create a default name based on
@@ -895,7 +895,7 @@ class AnalysedAudioFile(AudioFile):
     def open(self):
         return self
 
-    def analysis_data_grains(times, analysis, format):
+    def analysis_data_grains(self, times, analysis, format):
         """
         retrieve data for analysis within start and end time pairs in the format specified.
 

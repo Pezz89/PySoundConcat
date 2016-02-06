@@ -220,6 +220,7 @@ class Matcher:
         self.target_db = database2
         self.analysis_dict = analysis_dict
 
+        self.logger.debug("Initialised Matcher")
     def match(self, match_function, grain_size, overlap):
         """
         Find the closest match to each object in database 1 in database 2 using the matching function specified.
@@ -237,9 +238,15 @@ class Matcher:
         # Find all analyses shared by both the source and target entry
         common_analyses = source_entry.available_analyses & target_entry.available_analyses
 
+        matcher_analyses = []
+        for key in self.analysis_dict.iterkeys():
+            if key not in common_analyses:
+                self.logger.warning("Analysis: \"{0}\" not avilable in {1} and/or {2}".format(key, source_entry, target_entry))
+            else:
+                matcher_analyses.append(key)
 
-        for analysis in common_analyses:
-            source_data = source_entry.analysis_data_grains(source_times, analysis,
+        for analysis in matcher_analyses:
+            source_data = source_entry.analysis_data_grains(source_times, analysis, self.analysis_dict[analysis])
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""

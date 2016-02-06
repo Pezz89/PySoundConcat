@@ -81,7 +81,7 @@ def main():
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)
 
-    analysis_format_dict = {
+    analysis_dict = {
         "f0": "median",
         "rms": "mean",
         "fft": "raw",
@@ -90,8 +90,8 @@ def main():
         "spcsprd": "mean",
     }
 
-    matcher = Matcher(source_db, target_db)
-    matcher.match(Matcher.brute_force_matcher, grain_size=100, overlap=2)
+    matcher = Matcher(source_db, target_db, analysis_dict)
+    matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=2)
 
 if __name__ == "__main__":
     main()
