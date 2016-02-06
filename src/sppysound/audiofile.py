@@ -44,6 +44,7 @@ class AudioFile(object):
         self.samplerate = samplerate
         self.format = format
         self.channels = channels
+        self.frames = None
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
@@ -60,7 +61,8 @@ class AudioFile(object):
             )
             self.samplerate = self.get_samplerate()
             self.format = self.get_format()
-            self.channels = self.get_channels()
+            self.get_channels()
+            self.get_frames()
             return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
@@ -98,7 +100,8 @@ class AudioFile(object):
     @__if_open
     def get_channels(self):
         """Return number of channels of sndfile."""
-        return self.pysndfile_object.channels()
+        self.channels = self.pysndfile_object.channels()
+        return self.channels
 
     @__if_open
     def encoding_str(self):
@@ -121,9 +124,10 @@ class AudioFile(object):
         return self.pysndfile_object.format()
 
     @__if_open
-    def frames(self):
+    def get_frames(self):
         """Return number of frames in file (number of samples per channel)."""
-        return self.pysndfile_object.frames()
+        self.frames = self.pysndfile_object.frames()
+        return self.frames
 
     @__if_open
     def get_strings(self):
@@ -321,7 +325,7 @@ class AudioFile(object):
         print('No. channels:            ', self.channels())
         print('Samplerate:              ', self.samplerate())
         print('Format:                  ', self.format())
-        print('No. Frames:              ', self.frames())
+        print('No. Frames:              ', self.get_frames())
         print('Encoding string:         ', self.encoding_str())
         print('Major format string:     ', self.major_format_str())
         print('Seekable?:               ', bool(self.seekable()))
@@ -338,18 +342,18 @@ class AudioFile(object):
         """
         self.switch_mode('r')
         if start_index < 0:
-            start_index = self.frames() + start_index
+            start_index = self.get_frames() + start_index
         if not grain_size:
-            grain_size = self.frames()
+            grain_size = self.get_frames()
         position = self.get_seek_position()
         # Read grain
         index = self.pysndfile_object.seek(start_index, 0)
-        if index + grain_size > self.frames():
-            grain = self.read_frames(self.frames() - index)
+        if index + grain_size > self.get_frames():
+            grain = self.read_frames(self.get_frames() - index)
             if padding:
                 grain = np.pad(
                     grain,
-                    (0, index + grain_size - self.frames()),
+                    (0, index + grain_size - self.get_frames()),
                     'constant',
                     constant_values=(0, 0)
                 )
@@ -457,7 +461,7 @@ class AudioFile(object):
         self.seek(0, 0)
         i = 0
         chunk_size = 2048
-        while i < self.frames():
+        while i < self.get_frames():
             chunk = self.read_grain(i, chunk_size, padding=False)
             chunk = ((chunk[:, 0] * 0.5) + (chunk[:, 1] * 0.5))
             mono_file.write_frames(chunk)
@@ -584,7 +588,7 @@ class AudioFile(object):
 
     def check_not_empty(self):
         """Check that the file contains audio"""
-        if self.frames() > 0:
+        if self.get_frames() > 0:
             return True
         return False
 
@@ -627,13 +631,14 @@ class AudioFile(object):
         grain_length: length of each grain in seconds.
         overlap: the factor by which grains overlap (integer)
         """
-        length = self.samps_to_ms(self.frames())
-
-        grain_count = length / (grain_length / overlap)
-        pdb.set_trace()
-
-
-
+        length = self.samps_to_ms(self.frames)
+        hop_size = grain_length / overlap
+        grain_count = int(length / hop_size) - 1
+        times = np.arange(grain_count).reshape(-1, 1)
+        times = np.hstack((times, times))
+        times *= hop_size
+        times[:, 1] += grain_length
+        return times
 
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
@@ -889,6 +894,19 @@ class AnalysedAudioFile(AudioFile):
 
     def open(self):
         return self
+
+    def analysis_data_grains(times, analysis, format):
+        """
+        retrieve data for analysis within start and end time pairs in the format specified.
+
+        times: an array of start and end times to retrieve analysis from (np.array)
+        analysis: analysis string specifying analysis to retrieve
+        format: The format to return the data in. current formats available are:
+            raw: return raw analysis data.
+            mean: return the mean value of each grain's analysis
+            median: return the median value of each grain's analysis
+        """
+        pdb.set_trace()
 
     def plot_rms_to_graph(self):
         """
