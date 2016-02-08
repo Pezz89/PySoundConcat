@@ -84,7 +84,7 @@ def main():
     analysis_dict = {
         "f0": "median",
         "rms": "mean",
-        "fft": "raw",
+        #"fft": "raw",
         "zerox": "mean",
         "spccntr": "mean",
         "spcsprd": "mean",

@@ -219,6 +219,10 @@ class Matcher:
         self.source_db = database1
         self.target_db = database2
         self.analysis_dict = analysis_dict
+        self.match_type = {
+            "mean": self.mean_formatter,
+            "median": self.median_formatter
+        }
 
         self.logger.debug("Initialised Matcher")
     def match(self, match_function, grain_size, overlap):
@@ -228,6 +232,12 @@ class Matcher:
         for source_entry in self.source_db.analysed_audio:
             for target_entry in self.target_db.analysed_audio:
                 match_function(source_entry, target_entry, grain_size, overlap)
+
+    def mean_formatter():
+        """Calculate the mean value of the analysis data"""
+
+    def median_formatter():
+        """Calculate the median value of the analysis data"""
 
     def brute_force_matcher(self, source_entry, target_entry, grain_size, overlap):
         # Create an array of grain times for target sample
@@ -241,6 +251,7 @@ class Matcher:
         # Create final list of analyses to perform matching on based on
         # selected match analyses.
         matcher_analyses = []
+        self.logger.info("Matching {0} to {1}".format(source_entry, target_entry))
         for key in self.analysis_dict.iterkeys():
             if key not in common_analyses:
                 self.logger.warning("Analysis: \"{0}\" not avilable in {1} and/or {2}".format(key, source_entry, target_entry))
@@ -250,6 +261,10 @@ class Matcher:
         for analysis in matcher_analyses:
             # Get data for all source grains for each analysis
             source_data = source_entry.analysis_data_grains(source_times, analysis, self.analysis_dict[analysis])
+            # Get data for all target grains for each analysis
+            target_data = source_entry.analysis_data_grains(target_times, analysis, self.analysis_dict[analysis])
+
+
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""

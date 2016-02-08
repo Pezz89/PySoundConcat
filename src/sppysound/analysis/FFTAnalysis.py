@@ -75,7 +75,6 @@ class FFTAnalysis(Analysis):
         np.set_printoptions(threshold=np.nan)
 
         grain_data = []
-        pdb.set_trace()
         for grain in selection:
             grain_data.append((self.analysis_group["FFT"]["frames"][grain, :], times[grain]))
 
