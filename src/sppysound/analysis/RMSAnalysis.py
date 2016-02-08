@@ -81,6 +81,27 @@ class RMSAnalysis(Analysis):
 
         return rms
 
+    def get_analysis_grains(self, start, end):
+        """
+        Retrieve analysis frames for period specified in start and end times.
+        arrays of start and end time pairs will produce an array of equivelant
+        size containing frames for these times.
+        """
+        times = self.analysis_group["RMS"]["times"][:]
+        start = start / 1000
+        end = end / 1000
+        vtimes = times.reshape(-1, 1)
+
+        selection = np.transpose((vtimes >= start) & (vtimes <= end))
+
+        np.set_printoptions(threshold=np.nan)
+
+        grain_data = []
+        for grain in selection:
+            grain_data.append((self.analysis_group["RMS"]["frames"][grain], times[grain]))
+
+        return grain_data
+
     def hdf5_dataset_formatter(self, *args, **kwargs):
         '''
         Formats the output from the analysis method to save to the HDF5 file.

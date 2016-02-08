@@ -15,29 +15,56 @@ class SpectralSpreadAnalysis(Analysis):
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
-        if not self.AnalysedAudioFile.SpectralCentroid:
-            raise ValueError("Spectral Centroid analysis is required for "
+        try:
+            spccntr = self.AnalysedAudioFile.analyses["spccntr"]
+        except KeyError:
+            raise KeyError("Spectral Centroid analysis is required for "
                              "spectral spread analysis.")
-        if not self.AnalysedAudioFile.FFT:
-            raise ValueError("FFT analysis is required for spectral spread "
+        try:
+            fft = self.AnalysedAudioFile.analyses["fft"]
+        except KeyError:
+            raise KeyError("FFT analysis is required for spectral spread "
                              "analysis.")
 
         self.analysis_group = analysis_group
         self.logger.info("Creating Spectral Spread analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
-            self.AnalysedAudioFile.FFT.analysis['frames'][:],
-            self.AnalysedAudioFile.SpectralCentroid.analysis['frames'][:],
-            self.AnalysedAudioFile.FFT.analysis.attrs['win_size'],
+            fft.analysis['frames'][:],
+            spccntr.analysis['frames'][:],
+            fft.analysis.attrs['win_size'],
             self.AnalysedAudioFile.samplerate
         )
         self.spccntr_window_count = None
+
+    def get_analysis_grains(self, start, end):
+        """
+        Retrieve analysis frames for period specified in start and end times.
+        arrays of start and end time pairs will produce an array of equivelant
+        size containing frames for these times.
+        """
+        times = self.analysis_group["SpcSprd"]["times"][:]
+        start = start / 1000
+        end = end / 1000
+        vtimes = times.reshape(-1, 1)
+
+        selection = np.transpose((vtimes >= start) & (vtimes <= end))
+
+        np.set_printoptions(threshold=np.nan)
+
+        grain_data = []
+        for grain in selection:
+            grain_data.append((self.analysis_group["SpcSprd"]["frames"][grain], times[grain]))
+
+        return grain_data
 
     def hdf5_dataset_formatter(self, *args, **kwargs):
         '''
         Formats the output from the analysis method to save to the HDF5 file.
         '''
+        samplerate = self.AnalysedAudioFile.samplerate
         output = self.create_spcsprd_analysis(*args, **kwargs)
-        return ({'frames': output}, {})
+        times = self.calc_spcsprd_frame_times(output, args[0], samplerate)
+        return ({'frames': output, 'times': times}, {})
 
     @staticmethod
     def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate, output_format = "ind"):
@@ -69,3 +96,19 @@ class SpectralSpreadAnalysis(Analysis):
         y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / np.sum(mag_sqrd, axis=1))
 
         return y
+
+    @staticmethod
+    def calc_spcsprd_frame_times(spcsprd_frames, sample_frames, samplerate):
+
+        """Calculate times for frames using sample size and samplerate."""
+
+        # Get number of frames for time and frequency
+        timebins = spcsprd_frames.shape[0]
+        # Create array ranging from 0 to number of time frames
+        scale = np.arange(timebins+1)
+        # divide the number of samples by the total number of frames, then
+        # multiply by the frame numbers.
+        spcsprd_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        # Divide by the samplerate to give times in seconds
+        spcsprd_times = spcsprd_times / samplerate
+        return spcsprd_times

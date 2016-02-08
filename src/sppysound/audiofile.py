@@ -12,6 +12,7 @@ import traceback
 import logging
 import h5py
 import multiprocessing as mp
+from collections import namedtuple, defaultdict
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -61,8 +62,8 @@ class AudioFile(object):
             )
             self.samplerate = self.get_samplerate()
             self.format = self.get_format()
-            self.get_channels()
-            self.get_frames()
+            self.channels = self.get_channels()
+            self.frames = self.get_frames()
             return self
         else:
             self.pysndfile_object = pysndfile.PySndfile(
@@ -419,14 +420,8 @@ class AudioFile(object):
         self.close()
         os.remove(self.filepath)
         os.rename(replacement_filename, self.filepath)
-        replacement_file = pysndfile.PySndfile(
-            self.filepath,
-            mode='r',
-        )
-        self.channels = replacement_file.channels()
-        self.samplerate = replacement_file.samplerate()
-        self.pysndfile_object = replacement_file
         self.mode = 'r'
+        self.__enter__()
 
     def convert_to_mono(self, overwrite_original=False):
         # TODO: Implement mixdown for multi-channel audio other than 2 channel
@@ -612,6 +607,9 @@ class AudioFile(object):
         if self.mode != mode:
             seek = self.get_seek_position()
             del self.pysndfile_object
+            self.mode = mode
+            self.__enter__()
+            '''
             self.pysndfile_object = pysndfile.PySndfile(
                 self.filepath,
                 mode=mode,
@@ -619,8 +617,8 @@ class AudioFile(object):
                 channels=self.channels,
                 samplerate=self.samplerate
             )
+            '''
             self.pysndfile_object.seek(seek)
-            self.mode = mode
 
     def generate_grain_times(self, grain_length, overlap):
         """
@@ -800,7 +798,7 @@ class AnalysedAudioFile(AudioFile):
         # Refferences the HDF5 file object to use for storing analysis data.
         analysis_file = kwargs.pop('data_file', None)
 
-        self.analyses = self.create_analysis_group(analysis_file)
+        self.analysis_storage = self.create_analysis_group(analysis_file)
 
         # If True then files are re-analysed, discarding any previous analysis.
         self.force_analysis = kwargs.pop('reanalyse', False)
@@ -812,44 +810,24 @@ class AnalysedAudioFile(AudioFile):
         self.available_analyses = kwargs["analyses"]
 
     def create_analysis(self):
+        analysis_object = namedtuple("AnalysisObject", "name, analysis_object")
+        analysis_object_list = [
+            analysis_object("fft", FFTAnalysis),
+            analysis_object("rms", RMSAnalysis),
+            analysis_object("zerox", ZeroXAnalysis),
+            analysis_object("spccntr", SpectralCentroidAnalysis),
+            analysis_object("spcsprd", SpectralSpreadAnalysis),
+            analysis_object("f0", F0Analysis)
+        ]
+
+        self.analyses = defaultdict(None)
+
         # Create the analysis objects for analyses that have been specified in
         # the analyses member variable.
-        if 'fft' in self.available_analyses:
-            self.FFT = FFTAnalysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping FFT analysis.")
-            self.FFT = None
+        for analysis in analysis_object_list:
+            if analysis.name in self.available_analyses:
+                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage)
 
-        if 'rms' in self.available_analyses:
-            self.RMS = RMSAnalysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping RMS analysis.")
-            self.RMS = None
-
-        # Create Zero crossing analysis
-        if 'zerox' in self.available_analyses:
-            self.ZeroX = ZeroXAnalysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping zero-crossing analysis.")
-            self.ZeroX = None
-
-        if 'spccntr' in self.available_analyses:
-            self.SpectralCentroid = SpectralCentroidAnalysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping Spectral Centroid analysis.")
-            self.SpectralCentroid = None
-
-        if 'spcsprd' in self.available_analyses:
-            self.SpectralSpread = SpectralSpreadAnalysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping Spectral Spread analysis.")
-            self.SpectralSpread = None
-
-        if 'f0' in self.available_analyses:
-            self.F0 = F0Analysis(self, self.analyses)
-        else:
-            self.logger.info("Skipping Fundamental Frequency analysis.")
-            self.F0 = None
 
     def create_analysis_group(self, analysis_file):
         """
@@ -906,7 +884,7 @@ class AnalysedAudioFile(AudioFile):
             mean: return the mean value of each grain's analysis
             median: return the median value of each grain's analysis
         """
-        pdb.set_trace()
+        analysis_frames = self.analyses[analysis].get_analysis_grains(times[:, 0], times[:, 1])
 
     def plot_rms_to_graph(self):
         """

@@ -238,6 +238,8 @@ class Matcher:
         # Find all analyses shared by both the source and target entry
         common_analyses = source_entry.available_analyses & target_entry.available_analyses
 
+        # Create final list of analyses to perform matching on based on
+        # selected match analyses.
         matcher_analyses = []
         for key in self.analysis_dict.iterkeys():
             if key not in common_analyses:
@@ -246,6 +248,7 @@ class Matcher:
                 matcher_analyses.append(key)
 
         for analysis in matcher_analyses:
+            # Get data for all source grains for each analysis
             source_data = source_entry.analysis_data_grains(source_times, analysis, self.analysis_dict[analysis])
 
     def swap_databases(self):

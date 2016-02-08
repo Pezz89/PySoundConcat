@@ -36,6 +36,28 @@ class F0Analysis(Analysis):
         self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, self.AnalysedAudioFile.samplerate)
 
+    def get_analysis_grains(self, start, end):
+        """
+        Retrieve analysis frames for period specified in start and end times.
+        arrays of start and end time pairs will produce an array of equivelant
+        size containing frames for these times.
+        """
+        times = self.analysis_group["F0"]["times"][:]
+        start = start / 1000
+        end = end / 1000
+        vtimes = times.reshape(-1, 1)
+
+        selection = np.transpose((vtimes >= start) & (vtimes <= end))
+
+        np.set_printoptions(threshold=np.nan)
+
+        grain_data = []
+        for grain in selection:
+            grain_data.append((self.analysis_group["F0"]["frames"][grain], times[grain]))
+
+        return grain_data
+
+
     @staticmethod
     def create_f0_analysis(frames, samplerate, window_size=512, overlapFac=0.5, m0=None, M=None):
         """

@@ -191,7 +191,7 @@ class GenerateWhiteNoiseTest(globalTests):
         self.assertFalse((samples < -1.0).any() and (samples > 1.0).any())
         self.TestAudio.write_frames(samples)
         self.TestAudio.switch_mode('r')
-        self.assertEqual(self.TestAudio.frames(), 88200)
+        self.assertEqual(self.TestAudio.get_frames(), 88200)
 
     def tearDown(self):
         """
@@ -229,7 +229,7 @@ class MonoDownmixTest(globalTests):
         mono_file = self.TestAudio.convert_to_mono(overwrite_original=False)
         mono_file.switch_mode('r')
         mono_file.seek(0, 0)
-        stereo_frames = self.TestAudio.frames()
+        stereo_frames = self.TestAudio.frames
         self.assertGreater(stereo_frames, 0)
         # Check new file exists
         self.assertTrue(os.path.exists("./.TestAudio.mono.wav"))
@@ -240,7 +240,7 @@ class MonoDownmixTest(globalTests):
         # Check original is stereo
         self.assertEqual(self.TestAudio.channels, 2)
         # Check new file is the same length in frames as the original
-        self.assertEqual(stereo_frames, mono_file.frames())
+        self.assertEqual(stereo_frames, mono_file.frames)
         # Check that if mono file already exists, it is used to replace the
         # original if the function is run again with overwrite_original set to
         # True
@@ -252,7 +252,7 @@ class MonoDownmixTest(globalTests):
         # Check original exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         # Check new file is the same length in frames as the original
-        self.assertEqual(stereo_frames, mono_file.frames())
+        self.assertEqual(stereo_frames, mono_file.frames)
         self.TestAudio.seek(0, 0)
         samples = self.TestAudio.read_frames()
         self.TestAudio.switch_mode('r')
@@ -291,7 +291,7 @@ class NormalizeTest(globalTests):
         normalized_file = self.TestAudio.normalize_file(
             overwrite_original=False
         )
-        normalized_frames = self.TestAudio.frames()
+        normalized_frames = self.TestAudio.frames
         self.assertGreater(normalized_frames, 0)
         # Check new file exists
         self.assertTrue(os.path.exists("./.TestAudio.norm.wav"))
@@ -300,7 +300,7 @@ class NormalizeTest(globalTests):
         # Check original exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         # Check new file is the same length in frames as the original
-        self.assertEqual(normalized_frames, normalized_file.frames())
+        self.assertEqual(normalized_frames, normalized_file.frames)
         # Check that if normalized file already exists, it is used to replace
         # the original if the function is run again with overwrite_original set
         # to True
@@ -312,12 +312,12 @@ class NormalizeTest(globalTests):
         # Check original exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         # Check new file is the same length in frames as the original
-        self.assertEqual(normalized_frames, normalized_file.frames())
+        self.assertEqual(normalized_frames, normalized_file.frames)
         # Check that all samples have been normalized
         self.TestAudio.switch_mode('r')
         self.TestAudio.seek(0, 0)
         self.assertGreater(self.TestAudio.read_frames().all(), 0.9)
-        self.assertEqual(self.TestAudio.frames(), 1000)
+        self.assertEqual(self.TestAudio.frames, 1000)
 
     def tearDown(self):
         """
@@ -344,7 +344,7 @@ class RenameFileTests(globalTests):
     def test_RenameFile(self):
         """Check that file renaming function works correctly."""
         self.check_setup(self.TestAudio, mode='r')
-        original_framecount = self.TestAudio.frames()
+        original_framecount = self.TestAudio.frames
         original_channels = self.TestAudio.channels
         # Check original file exists
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
@@ -354,11 +354,11 @@ class RenameFileTests(globalTests):
         self.assertTrue(os.path.exists("./.TestAudio.rename.wav"))
         self.assertEqual(self.TestAudio.filepath, "./.TestAudio.rename.wav")
         # Check new file has correct data
-        self.assertEqual(self.TestAudio.frames(), original_framecount)
+        self.assertEqual(self.TestAudio.frames, original_framecount)
         self.assertEqual(self.TestAudio.channels, original_channels)
         # Check original file no longer exists
         self.assertFalse(os.path.exists("./.TestAudio.wav"))
-        self.assertEqual(self.TestAudio.frames(), 101)
+        self.assertEqual(self.TestAudio.frames, 101)
 
     def tearDown(self):
         """
@@ -404,7 +404,7 @@ class ReplaceFileTests(globalTests):
         # file and that it has been renamed correctly
         self.assertTrue(os.path.exists("./.TestAudio.wav"))
         self.assertTrue(self.TestAudio.filepath, "./.TestAudio.wav")
-        self.assertEqual(self.TestAudio.frames(), 50)
+        self.assertEqual(self.TestAudio.frames, 50)
 
 
 class FadeAudioTest(globalTests):
