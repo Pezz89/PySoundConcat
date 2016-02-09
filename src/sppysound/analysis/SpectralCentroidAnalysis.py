@@ -10,7 +10,7 @@ class SpectralCentroidAnalysis(Analysis):
     An encapsulation of a spectral centroid analysis.
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group):
+    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(SpectralCentroidAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcCntr')
         # Create logger for module
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))

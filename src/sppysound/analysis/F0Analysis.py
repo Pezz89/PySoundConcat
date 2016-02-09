@@ -25,7 +25,7 @@ class F0Analysis(Analysis):
     member as other such analyses are. Use get_rms_from_file.
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group):
+    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(F0Analysis, self).__init__(AnalysedAudioFile, analysis_group, 'F0')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
@@ -35,6 +35,10 @@ class F0Analysis(Analysis):
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, self.AnalysedAudioFile.samplerate)
+        if config:
+            self.threshold = config.f0["threshold"]
+        else:
+            self.threshold = None
 
     def get_analysis_grains(self, start, end):
         """
@@ -49,17 +53,22 @@ class F0Analysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        np.set_printoptions(threshold=np.nan)
-
-        grain_data = []
+        grain_data = [[], []]
         for grain in selection:
-            grain_data.append((self.analysis_group["F0"]["frames"][grain], times[grain]))
+            grain_data[0].append((self.analysis_group["F0"]["frames"][grain], times[grain]))
+            grain_data[1].append((self.analysis_group["F0"]["harmonic_ratio"][grain], times[grain]))
 
         return grain_data
 
-
     @staticmethod
-    def create_f0_analysis(frames, samplerate, window_size=512, overlapFac=0.5, m0=None, M=None):
+    def create_f0_analysis(
+        frames,
+        samplerate,
+        window_size=512,
+        overlapFac=0.5,
+        m0=None,
+        M=None,
+    ):
         """
         # function [HR, f0, Gamma] = feature_harmonic(window, Fs, M, m0)
         # This function computes the harmonic ratio and fundamental frequency of a
@@ -199,7 +208,9 @@ class F0Analysis(Analysis):
                         # get fundamental frequency:
                         f0 = samplerate / interp
             if f0 > samplerate/2:
-                pdb.set_trace()
+                raise ValueError("F0 value ({0}) is above the nyquist rate "
+                                 "({1}). This shouldn't happen...".format(f0,
+                                 samplerate/2))
             if HR >= 1:
                 HR = 1
             return f0, HR
@@ -232,3 +243,17 @@ class F0Analysis(Analysis):
         # Divide by the samplerate to give times in seconds
         f0_times = f0_times / samplerate
         return f0_times
+
+    def mean_formatter(self, data):
+        if not self.threshold:
+            raise ValueError("Threshold not set for F0Analysis object.")
+        frames = data[0]
+        confidence = data[1]
+        return np.mean(frames[confidence > self.threshold])
+
+    def median_formatter(self, data):
+        if not self.threshold:
+            raise ValueError("Threshold not set for F0Analysis object.")
+        frames = data[0]
+        confidence = data[1]
+        return np.median(frames[confidence > self.threshold])

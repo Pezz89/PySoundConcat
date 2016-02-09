@@ -12,13 +12,21 @@ class Analysis(object):
 
     """Basic descriptor class to build analyses on."""
 
-    def __init__(self, AnalysedAudioFile, analysis_group, name):
+    def __init__(self, AnalysedAudioFile, analysis_group, name, config=None):
         # Create object logger
         self.logger = logging.getLogger(__name__ + '.{0}Analysis'.format(name))
         # Store AnalysedAudioFile object to be analysed.
         self.AnalysedAudioFile = AnalysedAudioFile
         self.analysis_group = analysis_group
         self.name = name
+        # Define default formaters for formatting raw analysis data. This can
+        # be used to convert data into a useable format for processed such as
+        # frame comparisson.
+        self.formatters = {
+            "mean": self.mean_formatter,
+            "median": self.median_formatter,
+            "raw": self.raw_formatter
+        }
 
     def create_analysis(self, *args, **kwargs):
         """
@@ -75,3 +83,20 @@ class Analysis(object):
         '''
         output, attributes = analysis_method(*args, **kwargs)
         return ({'data': output}, {'attrs': attributes})
+
+    def mean_formatter(self, data):
+        """Calculate the mean value of the analysis data"""
+        output = np.empty(len(data))
+        for ind, i in enumerate(data):
+            output[ind] = np.mean(i)
+        return output
+
+    def median_formatter(self, data):
+        """Calculate the median value of the analysis data"""
+        output = np.empty(len(data))
+        for ind, i in enumerate(data):
+            output[ind] = np.median(i)
+        return output
+
+    def raw_formatter(self, data):
+        return data

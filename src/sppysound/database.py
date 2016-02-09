@@ -219,50 +219,65 @@ class Matcher:
         self.source_db = database1
         self.target_db = database2
         self.analysis_dict = analysis_dict
+        self.common_analyses = []
+        """
         self.match_type = {
             "mean": self.mean_formatter,
             "median": self.median_formatter
         }
+        """
 
         self.logger.debug("Initialised Matcher")
     def match(self, match_function, grain_size, overlap):
         """
         Find the closest match to each object in database 1 in database 2 using the matching function specified.
         """
-        for source_entry in self.source_db.analysed_audio:
-            for target_entry in self.target_db.analysed_audio:
-                match_function(source_entry, target_entry, grain_size, overlap)
-
-    def mean_formatter():
-        """Calculate the mean value of the analysis data"""
-
-    def median_formatter():
-        """Calculate the median value of the analysis data"""
-
-    def brute_force_matcher(self, source_entry, target_entry, grain_size, overlap):
-        # Create an array of grain times for target sample
-        target_times = target_entry.generate_grain_times(grain_size, overlap)
-        # Create an array of grain times for source sample
-        source_times = source_entry.generate_grain_times(grain_size, overlap)
-
         # Find all analyses shared by both the source and target entry
-        common_analyses = source_entry.available_analyses & target_entry.available_analyses
-
+        common_analyses = self.source_db.analysis_list & self.target_db.analysis_list
+        self.matcher_analyses = []
         # Create final list of analyses to perform matching on based on
         # selected match analyses.
-        matcher_analyses = []
-        self.logger.info("Matching {0} to {1}".format(source_entry, target_entry))
         for key in self.analysis_dict.iterkeys():
             if key not in common_analyses:
                 self.logger.warning("Analysis: \"{0}\" not avilable in {1} and/or {2}".format(key, source_entry, target_entry))
             else:
-                matcher_analyses.append(key)
+                self.matcher_analyses.append(key)
 
-        for analysis in matcher_analyses:
-            # Get data for all source grains for each analysis
-            source_data = source_entry.analysis_data_grains(source_times, analysis, self.analysis_dict[analysis])
-            # Get data for all target grains for each analysis
-            target_data = source_entry.analysis_data_grains(target_times, analysis, self.analysis_dict[analysis])
+        # Run matching
+        match_function(grain_size, overlap)
+
+
+    def brute_force_matcher(self, grain_size, overlap):
+        for source_entry in self.source_db.analysed_audio:
+            # Create an array of grain times for source sample
+            source_times = source_entry.generate_grain_times(grain_size, overlap)
+
+            for target_entry in self.target_db.analysed_audio:
+                # Create an array of grain times for target sample
+                target_times = target_entry.generate_grain_times(grain_size, overlap)
+
+                self.logger.info("Matching {0} to {1}".format(source_entry, target_entry))
+
+                for analysis in self.matcher_analyses:
+                    # Get data for all source grains for each analysis
+                    source_data = source_entry.analysis_data_grains(source_times, analysis)
+                    # Get data for all target grains for each analysis
+                    target_data = source_entry.analysis_data_grains(target_times, analysis)
+
+                    # Get the analysis object for the current entry
+                    analysis_object = source_entry.analyses[analysis]
+                    # Get the format to convert analysis data to (ie. mean,
+                    # median, raw values...)
+                    analysis_formatting = self.analysis_dict[analysis]
+                    source_data = analysis_object.formatters[analysis_formatting](source_data)
+                    target_data = analysis_object.formatters[analysis_formatting](target_data)
+                    pdb.set_trace()
+
+
+                    # Select the function to format match data ready for comparisson.
+                    match_format_func = self.match_type[self.analysis_dict[analysis]]
+                    source_data = match_format_func(source_data)
+                    target_data = match_format_func(target_data)
 
 
 

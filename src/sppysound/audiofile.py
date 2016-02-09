@@ -809,7 +809,7 @@ class AnalysedAudioFile(AudioFile):
         # A set containing tags for analyses to be created for the file
         self.available_analyses = kwargs["analyses"]
 
-    def create_analysis(self):
+    def create_analysis(self, config=None):
         analysis_object = namedtuple("AnalysisObject", "name, analysis_object")
         analysis_object_list = [
             analysis_object("fft", FFTAnalysis),
@@ -826,7 +826,7 @@ class AnalysedAudioFile(AudioFile):
         # the analyses member variable.
         for analysis in analysis_object_list:
             if analysis.name in self.available_analyses:
-                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage)
+                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=config)
 
 
     def create_analysis_group(self, analysis_file):
@@ -873,7 +873,7 @@ class AnalysedAudioFile(AudioFile):
     def open(self):
         return self
 
-    def analysis_data_grains(self, times, analysis, format):
+    def analysis_data_grains(self, times, analysis):
         """
         retrieve data for analysis within start and end time pairs in the format specified.
 
@@ -885,6 +885,7 @@ class AnalysedAudioFile(AudioFile):
             median: return the median value of each grain's analysis
         """
         analysis_frames = self.analyses[analysis].get_analysis_grains(times[:, 0], times[:, 1])
+        return analysis_frames
 
     def plot_rms_to_graph(self):
         """

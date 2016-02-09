@@ -14,7 +14,7 @@ class AttackAnalysis:
 
     """Encapsulation of attack estimation analysis."""
 
-    def __init__(self, AnalysedAudioFile, atkpath):
+    def __init__(self, AnalysedAudioFile, atkpath, config=None):
         self.logger = logging.getLogger(__name__ + '.AttackAnalysis')
         self.AnalysedAudioFile = AnalysedAudioFile
         self.attackpath = atkpath

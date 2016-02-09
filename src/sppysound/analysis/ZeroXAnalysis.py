@@ -11,7 +11,7 @@ class ZeroXAnalysis(Analysis):
 
     """Zero-crossing analysis class. """
 
-    def __init__(self, AnalysedAudioFile, analysis_group):
+    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'ZeroCrossing')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         self.analysis_group = analysis_group

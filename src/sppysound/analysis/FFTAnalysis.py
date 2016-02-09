@@ -27,7 +27,7 @@ class FFTAnalysis(Analysis):
         analysis - HDF5 file object used to store analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group):
+    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(FFTAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'FFT')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed

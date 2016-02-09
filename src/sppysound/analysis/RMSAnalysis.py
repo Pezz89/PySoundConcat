@@ -29,7 +29,7 @@ class RMSAnalysis(Analysis):
     member as other such analyses are. Use get_rms_from_file.
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group):
+    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(RMSAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'RMS')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
