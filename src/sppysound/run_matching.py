@@ -12,8 +12,6 @@ import __builtin__
 import config
 from database import AudioDatabase, Matcher
 
-pdb.set_trace()
-
 filename = os.path.splitext(__file__)[0]
 logger = loggerops.create_logger(log_filename='./{0}.log'.format(filename))
 
@@ -73,6 +71,7 @@ def main():
     source_db = AudioDatabase(
         args.source,
         analysis_list=args.analyse,
+        config=config
     )
     # Create/load a pre-existing database
     source_db.load_database(reanalyse=False)
@@ -80,6 +79,7 @@ def main():
     target_db = AudioDatabase(
         args.target,
         analysis_list=args.analyse,
+        config=config
     )
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)

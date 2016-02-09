@@ -795,6 +795,8 @@ class AnalysedAudioFile(AudioFile):
         # Stores the path to the database if object is part of a database.
         self.db_dir = kwargs.pop('db_dir', None)
 
+        self.config = kwargs.pop('config', None)
+
         # Refferences the HDF5 file object to use for storing analysis data.
         analysis_file = kwargs.pop('data_file', None)
 
@@ -809,7 +811,7 @@ class AnalysedAudioFile(AudioFile):
         # A set containing tags for analyses to be created for the file
         self.available_analyses = kwargs["analyses"]
 
-    def create_analysis(self, config=None):
+    def create_analysis(self):
         analysis_object = namedtuple("AnalysisObject", "name, analysis_object")
         analysis_object_list = [
             analysis_object("fft", FFTAnalysis),
@@ -826,7 +828,7 @@ class AnalysedAudioFile(AudioFile):
         # the analyses member variable.
         for analysis in analysis_object_list:
             if analysis.name in self.available_analyses:
-                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=config)
+                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=self.config)
 
 
     def create_analysis_group(self, analysis_file):
@@ -907,6 +909,3 @@ class AnalysedAudioFile(AudioFile):
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0})'.format(self.name))
-
-
-

@@ -34,6 +34,8 @@ class AudioDatabase:
         db_dir=None,
         audio_dir=None,
         analysis_list=[],
+        *args,
+        **kwargs
     ):
         """
         Create the folder hierachy for the database of files to be stored in.
@@ -47,6 +49,7 @@ class AudioDatabase:
         self.db_dir = db_dir
         self.audio_dir = audio_dir
         self.analysis_list = analysis_list
+        self.config = kwargs.pop("config", None)
         self.logger = logging.getLogger(__name__ + '.AudioDatabase')
 
         # Check that all analysis list args are valid
@@ -97,7 +100,8 @@ class AudioDatabase:
                     name=os.path.basename(item),
                     db_dir=self.db_dir,
                     data_file=self.data,
-                    reanalyse=reanalyse
+                    reanalyse=reanalyse,
+                    config=self.config
                 ) as AAF:
                     AAF.create_analysis()
                     self.analysed_audio.append(AAF)
@@ -214,7 +218,7 @@ class Matcher:
     Used to compare and match entries in two AnalysedAudioFile databases.
     """
 
-    def __init__(self, database1, database2, analysis_dict):
+    def __init__(self, database1, database2, analysis_dict,*args, **kwargs):
         self.logger = logging.getLogger(__name__ + '.Matcher')
         self.source_db = database1
         self.target_db = database2
@@ -248,36 +252,39 @@ class Matcher:
 
 
     def brute_force_matcher(self, grain_size, overlap):
-        for source_entry in self.source_db.analysed_audio:
-            # Create an array of grain times for source sample
-            source_times = source_entry.generate_grain_times(grain_size, overlap)
 
-            for target_entry in self.target_db.analysed_audio:
-                # Create an array of grain times for target sample
-                target_times = target_entry.generate_grain_times(grain_size, overlap)
+        for analysis in self.matcher_analyses:
+            self.logger.debug("Current analysis: {0}".format(analysis))
+            analysis_formatting = self.analysis_dict[analysis]
 
-                self.logger.info("Matching {0} to {1}".format(source_entry, target_entry))
+            for ind, source_entry in enumerate(self.source_db.analysed_audio):
+                # Create an array of grain times for source sample
+                source_times = source_entry.generate_grain_times(grain_size, overlap)
 
-                for analysis in self.matcher_analyses:
-                    # Get data for all source grains for each analysis
-                    source_data = source_entry.analysis_data_grains(source_times, analysis)
+                # Get data for all source grains for each analysis
+                source_data = source_entry.analysis_data_grains(source_times, analysis)
+
+                # Get the analysis object for the current entry
+                analysis_object = source_entry.analyses[analysis]
+                # Format the source data ready for matching using the analysis
+                # objects match formatting function.
+                source_data = analysis_object.formatters[analysis_formatting](source_data)
+
+
+                for ind, target_entry in enumerate(self.target_db.analysed_audio):
+                    # Create an array of grain times for target sample
+                    target_times = target_entry.generate_grain_times(grain_size, overlap)
+
+                    self.logger.debug("Matching {0} to {1}".format(source_entry.name, target_entry.name))
+
                     # Get data for all target grains for each analysis
                     target_data = source_entry.analysis_data_grains(target_times, analysis)
 
-                    # Get the analysis object for the current entry
-                    analysis_object = source_entry.analyses[analysis]
-                    # Get the format to convert analysis data to (ie. mean,
-                    # median, raw values...)
-                    analysis_formatting = self.analysis_dict[analysis]
-                    source_data = analysis_object.formatters[analysis_formatting](source_data)
+                    # Format the source data ready for matching using the analysis
+                    # objects match formatting function.
                     target_data = analysis_object.formatters[analysis_formatting](target_data)
-                    pdb.set_trace()
 
-
-                    # Select the function to format match data ready for comparisson.
-                    match_format_func = self.match_type[self.analysis_dict[analysis]]
-                    source_data = match_format_func(source_data)
-                    target_data = match_format_func(target_data)
+                    data_difference = np.vstack(source_data) - target_data
 
 
 

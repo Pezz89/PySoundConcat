@@ -53,10 +53,11 @@ class F0Analysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        grain_data = [[], []]
+        grain_data = [[], [], []]
         for grain in selection:
-            grain_data[0].append((self.analysis_group["F0"]["frames"][grain], times[grain]))
-            grain_data[1].append((self.analysis_group["F0"]["harmonic_ratio"][grain], times[grain]))
+            grain_data[0].append(self.analysis_group["F0"]["frames"][grain])
+            grain_data[1].append(self.analysis_group["F0"]["harmonic_ratio"][grain])
+            grain_data[2].append(times[grain])
 
         return grain_data
 
@@ -213,9 +214,14 @@ class F0Analysis(Analysis):
                                  samplerate/2))
             if HR >= 1:
                 HR = 1
-            return f0, HR
+            return (f0, HR)
 
-        return np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
+        output = np.empty((frames.shape[0], 2))
+        for ind, i in enumerate(frames):
+            output[ind] = per_frame_f0(i, m0, M)
+
+        # output = np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
+        return output
 
     def hdf5_dataset_formatter(self, *args, **kwargs):
         '''
@@ -249,11 +255,33 @@ class F0Analysis(Analysis):
             raise ValueError("Threshold not set for F0Analysis object.")
         frames = data[0]
         confidence = data[1]
-        return np.mean(frames[confidence > self.threshold])
+        output = np.empty(len(frames))
+        for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            if not frame.size:
+                output[i] = 0
+                continue
+            med_conf = np.mean(conf)
+            if med_conf > self.threshold:
+                output[i] = np.mean(frame[conf > self.threshold])
+            else:
+                output[i] = 0
+
+        return output
 
     def median_formatter(self, data):
         if not self.threshold:
             raise ValueError("Threshold not set for F0Analysis object.")
         frames = data[0]
         confidence = data[1]
-        return np.median(frames[confidence > self.threshold])
+        output = np.empty(len(frames))
+        for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            if not frame.size:
+                output[i] = 0
+                continue
+            med_conf = np.median(conf)
+            if med_conf > self.threshold:
+                output[i] = np.median(frame[conf > self.threshold])
+            else:
+                output[i] = 0
+
+        return output
