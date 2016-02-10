@@ -250,41 +250,58 @@ class Matcher:
         # Run matching
         match_function(grain_size, overlap)
 
+    def count_grains(self, database, grain_length, overlap):
+        '''Calculate the number of grains in the database'''
+        entry_count = len(database.analysed_audio)
+        grain_indexes = np.empty((entry_count, 2))
+
+        for ind, entry in enumerate(database.analysed_audio):
+            length = entry.samps_to_ms(entry.frames)
+            hop_size = grain_length / overlap
+            grain_indexes[ind][0] = int(length / hop_size) - 1
+        grain_indexes[:, 1] = np.cumsum(grain_indexes[:, 0])
+        grain_indexes[:, 0] = grain_indexes[:, 1] - grain_indexes[:, 0]
+        return grain_indexes
 
     def brute_force_matcher(self, grain_size, overlap):
+        source_grain_indexes = self.count_grains(self.source_db, grain_size, overlap)
 
         for analysis in self.matcher_analyses:
             self.logger.debug("Current analysis: {0}".format(analysis))
             analysis_formatting = self.analysis_dict[analysis]
 
-            for ind, source_entry in enumerate(self.source_db.analysed_audio):
+            for tind, target_entry in enumerate(self.target_db.analysed_audio):
                 # Create an array of grain times for source sample
-                source_times = source_entry.generate_grain_times(grain_size, overlap)
+                target_times = target_entry.generate_grain_times(grain_size, overlap)
 
-                # Get data for all source grains for each analysis
-                source_data = source_entry.analysis_data_grains(source_times, analysis)
+                # Get data for all target grains for each analysis
+                target_data = target_entry.analysis_data_grains(target_times, analysis)
 
                 # Get the analysis object for the current entry
-                analysis_object = source_entry.analyses[analysis]
-                # Format the source data ready for matching using the analysis
+                analysis_object = target_entry.analyses[analysis]
+                # Format the target data ready for matching using the analysis
                 # objects match formatting function.
-                source_data = analysis_object.formatters[analysis_formatting](source_data)
+                target_data = analysis_object.formatters[analysis_formatting](target_data)
 
+                data_distance = np.empty((target_data.shape[0], source_grain_indexes[-1][-1]))
+                for sind, source_entry in enumerate(self.source_db.analysed_audio):
+                    # Create an array of grain times for source sample
+                    source_times = source_entry.generate_grain_times(grain_size, overlap)
 
-                for ind, target_entry in enumerate(self.target_db.analysed_audio):
-                    # Create an array of grain times for target sample
-                    target_times = target_entry.generate_grain_times(grain_size, overlap)
+                    self.logger.debug("Matching {0} to {1}".format(source_entry.name, source_entry.name))
 
-                    self.logger.debug("Matching {0} to {1}".format(source_entry.name, target_entry.name))
-
-                    # Get data for all target grains for each analysis
-                    target_data = source_entry.analysis_data_grains(target_times, analysis)
+                    # Get data for all source grains for each analysis
+                    source_data = source_entry.analysis_data_grains(source_times, analysis)
 
                     # Format the source data ready for matching using the analysis
                     # objects match formatting function.
-                    target_data = analysis_object.formatters[analysis_formatting](target_data)
+                    source_data = analysis_object.formatters[analysis_formatting](source_data)
 
-                    data_difference = np.vstack(source_data) - target_data
+                    # FIX
+                    start_index, end_index = source_grain_indexes[sind]
+                    pdb.set_trace()
+                    #data_distance[:,  = np.abs(np.vstack(source_data) - source_data)
+                    pdb.set_trace()
 
 
 
