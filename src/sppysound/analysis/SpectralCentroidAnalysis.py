@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 import logging
 import pdb
@@ -45,11 +45,10 @@ class SpectralCentroidAnalysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        np.set_printoptions(threshold=np.nan)
-
-        grain_data = []
+        grain_data = [[],[]]
         for grain in selection:
-            grain_data.append((self.analysis_group["SpcCntr"]["frames"][grain], times[grain]))
+            grain_data[0].append(self.analysis_group["SpcCntr"]["frames"][grain])
+            grain_data[1].append(times[grain])
 
         return grain_data
 
@@ -59,7 +58,7 @@ class SpectralCentroidAnalysis(Analysis):
         '''
         samplerate = self.AnalysedAudioFile.samplerate
         output = self.create_spccntr_analysis(*args, **kwargs)
-        times = self.calc_spccntr_frame_times(output, args[0], samplerate)
+        times = self.calc_spccntr_frame_times(output, self.AnalysedAudioFile.frames, samplerate)
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
@@ -84,12 +83,13 @@ class SpectralCentroidAnalysis(Analysis):
             raise ValueError("\'{0}\' is not a valid output "
                              "format.".format(output_format))
         # Calculate the weighted mean
-        y = np.sum(magnitudes*freqs, axis=1) / np.sum(magnitudes, axis=1)
+        y = np.sum(magnitudes*freqs, axis=1) / (np.sum(magnitudes, axis=1)+np.finfo(float).eps)
+
         # Convert from index to Hz
         return y
 
     @staticmethod
-    def calc_spccntr_frame_times(spccntr_frames, sample_frames, samplerate):
+    def calc_spccntr_frame_times(spccntr_frames, sample_frame_count, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
 
@@ -99,7 +99,7 @@ class SpectralCentroidAnalysis(Analysis):
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
         # multiply by the frame numbers.
-        spccntr_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        spccntr_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
         spccntr_times = spccntr_times / samplerate
         return spccntr_times

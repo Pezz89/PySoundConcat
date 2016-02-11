@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import os
 import numpy as np
 import logging
@@ -94,11 +94,10 @@ class RMSAnalysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        np.set_printoptions(threshold=np.nan)
-
-        grain_data = []
+        grain_data = [[],[]]
         for grain in selection:
-            grain_data.append((self.analysis_group["RMS"]["frames"][grain], times[grain]))
+            grain_data[0].append(self.analysis_group["RMS"]["frames"][grain])
+            grain_data[1].append(times[grain])
 
         return grain_data
 
@@ -122,7 +121,7 @@ class RMSAnalysis(Analysis):
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
         # multiply by the frame numbers.
-        rms_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        rms_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
         rms_times = rms_times / samplerate
         return rms_times

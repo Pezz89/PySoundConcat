@@ -86,19 +86,20 @@ class Analysis(object):
 
     def mean_formatter(self, data):
         """Calculate the mean value of the analysis data"""
-        if not data.size:
-            return np.array([])
-        output = np.empty(len(data))
-        for ind, i in enumerate(data):
+
+        values = data[0]
+
+        output = np.empty(len(values))
+        for ind, i in enumerate(values):
             output[ind] = np.mean(i)
         return output
 
     def median_formatter(self, data):
         """Calculate the median value of the analysis data"""
-        if not data.size:
-            return np.array([])
+        values = data[0]
+
         output = np.empty(len(data))
-        for ind, i in enumerate(data):
+        for ind, i in enumerate(values):
             output[ind] = np.median(i)
         return output
 

@@ -189,6 +189,7 @@ class F0Analysis(Analysis):
             CSum = np.cumsum(frames*frames)
 
             Gamma[m0:M] = R[m0:M] / (np.sqrt([g*CSum[-m0:-M:-1]])+np.finfo(float).eps)
+
             Z = feature_zcr(Gamma)
             if Z > 0.15:
                 HR = 0

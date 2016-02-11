@@ -881,10 +881,6 @@ class AnalysedAudioFile(AudioFile):
 
         times: an array of start and end times to retrieve analysis from (np.array)
         analysis: analysis string specifying analysis to retrieve
-        format: The format to return the data in. current formats available are:
-            raw: return raw analysis data.
-            mean: return the mean value of each grain's analysis
-            median: return the median value of each grain's analysis
         """
         analysis_frames = self.analyses[analysis].get_analysis_grains(times[:, 0], times[:, 1])
         return analysis_frames

@@ -56,6 +56,8 @@ def main():
     parser.add_argument(
         'target',
         type=str,
+        nargs='?',
+        default='',
         help='Directory to generate the database in. If the directory does not'
         ' exist then it will be created if possible'
     )

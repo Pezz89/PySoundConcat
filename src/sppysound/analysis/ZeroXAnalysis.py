@@ -1,6 +1,7 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 import logging
+from numpy.lib import stride_tricks
 from Analysis import Analysis
 import pdb
 
@@ -20,11 +21,26 @@ class ZeroXAnalysis(Analysis):
         self.create_analysis(frames)
 
     @staticmethod
-    def create_zerox_analysis(samples, *args, **kwargs):
-        """Generate zero crossing detections for windows of the signal"""
-        # TODO: window across audiofile.
-        zero_crossings = np.where(np.diff(np.sign(samples)))[0]
-        return zero_crossings
+    def create_zerox_analysis(frames, window_size=512, overlapFac=0.5, *args, **kwargs):
+        """Generate zero crossing value for window of the signal"""
+        hopSize = int(window_size - np.floor(overlapFac * window_size))
+
+        # zeros at beginning (thus center of 1st window should be for sample nr. 0)
+        samples = np.append(np.zeros(np.floor(window_size/2.0)), frames)
+
+        # cols for windowing
+        cols = np.ceil((len(samples) - window_size) / float(hopSize)) + 1
+        # zeros at end (thus samples can be fully covered by frames)
+        samples = np.append(samples, np.zeros(window_size))
+
+        frames = stride_tricks.as_strided(
+            samples,
+            shape=(cols, window_size),
+            strides=(samples.strides[0]*hopSize, samples.strides[0])
+        ).copy()
+
+        zero_crossing = (1./(2.*samples.size))*np.sum(np.abs(np.diff(np.sign(frames))), axis=1)
+        return zero_crossing
 
     @staticmethod
     def calc_zerox_frame_times(zerox_frames, sample_frames, samplerate):
@@ -55,11 +71,10 @@ class ZeroXAnalysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        np.set_printoptions(threshold=np.nan)
-
-        grain_data = []
+        grain_data = [[],[]]
         for grain in selection:
-            grain_data.append((self.analysis_group["ZeroCrossing"]["frames"][grain], times[grain]))
+            grain_data[0].append(self.analysis_group["ZeroCrossing"]["frames"][grain])
+            grain_data[1].append(times[grain])
 
         return grain_data
 

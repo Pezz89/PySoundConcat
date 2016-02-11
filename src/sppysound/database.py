@@ -267,6 +267,8 @@ class Matcher:
         source_grain_indexes = self.count_grains(self.source_db, grain_size, overlap)
 
         for analysis in self.matcher_analyses:
+            if not analysis == 'zerox':
+                continue
             self.logger.debug("Current analysis: {0}".format(analysis))
             analysis_formatting = self.analysis_dict[analysis]
 
@@ -288,7 +290,7 @@ class Matcher:
                     # Create an array of grain times for source sample
                     source_times = source_entry.generate_grain_times(grain_size, overlap)
 
-                    self.logger.debug("Matching {0} to {1}".format(source_entry.name, source_entry.name))
+                    self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
                     source_data = source_entry.analysis_data_grains(source_times, analysis)
@@ -297,11 +299,15 @@ class Matcher:
                     # objects match formatting function.
                     source_data = analysis_object.formatters[analysis_formatting](source_data)
 
-                    # FIX
+                    # Get the start and end array indexes allocated for the
+                    # current entry's grains.
                     start_index, end_index = source_grain_indexes[sind]
-                    pdb.set_trace()
-                    #data_distance[:,  = np.abs(np.vstack(source_data) - source_data)
-                    pdb.set_trace()
+                    # Calculate the difference between the source and target
+                    # values of each grain and add to array
+                    data_distance[:, start_index:end_index] = np.abs(np.vstack(target_data) - source_data)
+
+
+            pdb.set_trace()
 
 
 

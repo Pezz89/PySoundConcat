@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numpy as np
 import logging
 import pdb
@@ -49,11 +49,10 @@ class SpectralSpreadAnalysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        np.set_printoptions(threshold=np.nan)
-
-        grain_data = []
+        grain_data = [[],[]]
         for grain in selection:
-            grain_data.append((self.analysis_group["SpcSprd"]["frames"][grain], times[grain]))
+            grain_data[0].append(self.analysis_group["SpcSprd"]["frames"][grain])
+            grain_data[1].append(times[grain])
 
         return grain_data
 
@@ -63,7 +62,7 @@ class SpectralSpreadAnalysis(Analysis):
         '''
         samplerate = self.AnalysedAudioFile.samplerate
         output = self.create_spcsprd_analysis(*args, **kwargs)
-        times = self.calc_spcsprd_frame_times(output, args[0], samplerate)
+        times = self.calc_spcsprd_frame_times(output, self.AnalysedAudioFile.frames, samplerate)
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
@@ -93,12 +92,12 @@ class SpectralSpreadAnalysis(Analysis):
         a = np.power(freqs-spectral_centroid, 2)
         mag_sqrd = np.power(magnitudes, 2)
         # Calculate the weighted mean
-        y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / np.sum(mag_sqrd, axis=1))
+        y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / (np.sum(mag_sqrd, axis=1)+np.finfo(float).eps))
 
         return y
 
     @staticmethod
-    def calc_spcsprd_frame_times(spcsprd_frames, sample_frames, samplerate):
+    def calc_spcsprd_frame_times(spcsprd_frames, sample_frame_count, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
 
@@ -108,7 +107,7 @@ class SpectralSpreadAnalysis(Analysis):
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
         # multiply by the frame numbers.
-        spcsprd_times = (sample_frames.shape[0]/timebins) * scale[:-1]
+        spcsprd_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
         spcsprd_times = spcsprd_times / samplerate
         return spcsprd_times
