@@ -867,14 +867,15 @@ class AnalysedAudioFile(AudioFile):
                 datapath = os.path.join(path, name)
                 analysis_file = h5py.File(datapath, 'a')
         # Create a group to store analyses for this file in
+        group_name = ''.join(("analysis/", self.name))
         try:
-            analysis_file.create_group(self.name)
+            analysis_file.create_group(group_name)
         except ValueError:
             self.logger.warning("A file with the same name ({0}) already "
                                 "exists in the analysis data. Using data from "
-                                "this file.".format(self.name))
-        analysis_file[self.name].attrs['filepath'] = self.filepath
-        return analysis_file[self.name]
+                                "this file.".format(group_name))
+        analysis_file[group_name].attrs['filepath'] = self.filepath
+        return analysis_file[group_name]
 
     def __enter__(self):
         super(AnalysedAudioFile, self).__enter__()

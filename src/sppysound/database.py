@@ -278,6 +278,9 @@ class Matcher:
         # Count grains of the source database
         source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
 
+        #
+        final_match_indexes = []
+
         if self.config:
             weightings = self.config.matcher_weightings
         else:
@@ -336,8 +339,8 @@ class Matcher:
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
-            self.output_db.data["match_data"] = match_grain_inds
-            return match_grain_inds
+        self.output_db.data["match_data"] = match_grain_inds
+        return match_grain_inds
 
 
 
@@ -365,7 +368,6 @@ class Matcher:
         # Calculate grain index offset from the start of the sample
         match_grain_inds = match_indexes.reshape(mi_shape) - match_start_inds
 
-
         return np.dstack((x, match_grain_inds))
 
     def swap_databases(self):
@@ -382,8 +384,9 @@ class Synthesizer:
         self.match_db = database1
         self.output_db = database2
 
-    def synthesize(self, match_inds, grain_size, overlap):
+    def synthesize(self, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
+        match_inds = self.output_db.data["match_data"][:]
         pdb.set_trace()
 
     def swap_databases(self):
