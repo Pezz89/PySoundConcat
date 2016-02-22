@@ -329,17 +329,9 @@ class Matcher:
                 distance_accum += data_distance
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
-            self.calculate_db_inds(match_indexes, source_sample_indexes)
+            match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
+            return match_grain_inds
 
-            pdb.set_trace()
-
-
-
-
-            # Generate array containing index of grain that each match
-            # originates from.
-            pdb.set_trace()
-            np.argmax(source_sample_indexes > match_indexes)
 
 
 
@@ -350,7 +342,7 @@ class Matcher:
 
         Output array will be a 3 dimensional array with an axis for each target
         grain, a dimension for each match of said grain and a dimension
-        containing database sample index, grain start and grain end times.
+        containing database sample index and the sample's grain index.
         """
         mi_shape = match_indexes.shape
         x = match_indexes.flatten()
@@ -361,19 +353,31 @@ class Matcher:
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
 
-        x = x.flatten()
         # Calculate sample index in database
-        match_start_inds = source_sample_indexes[x, 0].reshape(mi_shape)
+        match_start_inds = source_sample_indexes[x.flatten(), 0].reshape(mi_shape)
         # Calculate grain index offset from the start of the sample
         match_grain_inds = match_indexes.reshape(mi_shape) - match_start_inds
 
 
-        # np.dstack((match_start_inds, match_grain_inds))
-
-
-        pdb.set_trace()
+        return np.dstack((x, match_grain_inds))
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
         self.source_db, self.target_db = self.target_db, self.source_db
 
+
+class Synthesizer:
+
+    """An object used for synthesizing output based on grain matching."""
+
+    def __init__(database1, database2, *args, **kwargs):
+        """Initialize synthesizer instance"""
+        self.source_db = database1
+        self.target_db = database2
+
+    def synthesize(match_inds):
+        """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
+
+    def swap_databases(self):
+        """Convenience method to swap databases, changing the source database into the target and vice-versa"""
+        self.source_db, self.target_db = self.target_db, self.source_db

@@ -636,7 +636,20 @@ class AudioFile(object):
         times = np.hstack((times, times))
         times *= hop_size
         times[:, 1] += grain_length
+        # Save grain times as a member variable for later refference.
+        self.times = times
         return times
+
+    def __getitem__(self, key):
+        if not self.times:
+            raise IndexError("AudioFile object grain times must be generated "
+                             "before grains can be accesed by index. Try running "
+                             "AnalysedAudioFile.generate_grain_times(grain_size, "
+                                                                    "overlap)")
+        grain_ind = times[key]
+        pdb.set_trace()
+        return self.read_grain()
+
 
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
