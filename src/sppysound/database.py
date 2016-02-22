@@ -219,6 +219,8 @@ class Matcher:
     """
 
     def __init__(self, database1, database2, analysis_dict,*args, **kwargs):
+        self.config = kwargs.pop('config', None)
+        self.match_quantity = kwargs.pop('quantity', 30)
         self.logger = logging.getLogger(__name__ + '.Matcher')
         self.source_db = database1
         self.target_db = database2
@@ -264,32 +266,50 @@ class Matcher:
         return grain_indexes
 
     def brute_force_matcher(self, grain_size, overlap):
-        source_grain_indexes = self.count_grains(self.source_db, grain_size, overlap)
+        # Source database = musical samples database
+        # Target database = Human samples database
 
-        for analysis in self.matcher_analyses:
-            if not analysis == 'zerox':
-                continue
-            self.logger.debug("Current analysis: {0}".format(analysis))
-            analysis_formatting = self.analysis_dict[analysis]
+        # Count grains of the source database
+        source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
 
-            for tind, target_entry in enumerate(self.target_db.analysed_audio):
-                # Create an array of grain times for source sample
-                target_times = target_entry.generate_grain_times(grain_size, overlap)
+        if self.config:
+            weightings = self.config.matcher_weightings
+        else:
+            weightings = {x: 1. for x in self.matcher_analyses}
+
+        for tind, target_entry in enumerate(self.target_db.analysed_audio):
+            # Create an array of grain times for target sample
+            target_times = target_entry.generate_grain_times(grain_size, overlap)
+
+            # Stores an accumulated distance between source and target grains,
+            # added to by each analysis.
+            distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
+            for analysis in self.matcher_analyses:
+                #if not analysis == 'f0':
+                    #continue
+                self.logger.debug("Current analysis: {0}".format(analysis))
+                analysis_formatting = self.analysis_dict[analysis]
+                # Get the analysis object for the current entry
+                analysis_object = target_entry.analyses[analysis]
+
 
                 # Get data for all target grains for each analysis
                 target_data = target_entry.analysis_data_grains(target_times, analysis)
 
-                # Get the analysis object for the current entry
-                analysis_object = target_entry.analyses[analysis]
                 # Format the target data ready for matching using the analysis
                 # objects match formatting function.
                 target_data = analysis_object.formatters[analysis_formatting](target_data)
 
-                data_distance = np.empty((target_data.shape[0], source_grain_indexes[-1][-1]))
+                data_distance = np.zeros((target_data.shape[0], source_sample_indexes[-1][-1]))
+
                 for sind, source_entry in enumerate(self.source_db.analysed_audio):
+
+                    # Get the start and end array indexes allocated for the
+                    # current entry's grains.
+                    start_index, end_index = source_sample_indexes[sind]
+
                     # Create an array of grain times for source sample
                     source_times = source_entry.generate_grain_times(grain_size, overlap)
-
                     self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
@@ -299,17 +319,51 @@ class Matcher:
                     # objects match formatting function.
                     source_data = analysis_object.formatters[analysis_formatting](source_data)
 
-                    # Get the start and end array indexes allocated for the
-                    # current entry's grains.
-                    start_index, end_index = source_grain_indexes[sind]
-                    # Calculate the difference between the source and target
-                    # values of each grain and add to array
-                    data_distance[:, start_index:end_index] = np.abs(np.vstack(target_data) - source_data)
+                    # Calculate the euclidean distance between the source and
+                    # source values of each grain and add to array
+                    data_distance[:, start_index:end_index] = np.sqrt((np.vstack(target_data) - source_data)**2)
 
+                # Normalize and weight the distances. A higher weighting gives
+                # an analysis presedence over others.
+                data_distance *= (1/data_distance.max()) * weightings[analysis]
+                distance_accum += data_distance
+            match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
+
+            self.calculate_db_inds(match_indexes, source_sample_indexes)
 
             pdb.set_trace()
 
 
+
+
+            # Generate array containing index of grain that each match
+            # originates from.
+            #db_match_inds = np.where(np.logical_and(match_indexes>=source_sample_indexes[:, 0], match_indexes<=source_sample_indexes[:, 1]))[1]
+            pdb.set_trace()
+            np.argmax(source_sample_indexes > match_indexes)
+
+
+
+    def calculate_db_inds(self, match_indexes, source_sample_indexes):
+        """
+        Generate the database sample index and grain index for each match based
+        on their indexes generated from the concatenated matching
+
+        Output array will be a 3 dimensional array with an axis for each target
+        grain, a dimension for each match of said grain and a dimension
+        containing database sample index, grain start and grain end times.
+        """
+        mi_shape = match_indexes.shape
+        match_indexes = match_indexes.flatten()
+        x = np.logical_and(
+            np.vstack(match_indexes)>=source_sample_indexes[:,0],
+            np.vstack(match_indexes)<=source_sample_indexes[:,1]
+        )
+        x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
+        x = np.argmax(x, axis=2)
+
+
+        pdb.set_trace()
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""

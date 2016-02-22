@@ -16,6 +16,7 @@ class SpectralCentroidAnalysis(Analysis):
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
+        self.nyquist_rate = self.AnalysedAudioFile.samplerate / 2.
         try:
             fft = self.AnalysedAudioFile.analyses["fft"]
         except KeyError:
@@ -103,3 +104,22 @@ class SpectralCentroidAnalysis(Analysis):
         # Divide by the samplerate to give times in seconds
         spccntr_times = spccntr_times / samplerate
         return spccntr_times
+
+    def mean_formatter(self, data):
+        """Calculate the mean value of the analysis data"""
+
+        values = data[0]
+
+        output = np.empty(len(values))
+        for ind, i in enumerate(values):
+            output[ind] = np.log10(np.mean(i))/self.nyquist_rate
+        return output
+
+    def median_formatter(self, data):
+        """Calculate the median value of the analysis data"""
+        values = data[0]
+
+        output = np.empty(len(data))
+        for ind, i in enumerate(values):
+            output[ind] = np.log10(np.median(i))/self.nyquist_rate
+        return output

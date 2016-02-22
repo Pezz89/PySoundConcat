@@ -31,6 +31,8 @@ class F0Analysis(Analysis):
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
+        self.nyquist_rate = self.AnalysedAudioFile.samplerate / 2.
+
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
@@ -263,7 +265,7 @@ class F0Analysis(Analysis):
                 continue
             med_conf = np.mean(conf)
             if med_conf > self.threshold:
-                output[i] = np.mean(frame[conf > self.threshold])
+                output[i] = np.log10(np.mean(frame[conf > self.threshold]))/self.nyquist_rate
             else:
                 output[i] = 0
 
@@ -281,7 +283,7 @@ class F0Analysis(Analysis):
                 continue
             med_conf = np.median(conf)
             if med_conf > self.threshold:
-                output[i] = np.median(frame[conf > self.threshold])
+                output[i] = np.log10(np.median(frame[conf > self.threshold]))/self.nyquist_rate
             else:
                 output[i] = 0
 

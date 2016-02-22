@@ -93,7 +93,7 @@ def main():
         "spcsprd": "mean",
     }
 
-    matcher = Matcher(source_db, target_db, analysis_dict)
+    matcher = Matcher(source_db, target_db, analysis_dict, config=config, quantity=30)
     matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=2)
 
 if __name__ == "__main__":
