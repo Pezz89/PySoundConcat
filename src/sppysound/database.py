@@ -58,12 +58,15 @@ class AudioDatabase:
             if analysis not in valid_analyses:
                 raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))
 
+        # Filter out repetitions in list if they exist
         self.analysis_list = set(self.analysis_list)
 
         self.logger.info("Initialising Database...")
 
         # Create empty list to fill with audio file paths
         self.audio_file_list = []
+
+        self.data = None
 
     def load_database(self, reanalyse=False):
         """Create/Read from a pre-existing database"""
@@ -78,9 +81,6 @@ class AudioDatabase:
             self.organize_audio(subdir_paths)
 
         analysed_audio = self.analyse_database(subdir_paths, reanalyse)
-
-        # with self.analysed_audio[48] as AAF:
-            # AAF.FFT.plotstft(AAF.read_grain(), AAF.samplerate, binsize=AAF.ms_to_samps(100))
 
     def analyse_database(self, subdir_paths, reanalyse):
         # Create data file for storing analysis data for the database
@@ -205,8 +205,10 @@ class AudioDatabase:
 
     def close(self):
         self.data.close()
+
     def __enter__(self):
         return self
+
     def __exit__(self):
         self.close()
 
@@ -224,6 +226,8 @@ class Matcher:
         self.logger = logging.getLogger(__name__ + '.Matcher')
         self.source_db = database1
         self.target_db = database2
+        self.output_db = kwargs.pop("output_db", None)
+
         self.analysis_dict = analysis_dict
         self.common_analyses = []
         """
@@ -234,10 +238,12 @@ class Matcher:
         """
 
         self.logger.debug("Initialised Matcher")
+
     def match(self, match_function, grain_size, overlap):
         """
         Find the closest match to each object in database 1 in database 2 using the matching function specified.
         """
+
         # Find all analyses shared by both the source and target entry
         common_analyses = self.source_db.analysis_list & self.target_db.analysis_list
         self.matcher_analyses = []
@@ -330,6 +336,7 @@ class Matcher:
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
+            self.output_db.data["match_data"] = match_grain_inds
             return match_grain_inds
 
 
@@ -370,14 +377,15 @@ class Synthesizer:
 
     """An object used for synthesizing output based on grain matching."""
 
-    def __init__(database1, database2, *args, **kwargs):
+    def __init__(self, database1, database2, *args, **kwargs):
         """Initialize synthesizer instance"""
-        self.source_db = database1
-        self.target_db = database2
+        self.match_db = database1
+        self.output_db = database2
 
-    def synthesize(match_inds):
+    def synthesize(self, match_inds, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
+        pdb.set_trace()
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
-        self.source_db, self.target_db = self.target_db, self.source_db
+        self.match_db, self.output_db = self.output_db, self.match_db

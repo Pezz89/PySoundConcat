@@ -60,6 +60,11 @@ def main():
         help='Target database directory'
     )
     parser.add_argument(
+        'output',
+        type=str,
+        help='output database directory'
+    )
+    parser.add_argument(
         '--analyse',
         '-a',
         nargs='*',
@@ -84,16 +89,23 @@ def main():
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)
 
+    output_db = AudioDatabase(
+        args.output,
+        analysis_list=args.analyse,
+        config=config
+    )
+    # Create/load a pre-existing database
+    output_db.load_database(reanalyse=False)
+
     analysis_dict = {
         "f0": "median",
         "rms": "mean",
-        #"fft": "raw",
         "zerox": "mean",
         "spccntr": "mean",
         "spcsprd": "mean",
     }
 
-    matcher = Matcher(source_db, target_db, analysis_dict, config=config, quantity=30)
+    matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=30)
     matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=2)
 
 if __name__ == "__main__":
