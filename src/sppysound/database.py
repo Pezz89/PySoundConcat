@@ -338,7 +338,6 @@ class Matcher:
 
             # Generate array containing index of grain that each match
             # originates from.
-            #db_match_inds = np.where(np.logical_and(match_indexes>=source_sample_indexes[:, 0], match_indexes<=source_sample_indexes[:, 1]))[1]
             pdb.set_trace()
             np.argmax(source_sample_indexes > match_indexes)
 
@@ -354,13 +353,22 @@ class Matcher:
         containing database sample index, grain start and grain end times.
         """
         mi_shape = match_indexes.shape
-        match_indexes = match_indexes.flatten()
+        x = match_indexes.flatten()
         x = np.logical_and(
-            np.vstack(match_indexes)>=source_sample_indexes[:,0],
-            np.vstack(match_indexes)<=source_sample_indexes[:,1]
+            np.vstack(x)>=source_sample_indexes[:,0],
+            np.vstack(x)<=source_sample_indexes[:,1]
         )
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
+
+        x = x.flatten()
+        # Calculate sample index in database
+        match_start_inds = source_sample_indexes[x, 0].reshape(mi_shape)
+        # Calculate grain index offset from the start of the sample
+        match_grain_inds = match_indexes.reshape(mi_shape) - match_start_inds
+
+
+        # np.dstack((match_start_inds, match_grain_inds))
 
 
         pdb.set_trace()
