@@ -647,7 +647,6 @@ class AudioFile(object):
                              "AnalysedAudioFile.generate_grain_times(grain_size, "
                                                                     "overlap)")
         grain_ind = times[key]
-        pdb.set_trace()
         return self.read_grain()
 
 

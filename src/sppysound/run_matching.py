@@ -72,6 +72,10 @@ def main():
         '\'f0\' \'atk\' \'fft\'',
         default=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"]
     )
+    parser.add_argument(
+        "--rematch", action="store_true",
+        help="Force re-matching, overwriting any existing match data "
+    )
     args = parser.parse_args()
     source_db = AudioDatabase(
         args.source,
@@ -105,7 +109,7 @@ def main():
         "spcsprd": "mean",
     }
 
-    matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=30)
+    matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=30, rematch=args.rematch)
     matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=2)
 
 if __name__ == "__main__":

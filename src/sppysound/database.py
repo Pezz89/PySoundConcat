@@ -31,8 +31,8 @@ class AudioDatabase:
 
     def __init__(
         self,
-        db_dir=None,
         audio_dir=None,
+        db_dir=None,
         analysis_list=[],
         *args,
         **kwargs
@@ -64,7 +64,7 @@ class AudioDatabase:
         self.logger.info("Initialising Database...")
 
         # Create empty list to fill with audio file paths
-        self.audio_file_list = []
+        self.audio_file_list = OrderedSet()
 
         self.data = None
 
@@ -116,6 +116,14 @@ class AudioDatabase:
         print("--------------------------------------------------")
         self.logger.debug("Analysis Finished.")
 
+    def add_file(self, file_object):
+        '''Add an AnalysedAudioFile object to the database'''
+        if type(file_object) is AnalysedAudioFile:
+            self.analysed_audio.add(file_object)
+            self.audio_file_list.append(file_object.filepath)
+        else:
+            raise TypeError("Object {0} of type {1} cannot be added to the database".format(file_object, file_object.__class__.__name__))
+
     def create_subdirs(self):
 
         # If the database directory isnt specified then the directory where the
@@ -152,7 +160,7 @@ class AudioDatabase:
                     " {1}".format(dirkey, os.path.relpath(directory)))
                     if dirkey == 'audio':
                         for item in pathops.listdir_nohidden(directory):
-                            self.audio_file_list.append(item)
+                            self.audio_file_list.add(item)
                 else:
                     raise err
             return directory
@@ -164,6 +172,8 @@ class AudioDatabase:
         subdir_paths = {
             key: initialise_subdir(key) for key in directory_set
         }
+        # Save sub-directory paths for later access
+        self.subdirs = subdir_paths
         return subdir_paths
 
     def organize_audio(self, subdir_paths, symlink=True):
@@ -199,7 +209,7 @@ class AudioDatabase:
                         self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
                             subdir_paths["audio"])))
                     # Add the file's path to the database content dictionary
-                    self.audio_file_list.append(
+                    self.audio_file_list.add(
                         os.path.join(subdir_paths["audio"], item)
                     )
 
@@ -227,6 +237,7 @@ class Matcher:
         self.source_db = database1
         self.target_db = database2
         self.output_db = kwargs.pop("output_db", None)
+        self.rematch = kwargs.pop("rematch", False)
 
         self.analysis_dict = analysis_dict
         self.common_analyses = []
@@ -277,7 +288,13 @@ class Matcher:
 
         # Count grains of the source database
         source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
+        try:
+            self.output_db.data.create_group("match")
+        except ValueError:
+            self.logger.debug("Match group already exists in the {0} HDF5 file.".format(self.output_db))
 
+        if self.rematch:
+            self.output_db.data["match"].clear()
         #
         final_match_indexes = []
 
@@ -339,7 +356,18 @@ class Matcher:
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
-        self.output_db.data["match_data"] = match_grain_inds
+            # Generate the path to the data group that will store the match
+            # data in the HDF5 file.
+            datafile_path = ''.join(("match/", target_entry.name))
+
+            try:
+                self.output_db.data[datafile_path] = match_grain_inds
+            except RuntimeError as err:
+                raise RuntimeError("Match data couldn't be written to HDF5 "
+                                   "file.\n Match data may already exist in the "
+                                   "file.\n Try running with the '--rematch' flag "
+                                   "to overwrite this data.\n Original error: "
+                                   "{0}".format(err))
         return match_grain_inds
 
 
@@ -386,9 +414,83 @@ class Synthesizer:
 
     def synthesize(self, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
-        match_inds = self.output_db.data["match_data"][:]
+        jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
+
+        for name, job in jobs:
+
+            # Generate output file name/path
+            filename, extension = os.path.splitext(name)
+            output_name = ''.join((filename, '_output', extension))
+            output_path = os.path.join(self.output_db.subdirs["audio"], output_name)
+            # Create audio file to save output to.
+            output = AudioFile(output_path, w, )
+
         pdb.set_trace()
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
         self.match_db, self.output_db = self.output_db, self.match_db
+
+
+class OrderedSet(collections.MutableSet):
+    '''
+    Defines a set object that remembers the order that items are added to it.
+
+    Taken from: http://code.activestate.com/recipes/576694/
+    '''
+
+    def __init__(self, iterable=None):
+        self.end = end = []
+        end += [None, end, end]         # sentinel node for doubly linked list
+        self.map = {}                   # key --> [key, prev, next]
+        if iterable is not None:
+            self |= iterable
+
+    def __len__(self):
+        return len(self.map)
+
+    def __contains__(self, key):
+        return key in self.map
+
+    def add(self, key):
+        if key not in self.map:
+            end = self.end
+            curr = end[1]
+            curr[2] = end[1] = self.map[key] = [key, curr, end]
+
+    def discard(self, key):
+        if key in self.map:
+            key, prev, next = self.map.pop(key)
+            prev[2] = next
+            next[1] = prev
+
+    def __iter__(self):
+        end = self.end
+        curr = end[2]
+        while curr is not end:
+            yield curr[0]
+            curr = curr[2]
+
+    def __reversed__(self):
+        end = self.end
+        curr = end[1]
+        while curr is not end:
+            yield curr[0]
+            curr = curr[1]
+
+    def pop(self, last=True):
+        if not self:
+            raise KeyError('set is empty')
+        key = self.end[1][0] if last else self.end[2][0]
+        self.discard(key)
+        return key
+
+    def __repr__(self):
+        if not self:
+            return '%s()' % (self.__class__.__name__,)
+        return '%s(%r)' % (self.__class__.__name__, list(self))
+
+    def __eq__(self, other):
+        if isinstance(other, OrderedSet):
+            return len(self) == len(other) and list(self) == list(other)
+        return set(self) == set(other)
