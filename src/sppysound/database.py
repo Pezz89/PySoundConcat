@@ -362,6 +362,9 @@ class Matcher:
 
             try:
                 self.output_db.data[datafile_path] = match_grain_inds
+                self.output_db.data[datafile_path].attrs["grain_size"] = grain_size
+                self.output_db.data[datafile_path].attrs["overlap"] = overlap
+
             except RuntimeError as err:
                 raise RuntimeError("Match data couldn't be written to HDF5 "
                                    "file.\n Match data may already exist in the "
@@ -411,19 +414,48 @@ class Synthesizer:
         """Initialize synthesizer instance"""
         self.match_db = database1
         self.output_db = database2
+        self.config = kwargs.pop("config", None)
 
     def synthesize(self, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
 
         for name, job in jobs:
-
             # Generate output file name/path
             filename, extension = os.path.splitext(name)
             output_name = ''.join((filename, '_output', extension))
             output_path = os.path.join(self.output_db.subdirs["audio"], output_name)
             # Create audio file to save output to.
-            output = AudioFile(output_path, w, )
+            output_config = self.config.output_file
+            grain_matches = self.output_db.data["match"][name]
+            # Get the grain size and overlap used for analysis.
+            match_grain_size = grain_matches.attrs["grain_size"]
+            match_overlap = grain_matches.attrs["overlap"]
+
+            _grain_size = grain_size
+            with AudioFile(
+                output_path,
+                "w",
+                samplerate=output_config["samplerate"],
+                format=output_config["format"],
+                channels=output_config["channels"]
+            ) as output:
+                hop_size = (grain_size / overlap) * output.samplerate/1000
+                _grain_size *= output.samplerate / 1000
+                output_frames = np.zeros(_grain_size + (hop_size*len(grain_matches)-1))
+                offset = 0
+                for matches in grain_matches:
+                    # If there are multiple matches, choose a match at random
+                    # from available matches.
+                    match_index = np.random.randint(matches.shape[0])
+                    final_match = matches[0]
+                    with self.match_db.analysed_audio[int(final_match[0])] as match_sample:
+                        match_sample.generate_grain_times(match_grain_size, match_overlap)
+                        match_grain = match_sample[int(final_match[1])-1]
+                        match_grain *= np.hanning(match_grain.size)
+                        output_frames[offset:offset+match_grain.size] += match_grain
+                    offset += hop_size
+                output.write_frames(output_frames)
 
         pdb.set_trace()
 

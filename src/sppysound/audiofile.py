@@ -46,6 +46,7 @@ class AudioFile(object):
         self.format = format
         self.channels = channels
         self.frames = None
+        self.times = None
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
@@ -641,13 +642,14 @@ class AudioFile(object):
         return times
 
     def __getitem__(self, key):
-        if not self.times:
+        if self.times == None:
             raise IndexError("AudioFile object grain times must be generated "
                              "before grains can be accesed by index. Try running "
                              "AnalysedAudioFile.generate_grain_times(grain_size, "
                                                                     "overlap)")
-        grain_ind = times[key]
-        return self.read_grain()
+        grain_times = self.times[key]
+        grain_times *= (self.samplerate / 1000)
+        return self.read_grain(start_index=grain_times[0], grain_size=grain_times[1]-grain_times[0])
 
 
     @staticmethod
