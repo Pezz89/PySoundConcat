@@ -169,8 +169,8 @@ class F0Analysis(Analysis):
 
         def per_frame_f0(frames, m0, M):
             if not frames.any():
-                HR = 0
-                f0 = 0
+                HR = np.nan
+                f0 = np.nan
                 return f0, HR
 
             R=autocorr([frames])
@@ -189,25 +189,29 @@ class F0Analysis(Analysis):
             Gamma = np.zeros(M)
 
             CSum = np.cumsum(frames*frames)
-
-            Gamma[m0:M] = R[m0:M] / (np.sqrt([g*CSum[-m0:-M:-1]])+np.finfo(float).eps)
+            with warnings.catch_warnings():
+                warnings.filterwarnings('error')
+                try:
+                    Gamma[m0:M] = R[m0:M] / (np.sqrt([g*CSum[-m0:-M:-1]])+np.finfo(float).eps)
+                except Warning:
+                    pass
 
             Z = feature_zcr(Gamma)
             if Z > 0.15:
-                HR = 0
-                f0 = 0
+                HR = np.nan
+                f0 = np.nan
             else:
                 # compute T0 and harmonic ratio:
                 if np.isnan(Gamma).any():
-                    HR=0
-                    f0 = 0
+                    HR=np.nan
+                    f0 = np.nan
                 else:
                     blag = np.argmax(Gamma)
                     HR = Gamma[blag]
                     interp, HR = parabolic(Gamma, blag)
                     if not interp:
-                        f0 = 0
-                        HR = 0
+                        f0 = np.nan
+                        HR = np.nan
                     else:
                         # get fundamental frequency:
                         f0 = samplerate / interp
@@ -223,7 +227,6 @@ class F0Analysis(Analysis):
         for ind, i in enumerate(frames):
             output[ind] = per_frame_f0(i, m0, M)
 
-        # output = np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
         return output
 
     def hdf5_dataset_formatter(self, *args, **kwargs):
@@ -260,14 +263,17 @@ class F0Analysis(Analysis):
         confidence = data[1]
         output = np.empty(len(frames))
         for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            valid_inds = np.isfinite(frame) & np.isfinite(conf)
+            frame = frame[valid_inds]
             if not frame.size:
-                output[i] = 0
+                output[i] = np.nan
                 continue
+            conf = conf[valid_inds]
             med_conf = np.mean(conf)
             if med_conf > self.threshold:
                 output[i] = np.log10(np.mean(frame[conf > self.threshold]))/self.nyquist_rate
             else:
-                output[i] = 0
+                output[i] = np.nan
 
         return output
 
@@ -278,13 +284,16 @@ class F0Analysis(Analysis):
         confidence = data[1]
         output = np.empty(len(frames))
         for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            valid_inds = np.isfinite(frame) & np.isfinite(conf)
+            frame = frame[valid_inds]
             if not frame.size:
-                output[i] = 0
+                output[i] = np.nan
                 continue
+            conf = conf[valid_inds]
             med_conf = np.median(conf)
             if med_conf > self.threshold:
                 output[i] = np.log10(np.median(frame[conf > self.threshold]))/self.nyquist_rate
             else:
-                output[i] = 0
+                output[i] = np.nan
 
         return output

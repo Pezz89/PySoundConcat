@@ -67,9 +67,9 @@ class SpectralSpreadAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate, output_format = "ind"):
+    def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate, output_format = "freq"):
         '''
-        Calculate the spectral centroid of the fft frames.
+        Calculate the spectral spread of the fft frames.
 
         fft: Real fft frames.
         spectral_centroid: spectral centroid frames (in index format).
@@ -78,7 +78,12 @@ class SpectralSpreadAnalysis(Analysis):
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
-        magnitudes = magnitudes / np.max(magnitudes);
+        mag_max = np.max(magnitudes)
+        if not mag_max:
+            y = np.empty(magnitudes.shape[0])
+            y.fill(np.nan)
+            return y
+        magnitudes = magnitudes / mag_max
         # Get the index for each bin
         if output_format == "ind":
             freqs = np.arange(np.size(fft, axis=1))
@@ -120,7 +125,11 @@ class SpectralSpreadAnalysis(Analysis):
 
         output = np.empty(len(values))
         for ind, i in enumerate(values):
-            output[ind] = np.log10(np.mean(i))/self.nyquist_rate
+            mean_i = np.mean(i)
+            if mean_i == 0:
+                output[ind] = np.nan
+            else:
+                output[ind] = np.log10(np.mean(i))/self.nyquist_rate
         return output
 
     def median_formatter(self, data):
@@ -129,5 +138,9 @@ class SpectralSpreadAnalysis(Analysis):
 
         output = np.empty(len(data))
         for ind, i in enumerate(values):
-            output[ind] = np.log10(np.median(i))/self.nyquist_rate
+            median_i = np.median(i)
+            if median_i == 0:
+                output[ind] = np.nan
+            else:
+                output[ind] = np.log10(np.median(i))/self.nyquist_rate
         return output

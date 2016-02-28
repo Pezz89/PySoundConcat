@@ -89,7 +89,7 @@ class AudioDatabase:
         self.analysed_audio = []
 
         for item in self.audio_file_list:
-            filepath = os.path.join(subdir_paths['audio'], item)
+            filepath = os.path.join(subdir_paths['audio'], os.path.basename(item))
             print("--------------------------------------------------")
             # if there is no wav file then skip
             try:
@@ -189,7 +189,7 @@ class AudioDatabase:
                 if os.path.splitext(item)[1] in valid_filetypes:
                     self.logger.debug(''.join(("File added to database content: ", item)))
                     # Get the full path for the file
-                    filepath = os.path.join(self.audio_dir, item)
+                    filepath = os.path.abspath(os.path.join(self.audio_dir, os.path.basename(item)))
                     # If the file isn't already in the database...
                     if not os.path.isfile(
                         '/'.join((subdir_paths["audio"], os.path.basename(filepath)))
@@ -197,7 +197,11 @@ class AudioDatabase:
                         # Copy the file to the database
                         if symlink:
                             filename = os.path.basename(filepath)
-                            os.symlink(filepath, os.path.join(subdir_paths["audio"], filename))
+                            try:
+                                os.remove(os.path.join(subdir_paths["audio"], filename))
+                            except OSError:
+                                pass
+                            os.symlink(filepath, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:
@@ -210,7 +214,7 @@ class AudioDatabase:
                             subdir_paths["audio"])))
                     # Add the file's path to the database content dictionary
                     self.audio_file_list.add(
-                        os.path.join(subdir_paths["audio"], item)
+                        os.path.join(subdir_paths["audio"], os.path.basename(item))
                     )
 
     def close(self):

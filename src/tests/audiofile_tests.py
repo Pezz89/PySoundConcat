@@ -2,6 +2,7 @@
 import unittest
 import numpy as np
 from sppysound import AudioFile, analysis
+from sppysound.database import AudioDatabase
 from fileops import pathops
 import pdb
 import os
@@ -33,7 +34,7 @@ class globalTests(unittest.TestCase):
             overwrite_existing=True,
             mode=mode,
             channels=channels,
-        ).open()
+        )
 
 
 class FileCreationTests(globalTests):
@@ -564,13 +565,57 @@ class F0AnalysisTests(globalTests):
         self.f = 440
         x = np.arange(88200)+1
         self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
-        self.white_noise = np.random.random(88200)
+        self.white_noise = 2 * np.random.random(88200) - 1
 
     def test_Generatef0(self):
         output = analysis.F0Analysis.create_f0_analysis(self.sine_wave, self.sr)
         average_output = np.median(output[:, 0])
         a = (average_output >= 437) & (average_output <= 443)
         self.assertTrue(a.all())
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        del self.TestAudio
+        pathops.delete_if_exists("./.TestAudio.wav")
+
+class DatabaseTests(globalTests):
+    """Tests database creation and analysis."""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        pathops.dir_must_exist("./.test_db")
+        self.sine_audio = self.create_test_audio(filename="./.test_db/test_sine.wav")
+        self.silent_audio = self.create_test_audio(filename="./.test_db/test_silent.wav")
+        self.noise_audio = self.create_test_audio(filename="./.test_db/test_noise.wav")
+        f = 440
+        x = np.arange(self.sine_audio.samplerate*2)+1
+        sine_wave = np.sin(2*np.pi*f/self.sine_audio.samplerate*x)
+        silence = np.zeros(self.silent_audio.samplerate*2)
+        white_noise = 2 * np.random.random(self.noise_audio.samplerate*2) - 1
+
+        self.sine_audio.write_frames(sine_wave)
+        del self.sine_audio
+
+        self.noise_audio.write_frames(white_noise)
+        del self.noise_audio
+
+        self.silent_audio.write_frames(silence)
+        del self.silent_audio
+
+    def test_DatabaseAnalysis(self):
+        # Create database object
+        database = AudioDatabase(
+            "./.test_db",
+            analysis_list=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"]
+        )
+        # Create/load a pre-existing database
+        database.load_database(reanalyse=True)
+
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)
