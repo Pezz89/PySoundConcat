@@ -376,30 +376,29 @@ class Matcher:
         """
         Calculates the euclidean distance between two arrays of data.
 
-        Distance is calculated with special handeling of Nan values, should they exist in the data.
+        Distance is calculated with special handeling of Nan values, if they exist in the data.
         """
         # Find all numbers that aren't Nan, inf, None etc...
         data1_finite_inds = np.isfinite(data1)
         data2_finite_inds = np.isfinite(data2)
         # Find all special numbers
-        data1_other_inds = np.nonzero(data1_finite_inds == False)
-        data2_other_inds = np.nonzero(data2_finite_inds == False)
+        data1_other_inds = data1_finite_inds == False
+        data2_other_inds = data2_finite_inds == False
 
         # Calculate euclidean distances between the two data arrays.
         distances = np.abs(np.vstack(data1)-data2)
         # Find the largest non-Nan distance
         largest_distance = np.max(distances[np.isfinite(distances)])
 
-        # Find all Nan intersections of the 2D array.
-        intersect = cartesian((data1_other_inds, data2_other_inds))
+        # Find grains where both the source and target values are Nan.
+        nan_intersects = np.vstack(data1_other_inds) & data2_other_inds
 
-        #distances[intersect] = 0.
+        # Set these grain's distances to 0 as they match.
+        distances[nan_intersects] = 0.
 
+        distances[np.isnan(distances)] = largest_distance + (largest_distance*0.1)
 
-        pdb.set_trace()
-        distance = np.sqrt((np.vstack(data2[data2_finite_inds]) - data1[data1_finite_inds])**2)
-
-        # self.data_distance[:, start_index:end_index] =
+        return distances
 
     def calculate_db_inds(self, match_indexes, source_sample_indexes):
         """
