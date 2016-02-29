@@ -241,16 +241,10 @@ class Matcher:
         self.source_db = database1
         self.target_db = database2
         self.output_db = kwargs.pop("output_db", None)
-        self.rematch = kwargs.pop("rematch", False)
+        self.rematch = self.config.matcher["rematch"]
 
         self.analysis_dict = analysis_dict
         self.common_analyses = []
-        """
-        self.match_type = {
-            "mean": self.mean_formatter,
-            "median": self.median_formatter
-        }
-        """
 
         self.logger.debug("Initialised Matcher")
 
@@ -330,7 +324,7 @@ class Matcher:
                 # objects match formatting function.
                 target_data = analysis_object.formatters[analysis_formatting](target_data)
 
-                data_distance = np.zeros((target_data.shape[0], source_sample_indexes[-1][-1]))
+                self.data_distance = np.zeros((target_data.shape[0], source_sample_indexes[-1][-1]))
 
                 for sind, source_entry in enumerate(self.source_db.analysed_audio):
 
@@ -351,12 +345,12 @@ class Matcher:
 
                     # Calculate the euclidean distance between the source and
                     # source values of each grain and add to array
-                    data_distance[:, start_index:end_index] = np.sqrt((np.vstack(target_data) - source_data)**2)
+                    self.data_distance[:, start_index:end_index] = np.sqrt((np.vstack(target_data) - source_data)**2)
 
                 # Normalize and weight the distances. A higher weighting gives
                 # an analysis presedence over others.
-                data_distance *= (1/data_distance.max()) * weightings[analysis]
-                distance_accum += data_distance
+                self.data_distance *= (1/self.data_distance.max()) * weightings[analysis]
+                distance_accum += self.data_distance
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
@@ -378,7 +372,34 @@ class Matcher:
         return match_grain_inds
 
 
+    def distance_calc(self, data1, data2):
+        """
+        Calculates the euclidean distance between two arrays of data.
 
+        Distance is calculated with special handeling of Nan values, should they exist in the data.
+        """
+        # Find all numbers that aren't Nan, inf, None etc...
+        data1_finite_inds = np.isfinite(data1)
+        data2_finite_inds = np.isfinite(data2)
+        # Find all special numbers
+        data1_other_inds = np.nonzero(data1_finite_inds == False)
+        data2_other_inds = np.nonzero(data2_finite_inds == False)
+
+        # Calculate euclidean distances between the two data arrays.
+        distances = np.abs(np.vstack(data1)-data2)
+        # Find the largest non-Nan distance
+        largest_distance = np.max(distances[np.isfinite(distances)])
+
+        # Find all Nan intersections of the 2D array.
+        intersect = cartesian((data1_other_inds, data2_other_inds))
+
+        #distances[intersect] = 0.
+
+
+        pdb.set_trace()
+        distance = np.sqrt((np.vstack(data2[data2_finite_inds]) - data1[data1_finite_inds])**2)
+
+        # self.data_distance[:, start_index:end_index] =
 
     def calculate_db_inds(self, match_indexes, source_sample_indexes):
         """
@@ -530,3 +551,54 @@ class OrderedSet(collections.MutableSet):
         if isinstance(other, OrderedSet):
             return len(self) == len(other) and list(self) == list(other)
         return set(self) == set(other)
+
+def cartesian(arrays, out=None):
+    """
+    Generate a cartesian product of input arrays.
+
+    Parameters
+    ----------
+    arrays : list of array-like
+        1-D arrays to form the cartesian product of.
+    out : ndarray
+        Array to place the cartesian product in.
+
+    Returns
+    -------
+    out : ndarray
+        2-D array of shape (M, len(arrays)) containing cartesian products
+        formed of input arrays.
+
+    Examples
+    --------
+    >>> cartesian(([1, 2, 3], [4, 5], [6, 7]))
+    array([[1, 4, 6],
+           [1, 4, 7],
+           [1, 5, 6],
+           [1, 5, 7],
+           [2, 4, 6],
+           [2, 4, 7],
+           [2, 5, 6],
+           [2, 5, 7],
+           [3, 4, 6],
+           [3, 4, 7],
+           [3, 5, 6],
+           [3, 5, 7]])
+
+    Ref: http://stackoverflow.com/questions/1208118/using-numpy-to-build-an-array-of-all-combinations-of-two-arrays
+    """
+
+    arrays = [np.asarray(x) for x in arrays]
+    dtype = arrays[0].dtype
+
+    n = np.prod([x.size for x in arrays])
+    if out is None:
+        out = np.zeros([n, len(arrays)], dtype=dtype)
+
+    m = n / arrays[0].size
+    out[:,0] = np.repeat(arrays[0], m)
+    if arrays[1:]:
+        cartesian(arrays[1:], out=out[0:m,1:])
+        for j in xrange(1, arrays[0].size):
+            out[j*m:(j+1)*m,1:] = out[0:m,1:]
+    return out

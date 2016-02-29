@@ -2,10 +2,11 @@
 import unittest
 import numpy as np
 from sppysound import AudioFile, analysis
-from sppysound.database import AudioDatabase
+from sppysound.database import AudioDatabase, Matcher
 from fileops import pathops
 import pdb
 import os
+import config
 
 
 class globalTests(unittest.TestCase):
@@ -615,6 +616,78 @@ class DatabaseTests(globalTests):
         )
         # Create/load a pre-existing database
         database.load_database(reanalyse=True)
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        pathops.delete_if_exists("./.test_db")
+
+class MatcherTests(globalTests):
+    """Tests database creation and analysis."""
+
+    # Create database 1
+    def setUp(self):
+        """Create matcher object to be tested"""
+        pathops.dir_must_exist("./.test_db1")
+        self.sine_audio = self.create_test_audio(filename="./.test_db1/test_sine.wav")
+        self.silent_audio = self.create_test_audio(filename="./.test_db1/test_silent.wav")
+        self.noise_audio = self.create_test_audio(filename="./.test_db1/test_noise.wav")
+        f = 440
+        x = np.arange(self.sine_audio.samplerate*2)+1
+        sine_wave = np.sin(2*np.pi*f/self.sine_audio.samplerate*x)
+        silence = np.zeros(self.silent_audio.samplerate*2)
+        white_noise = 2 * np.random.random(self.noise_audio.samplerate*2) - 1
+
+        self.sine_audio.write_frames(sine_wave)
+        del self.sine_audio
+
+        self.noise_audio.write_frames(white_noise)
+        del self.noise_audio
+
+        self.silent_audio.write_frames(silence)
+        del self.silent_audio
+        # Create database object
+        self.database1 = AudioDatabase(
+            "./.test_db",
+        )
+        # Create/load a pre-existing database
+        self.database1.load_database(reanalyse=True)
+
+        # Create database 2
+        pathops.dir_must_exist("./.test_db2")
+        self.sine_audio = self.create_test_audio(filename="./.test_db2/test_sine.wav")
+        self.silent_audio = self.create_test_audio(filename="./.test_db2/test_silent.wav")
+        self.noise_audio = self.create_test_audio(filename="./.test_db2/test_noise.wav")
+        f = 440
+        x = np.arange(self.sine_audio.samplerate*2)+1
+        sine_wave = np.sin(2*np.pi*f/self.sine_audio.samplerate*x)
+        silence = np.zeros(self.silent_audio.samplerate*2)
+        white_noise = 2 * np.random.random(self.noise_audio.samplerate*2) - 1
+
+        self.sine_audio.write_frames(sine_wave)
+        del self.sine_audio
+
+        self.noise_audio.write_frames(white_noise)
+        del self.noise_audio
+
+        self.silent_audio.write_frames(silence)
+        del self.silent_audio
+        # Create database object
+        self.database2 = AudioDatabase(
+            "./.test_db",
+        )
+        # Create/load a pre-existing database
+        self.database2.load_database(reanalyse=True)
+        self.matcher = Matcher(self.database1, self.database2, {}, config=config)
+
+    def test_DistanceCalc(self):
+        data1 = np.array([np.nan, 1,2,3,4, np.nan, np.nan, 7, 6, 5])
+        data2 = np.array([1, np.nan,2,3,4, 6, np.nan, 7, np.nan, 5])
+        self.matcher.distance_calc(data1, data2)
 
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
