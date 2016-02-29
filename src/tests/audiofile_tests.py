@@ -687,8 +687,18 @@ class MatcherTests(globalTests):
     def test_DistanceCalc(self):
         data1 = np.array([np.nan, 1,2,3,4, np.nan, np.nan, 7, 6, 5])
         data2 = np.array([1, np.nan,2,3,4, 6, np.nan, 7, np.nan, 5])
-        self.matcher.distance_calc(data1, data2)
-
+        output = self.matcher.distance_calc(data1, data2)
+        expected_output = np.array([[ 39.6,   0. ,  39.6,  39.6,  39.6,  39.6,   0. ,  39.6,   0. , 39.6],
+       [  0. ,  39.6,   1. ,   4. ,   9. ,  25. ,  39.6,  36. ,  39.6,  16. ],
+       [  1. ,  39.6,   0. ,   1. ,   4. ,  16. ,  39.6,  25. ,  39.6,   9. ],
+       [  4. ,  39.6,   1. ,   0. ,   1. ,   9. ,  39.6,  16. ,  39.6,   4. ],
+       [  9. ,  39.6,   4. ,   1. ,   0. ,   4. ,  39.6,   9. ,  39.6,   1. ],
+       [ 39.6,   0. ,  39.6,  39.6,  39.6,  39.6,   0. ,  39.6,   0. , 39.6],
+       [ 39.6,   0. ,  39.6,  39.6,  39.6,  39.6,   0. ,  39.6,   0. , 39.6],
+       [ 36. ,  39.6,  25. ,  16. ,   9. ,   1. ,  39.6,   0. ,  39.6,   4. ],
+       [ 25. ,  39.6,  16. ,   9. ,   4. ,   0. ,  39.6,   1. ,  39.6,   1. ],
+       [ 16. ,  39.6,   9. ,   4. ,   1. ,   1. ,  39.6,   4. ,  39.6,   0. ]])
+        np.testing.assert_array_equal(output, expected_output)
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)

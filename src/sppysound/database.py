@@ -236,7 +236,7 @@ class Matcher:
 
     def __init__(self, database1, database2, analysis_dict,*args, **kwargs):
         self.config = kwargs.pop('config', None)
-        self.match_quantity = kwargs.pop('quantity', 30)
+        self.match_quantity = kwargs.pop('quantity', 1)
         self.logger = logging.getLogger(__name__ + '.Matcher')
         self.source_db = database1
         self.target_db = database2
@@ -345,7 +345,7 @@ class Matcher:
 
                     # Calculate the euclidean distance between the source and
                     # source values of each grain and add to array
-                    self.data_distance[:, start_index:end_index] = np.sqrt((np.vstack(target_data) - source_data)**2)
+                    self.data_distance[:, start_index:end_index] = self.distance_calc(target_data, source_data)
 
                 # Normalize and weight the distances. A higher weighting gives
                 # an analysis presedence over others.
@@ -386,7 +386,7 @@ class Matcher:
         data2_other_inds = data2_finite_inds == False
 
         # Calculate euclidean distances between the two data arrays.
-        distances = np.abs(np.vstack(data1)-data2)
+        distances = np.abs(np.vstack(data1)-data2)**2
         # Find the largest non-Nan distance
         largest_distance = np.max(distances[np.isfinite(distances)])
 
@@ -480,8 +480,6 @@ class Synthesizer:
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
                 output.write_frames(output_frames)
-
-        pdb.set_trace()
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
