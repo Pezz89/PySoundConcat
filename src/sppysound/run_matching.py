@@ -95,7 +95,6 @@ def main():
 
     output_db = AudioDatabase(
         args.output,
-        analysis_list=args.analyse,
         config=config
     )
     # Create/load a pre-existing database
