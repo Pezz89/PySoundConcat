@@ -50,23 +50,40 @@ def main():
         'argument 2.'
     )
     parser.add_argument(
-        'match',
+        'source',
         type=str,
-        help='match database directory'
+        help='source database directory'
     )
     parser.add_argument(
         'output',
         type=str,
         help='output database directory'
     )
+    parser.add_argument(
+        'target',
+        type=str,
+        help='target database directory',
+        default=None
+    )
     args = parser.parse_args()
 
-    match_db = AudioDatabase(
-        args.match,
+    # Load database of samples to be used for output synthesis
+    source_db = AudioDatabase(
+        args.source,
         config=config
     )
     # Create/load a pre-existing database
-    match_db.load_database(reanalyse=False)
+    source_db.load_database(reanalyse=False)
+
+    # Load database used to generate matches to source database.
+    # This is used when enforcing analyses such as RMS and F0. (Original grains
+    # are needed to calculate the ratio to alter the synthesized grain by)
+    target_db = AudioDatabase(
+        args.target,
+        config=config
+    )
+    # Create/load a pre-existing database
+    target_db.load_database(reanalyse=False)
 
     output_db = AudioDatabase(
         args.output,
@@ -75,7 +92,7 @@ def main():
     # Create/load a pre-existing database
     output_db.load_database(reanalyse=False)
 
-    synthesizer = Synthesizer(match_db, output_db, config=config)
+    synthesizer = Synthesizer(source_db, output_db, target_db=target_db, config=config)
     synthesizer.synthesize(grain_size=100, overlap=2)
 
 if __name__ == "__main__":

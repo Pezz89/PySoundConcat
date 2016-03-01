@@ -68,6 +68,9 @@ class AudioDatabase:
 
         self.data = None
 
+    def __getitem__(self, key):
+        return analysed_audio[key]
+
     def load_database(self, reanalyse=False):
         """Create/Read from a pre-existing database"""
 
@@ -324,6 +327,8 @@ class Matcher:
                 # objects match formatting function.
                 target_data = analysis_object.formatters[analysis_formatting](target_data)
 
+                # Allocate memory for storing accumulated distances between
+                # source and target grains
                 self.data_distance = np.zeros((target_data.shape[0], source_sample_indexes[-1][-1]))
 
                 for sind, source_entry in enumerate(self.source_db.analysed_audio):
@@ -438,13 +443,23 @@ class Synthesizer:
         """Initialize synthesizer instance"""
         self.match_db = database1
         self.output_db = database2
+
         self.config = kwargs.pop("config", None)
+
+        self.enforce_rms_bool = self.config.synthesizer["enforce_rms"]
+        # Key word arguments overwrite config file.
+        self.enforce_rms_bool = kwargs.pop("enforce_rms", self.enforce_rms)
+
+        self.target_db = kwargs.pop("target_db", None)
+        if self.enforce_rms:
+            if not self.target_db:
+                raise ValueError("Target database must be provided if rms or F0 enforcement is enabled.")
 
     def synthesize(self, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
 
-        for name, job in jobs:
+        for job_ind, (name, job) in enumerate(jobs):
             # Generate output file name/path
             filename, extension = os.path.splitext(name)
             output_name = ''.join((filename, '_output', extension))
@@ -468,18 +483,28 @@ class Synthesizer:
                 _grain_size *= output.samplerate / 1000
                 output_frames = np.zeros(_grain_size + (hop_size*len(grain_matches)-1))
                 offset = 0
-                for matches in grain_matches:
+                for grain_ind, matches in enumerate(grain_matches):
                     # If there are multiple matches, choose a match at random
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
-                    final_match = matches[0]
+                    final_match = matches[match_index]
                     with self.match_db.analysed_audio[int(final_match[0])] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap)
                         match_grain = match_sample[int(final_match[1])-1]
+
+                        if self.enforce_rms_bool:
+                            target_entry = self.target_db[job_ind]
+
+                            match_grain = self.enforce_rms(match_grain, target_grain_ind=grain_ind, )
+
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
                 output.write_frames(output_frames)
+
+    def enforce_rms(grain, source_entry, target_db_ind, target_grain_ind):
+        source_entry.analysis_data_grains(source_times, "rms")
+        target_entry.analysis_data_grains(target_times, "rms")
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
