@@ -340,11 +340,7 @@ class Matcher:
                     self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
-                    source_data = source_entry.analysis_data_grains(source_times, analysis)
-
-                    # Format the source data ready for matching using the analysis
-                    # objects match formatting function.
-                    source_data = analysis_object.formatters[analysis_formatting](source_data)
+                    source_data = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
 
                     # Calculate the euclidean distance between the source and
                     # source values of each grain and add to array
@@ -426,7 +422,7 @@ class Matcher:
         # Calculate grain index offset from the start of the sample
         match_grain_inds = match_indexes.reshape(mi_shape) - match_start_inds
 
-        return np.dstack((x, match_grain_inds))
+        return np.dstack((x, match_grain_inds)).astype(int)
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""
@@ -481,28 +477,54 @@ class Synthesizer:
                 _grain_size *= output.samplerate / 1000
                 output_frames = np.zeros(_grain_size + (hop_size*len(grain_matches)-1))
                 offset = 0
-                for grain_ind, matches in enumerate(grain_matches):
+                for target_grain_ind, matches in enumerate(grain_matches):
                     # If there are multiple matches, choose a match at random
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
-                    final_match = matches[match_index]
-                    with self.match_db.analysed_audio[int(final_match[0])] as match_sample:
+                    match_db_ind, match_grain_ind = matches[match_index]
+                    with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap)
-                        match_grain = match_sample[int(final_match[1])-1]
+
+                        # TODO: Make proper fix for grain index offset of 1
+                        match_grain = match_sample[match_grain_ind-1]
 
                         if self.enforce_rms_bool:
-                            target_entry = self.target_db[job_ind]
+                            # Get the target sample from the database
+                            target_sample = self.target_db[job_ind]
 
-                            # match_grain = self.enforce_rms(match_grain, target_grain_ind=grain_ind, )
+                            # Calculate garin times for sample to allow for
+                            # indexing.
+                            target_sample.generate_grain_times(match_grain_size, match_overlap)
+
+                            match_grain = self.enforce_rms(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
                 output.write_frames(output_frames)
 
-    def enforce_rms(grain, source_entry, target_db_ind, target_grain_ind):
-        source_entry.analysis_data_grains(source_times, "rms")
-        target_entry.analysis_data_grains(target_times, "rms")
+    def enforce_rms(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
+
+        # Get grain start and finish range to retreive analysis frames from.
+        # TODO: Make proper fix for grain index offset of 1
+        target_times = target_sample.times[target_grain_ind-1]
+
+        # Get mean of RMS frames in time range specified.
+        target_rms = target_sample.analysis_data_grains(target_times, "rms", format="median")[0]
+
+        # Get grain start and finish range to retreive analysis frames from.
+        # TODO: Make proper fix for grain index offset of 1
+        source_times = source_sample.times[source_grain_ind-1]
+
+        # Get mean of RMS frames in time range specified.
+        source_rms = source_sample.analysis_data_grains(source_times, "rms", format="median")[0]
+
+
+        ratio_difference = source_rms / target_rms
+
+        grain *= ratio_difference
+
+        return grain
 
     def swap_databases(self):
         """Convenience method to swap databases, changing the source database into the target and vice-versa"""

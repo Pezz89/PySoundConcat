@@ -70,7 +70,8 @@ def main():
     # Load database of samples to be used for output synthesis
     source_db = AudioDatabase(
         args.source,
-        config=config
+        config=config,
+        analysis_list={"f0", "rms"}
     )
     # Create/load a pre-existing database
     source_db.load_database(reanalyse=False)
@@ -80,7 +81,8 @@ def main():
     # are needed to calculate the ratio to alter the synthesized grain by)
     target_db = AudioDatabase(
         args.target,
-        config=config
+        config=config,
+        analysis_list={"f0", "rms"}
     )
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)

@@ -647,7 +647,7 @@ class AudioFile(object):
                              "before grains can be accesed by index. Try running "
                              "AnalysedAudioFile.generate_grain_times(grain_size, "
                                                                     "overlap)")
-        grain_times = self.times[key]
+        grain_times = self.times[key].copy()
         grain_times *= (self.samplerate / 1000)
         return self.read_grain(start_index=grain_times[0], grain_size=grain_times[1]-grain_times[0])
 
@@ -890,16 +890,27 @@ class AnalysedAudioFile(AudioFile):
     def open(self):
         return self
 
-    def analysis_data_grains(self, times, analysis):
+    def analysis_data_grains(self, times, analysis, *args, **kwargs):
         """
         retrieve data for analysis within start and end time pairs in the format specified.
 
         times: an array of start and end times to retrieve analysis from (np.array)
         analysis: analysis string specifying analysis to retrieve
         """
-        analysis_frames = self.analyses[analysis].get_analysis_grains(times[:, 0], times[:, 1])
+        format_type = kwargs.pop("format", None)
+
+        analysis_object = self.analyses[analysis]
+
+        if times.size == 2:
+            times = np.array([times])
+        analysis_frames = analysis_object.get_analysis_grains(times[:, 0], times[:, 1])
+
+        if format_type:
+            analysis_frames = analysis_object.formatters[format_type](analysis_frames)
+
         return analysis_frames
 
+    '''
     def plot_rms_to_graph(self):
         """
         Uses matplotlib to create a graph of the audio file and the generated
@@ -914,6 +925,7 @@ class AnalysedAudioFile(AudioFile):
         plt.xlabel("Time (samples)")
         plt.ylabel("sample value")
         plt.show()
+    '''
 
     # -------------------------------------------------------------------------
     # GENERAL ANALYSIS METHODS
