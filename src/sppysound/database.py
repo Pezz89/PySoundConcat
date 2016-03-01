@@ -69,7 +69,7 @@ class AudioDatabase:
         self.data = None
 
     def __getitem__(self, key):
-        return analysed_audio[key]
+        return self.analysed_audio[key]
 
     def load_database(self, reanalyse=False):
         """Create/Read from a pre-existing database"""
@@ -161,9 +161,6 @@ class AudioDatabase:
                 if os.path.exists(directory):
                     self.logger.warning("\'{0}\' directory already exists:"
                     " {1}".format(dirkey, os.path.relpath(directory)))
-                    if dirkey == 'audio':
-                        for item in pathops.listdir_nohidden(directory):
-                            self.audio_file_list.add(item)
                 else:
                     raise err
             return directory
@@ -495,7 +492,7 @@ class Synthesizer:
                         if self.enforce_rms_bool:
                             target_entry = self.target_db[job_ind]
 
-                            match_grain = self.enforce_rms(match_grain, target_grain_ind=grain_ind, )
+                            # match_grain = self.enforce_rms(match_grain, target_grain_ind=grain_ind, )
 
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
