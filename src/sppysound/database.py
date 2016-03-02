@@ -11,7 +11,7 @@ import sys
 import traceback
 import logging
 import h5py
-import multiprocessing as mp
+from celery import group
 
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
@@ -510,17 +510,17 @@ class Synthesizer:
         target_times = target_sample.times[target_grain_ind-1]
 
         # Get mean of RMS frames in time range specified.
-        target_rms = target_sample.analysis_data_grains(target_times, "rms", format="median")[0]
+        target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0]
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
         source_times = source_sample.times[source_grain_ind-1]
 
         # Get mean of RMS frames in time range specified.
-        source_rms = source_sample.analysis_data_grains(source_times, "rms", format="median")[0]
+        source_rms = source_sample.analysis_data_grains(source_times, "rms", format="mean")[0]
 
 
-        ratio_difference = source_rms / target_rms
+        ratio_difference = target_rms / source_rms
 
         grain *= ratio_difference
 

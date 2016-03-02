@@ -910,7 +910,6 @@ class AnalysedAudioFile(AudioFile):
 
         return analysis_frames
 
-    '''
     def plot_rms_to_graph(self):
         """
         Uses matplotlib to create a graph of the audio file and the generated
@@ -925,7 +924,6 @@ class AnalysedAudioFile(AudioFile):
         plt.xlabel("Time (samples)")
         plt.ylabel("sample value")
         plt.show()
-    '''
 
     # -------------------------------------------------------------------------
     # GENERAL ANALYSIS METHODS
