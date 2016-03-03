@@ -11,8 +11,10 @@ import sys
 import traceback
 import logging
 import h5py
-from celery import group
+from pathos.helpers import cpu_count, ProcessPool as Pool
+from pools import get_pool
 
+from parallel_processes import generate_audio_objects
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
 from helper import OrderedSet
@@ -89,33 +91,15 @@ class AudioDatabase:
     def analyse_database(self, subdir_paths, reanalyse):
         # Create data file for storing analysis data for the database
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
-        self.data = h5py.File(datapath, 'a')
-        self.analysed_audio = []
+
+        tasks = [(item, self.analysis_list, self.db_dir, datapath, self.config, subdir_paths, reanalyse) for item in self.audio_file_list]
+
+        print("YUP!!")
+        pool = get_pool(mpi=True)
+
+        match_segs = pool.map(generate_audio_objects, tasks)
 
         for item in self.audio_file_list:
-            filepath = os.path.join(subdir_paths['audio'], os.path.basename(item))
-            print("--------------------------------------------------")
-            # if there is no wav file then skip
-            try:
-                with AnalysedAudioFile(
-                    filepath,
-                    'r',
-                    analyses=self.analysis_list,
-                    name=os.path.basename(item),
-                    db_dir=self.db_dir,
-                    data_file=self.data,
-                    reanalyse=reanalyse,
-                    config=self.config
-                ) as AAF:
-                    AAF.create_analysis()
-                    self.analysed_audio.append(AAF)
-            except IOError as err:
-                # Skip any audio file objects that can't be analysed
-                self.logger.warning("File cannot be analysed: {0}\nReason: {1}\n"
-                      "Skipping...".format(item, err))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                          file=sys.stdout)
                 continue
         print("--------------------------------------------------")
         self.logger.debug("Analysis Finished.")
