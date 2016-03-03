@@ -202,7 +202,7 @@ class AudioDatabase:
                                 os.remove(os.path.join(subdir_paths["audio"], filename))
                             except OSError:
                                 pass
-                            os.symlink(filepath, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
+                            os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:
