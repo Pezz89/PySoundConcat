@@ -17,7 +17,7 @@ matcher = {
 
 synthesizer = {
     "enforce_rms": True,
-    "enf_rms_ratio_limit": 10.,
+    "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
 }
 

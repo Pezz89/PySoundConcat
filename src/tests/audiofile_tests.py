@@ -3,6 +3,8 @@ import unittest
 import numpy as np
 from sppysound import AudioFile, analysis
 from sppysound.database import AudioDatabase, Matcher
+import subprocess
+
 from fileops import pathops
 import pdb
 import os
@@ -652,7 +654,7 @@ class MatcherTests(globalTests):
         del self.silent_audio
         # Create database object
         self.database1 = AudioDatabase(
-            "./.test_db",
+            "./.test_db1",
         )
         # Create/load a pre-existing database
         self.database1.load_database(reanalyse=True)
@@ -678,7 +680,7 @@ class MatcherTests(globalTests):
         del self.silent_audio
         # Create database object
         self.database2 = AudioDatabase(
-            "./.test_db",
+            "./.test_db2",
         )
         # Create/load a pre-existing database
         self.database2.load_database(reanalyse=True)
@@ -699,6 +701,51 @@ class MatcherTests(globalTests):
        [ 25. ,  39.6,  16. ,   9. ,   4. ,   0. ,  39.6,   1. ,  39.6,   1. ],
        [ 16. ,  39.6,   9. ,   4. ,   1. ,   1. ,  39.6,   4. ,  39.6,   0. ]])
         np.testing.assert_array_equal(output, expected_output)
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        pathops.delete_if_exists("./.test_db1")
+        pathops.delete_if_exists("./.test_db2")
+
+
+class PitchShiftTests(globalTests):
+    """Tests the pitch shifter function"""
+
+    def setUp(self):
+        # Generate a sine wave at 440hz
+        self.sr = 44100
+        x = np.arange(self.sr*2)+1
+        self.sine_wave = np.sin(2*np.pi*440/self.sr*x)
+
+        pathops.dir_must_exist("./.test_db3")
+        self.sine_audio = self.create_test_audio(filename="./.test_db3/test_sine.wav")
+        window = np.hanning(self.sine_wave.size)
+        self.sine_wave *= window
+        self.sine_audio.write_frames(self.sine_wave)
+        del self.sine_audio
+
+        p_shift_args = ["sox", "./.test_db3/test_sine.wav", "./.test_db3/pitch.wav", "pitch", "1000"]
+
+        p = subprocess.Popen(p_shift_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (output, err) = p.communicate()
+
+    def test_ShiftingAccuracy(self):
+        pitch = 2.
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        pathops.delete_if_exists("./.test_db3")
+
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)
 SwitchModeSuite = unittest.TestLoader().loadTestsFromTestCase(SwitchModeTests)

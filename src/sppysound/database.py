@@ -186,22 +186,18 @@ class AudioDatabase:
         for root, directories, filenames in os.walk(self.audio_dir):
             for item in filenames:
                 # If the file is a valid file type...
-                item = os.path.join(root,item)
+                item = os.path.abspath(os.path.join(root,item))
                 if os.path.splitext(item)[1] in valid_filetypes:
                     self.logger.debug(''.join(("File added to database content: ", item)))
                     # Get the full path for the file
                     filepath = os.path.abspath(os.path.join(self.audio_dir, os.path.basename(item)))
                     # If the file isn't already in the database...
-                    if not os.path.isfile(
-                        '/'.join((subdir_paths["audio"], os.path.basename(filepath)))
-                    ):
+                    filename = os.path.basename(filepath)
+                    destination = os.path.abspath(os.path.join(subdir_paths["audio"], os.path.basename(filepath)))
+
+                    if not (os.path.isfile(destination) and os.path.lexists(destination)):
                         # Copy the file to the database
                         if symlink:
-                            filename = os.path.basename(filepath)
-                            try:
-                                os.remove(os.path.join(subdir_paths["audio"], filename))
-                            except OSError:
-                                pass
                             os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
@@ -435,6 +431,8 @@ class Synthesizer:
 
     def __init__(self, database1, database2, *args, **kwargs):
         """Initialize synthesizer instance"""
+        self.logger = logging.getLogger(__name__ + '.Matcher')
+
         self.match_db = database1
         self.output_db = database2
 
@@ -521,6 +519,37 @@ class Synthesizer:
 
 
         ratio_difference = target_rms / source_rms
+        # If the ratio difference is within the limits
+        ratio_limit = self.config.synthesizer["enf_rms_ratio_limit"]
+
+        if ratio_difference > ratio_limit:
+            self.logger.warning("Grain RMS ratio too large({0}), enforcing RMS at limit ({1})\n"
+                                "Source sample: {2}\n"
+                                "Source grain index: {3}\n"
+                                "Target sample: {4}\n"
+                                "Target grain index: {5}".format(
+                                    ratio_difference,
+                                    ratio_limit,
+                                    source_sample,
+                                    source_grain_ind,
+                                    target_sample,
+                                    target_grain_ind
+                                ))
+            ratio_difference = ratio_limit
+        elif ratio_difference < 1./ratio_limit:
+            self.logger.warning("Grain RMS ratio too large ({0}), enforcing RMS at limit ({1})\n"
+                                "Source sample: {2}\n"
+                                "Source grain index: {3}\n"
+                                "Target sample: {4}\n"
+                                "Target grain index: {5}".format(
+                                    ratio_difference,
+                                    1./ratio_limit,
+                                    source_sample,
+                                    source_grain_ind,
+                                    target_sample,
+                                    target_grain_ind
+                                ))
+            ratio_difference = 1./ratio_limit
 
         grain *= ratio_difference
 
