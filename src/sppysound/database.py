@@ -12,6 +12,7 @@ import traceback
 import logging
 import h5py
 from celery import group
+import pitch_shift
 
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
@@ -440,7 +441,11 @@ class Synthesizer:
 
         self.enforce_rms_bool = self.config.synthesizer["enforce_rms"]
         # Key word arguments overwrite config file.
-        self.enforce_rms_bool = kwargs.pop("enforce_rms", self.enforce_rms)
+        self.enforce_rms_bool = kwargs.pop("enforce_rms", self.enforce_rms_bool)
+
+        self.enforce_f0_bool = self.config.synthesizer["enforce_f0"]
+        # Key word arguments overwrite config file.
+        self.enforce_f0_bool = kwargs.pop("enforce_f0", self.enforce_f0_bool)
 
         self.target_db = kwargs.pop("target_db", None)
         if self.enforce_rms:
@@ -496,10 +501,74 @@ class Synthesizer:
 
                             match_grain = self.enforce_rms(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
+                        if self.enforce_f0_bool:
+                            # Get the target sample from the database
+                            target_sample = self.target_db[job_ind]
+
+                            # Calculate garin times for sample to allow for
+                            # indexing.
+                            target_sample.generate_grain_times(match_grain_size, match_overlap)
+
+                            match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
+
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
                 output.write_frames(output_frames)
+
+    def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
+
+        # Get grain start and finish range to retreive analysis frames from.
+        # TODO: Make proper fix for grain index offset of 1
+        target_times = target_sample.times[target_grain_ind-1]
+
+        # Get mean of f0 frames in time range specified.
+        target_f0 = target_sample.analysis_data_grains(target_times, "f0", format="mean")[0]
+
+        # Get grain start and finish range to retreive analysis frames from.
+        # TODO: Make proper fix for grain index offset of 1
+        source_times = source_sample.times[source_grain_ind-1]
+
+        # Get mean of f0 frames in time range specified.
+        source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="mean")[0]
+
+
+        ratio_difference = target_f0 / source_f0
+        # If the ratio difference is within the limits
+        ratio_limit = self.config.synthesizer["enf_f0_ratio_limit"]
+
+        if ratio_difference > ratio_limit:
+            self.logger.warning("Grain f0 ratio too large({0}), enforcing f0 at limit ({1})\n"
+                                "Source sample: {2}\n"
+                                "Source grain index: {3}\n"
+                                "Target sample: {4}\n"
+                                "Target grain index: {5}".format(
+                                    ratio_difference,
+                                    ratio_limit,
+                                    source_sample,
+                                    source_grain_ind,
+                                    target_sample,
+                                    target_grain_ind
+                                ))
+            ratio_difference = ratio_limit
+        elif ratio_difference < 1./ratio_limit:
+            self.logger.warning("Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})\n"
+                                "Source sample: {2}\n"
+                                "Source grain index: {3}\n"
+                                "Target sample: {4}\n"
+                                "Target grain index: {5}".format(
+                                    ratio_difference,
+                                    1./ratio_limit,
+                                    source_sample,
+                                    source_grain_ind,
+                                    target_sample,
+                                    target_grain_ind
+                                ))
+            ratio_difference = 1./ratio_limit
+
+        grain = pitch_shift.shift(grain, ratio_difference)
+
+        return grain
 
     def enforce_rms(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
 

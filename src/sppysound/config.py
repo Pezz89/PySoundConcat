@@ -1,7 +1,10 @@
 f0 = {
-    "threshold": 0.3
+    "threshold": 0.6
 }
 
+analyser = {
+    "fft_size": 8192
+}
 
 matcher_weightings = {
         "f0" : 1.,
@@ -19,6 +22,7 @@ synthesizer = {
     "enforce_rms": True,
     "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
+    "enf_f0_ratio_limit": 100.,
 }
 
 output_file = {

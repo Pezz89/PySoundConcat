@@ -101,7 +101,7 @@ def main():
     output_db.load_database(reanalyse=False)
 
     analysis_dict = {
-        "f0": "median",
+        "f0": "log10_median",
         "rms": "mean",
         "zerox": "mean",
         "spccntr": "mean",
@@ -109,7 +109,7 @@ def main():
     }
 
     matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=1, rematch=args.rematch)
-    matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=2)
+    matcher.match(matcher.brute_force_matcher, grain_size=100, overlap=4)
 
 if __name__ == "__main__":
     main()

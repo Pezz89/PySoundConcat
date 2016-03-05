@@ -293,6 +293,48 @@ class F0Analysis(Analysis):
             conf = conf[valid_inds]
             med_conf = np.median(conf)
             if med_conf > self.threshold:
+                output[i] = np.median(frame[conf > self.threshold])/self.nyquist_rate
+            else:
+                output[i] = np.nan
+
+        return output
+
+    def log10_mean_formatter(self, data):
+        if not self.threshold:
+            raise ValueError("Threshold not set for F0Analysis object.")
+        frames = data[0]
+        confidence = data[1]
+        output = np.empty(len(frames))
+        for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            valid_inds = np.isfinite(frame) & np.isfinite(conf)
+            frame = frame[valid_inds]
+            if not frame.size:
+                output[i] = np.nan
+                continue
+            conf = conf[valid_inds]
+            med_conf = np.mean(conf)
+            if med_conf > self.threshold:
+                output[i] = np.log10(np.mean(frame[conf > self.threshold]))/self.nyquist_rate
+            else:
+                output[i] = np.nan
+
+        return output
+
+    def log10_median_formatter(self, data):
+        if not self.threshold:
+            raise ValueError("Threshold not set for F0Analysis object.")
+        frames = data[0]
+        confidence = data[1]
+        output = np.empty(len(frames))
+        for i, (frame, conf) in enumerate(zip(frames, confidence)):
+            valid_inds = np.isfinite(frame) & np.isfinite(conf)
+            frame = frame[valid_inds]
+            if not frame.size:
+                output[i] = np.nan
+                continue
+            conf = conf[valid_inds]
+            med_conf = np.median(conf)
+            if med_conf > self.threshold:
                 output[i] = np.log10(np.median(frame[conf > self.threshold]))/self.nyquist_rate
             else:
                 output[i] = np.nan

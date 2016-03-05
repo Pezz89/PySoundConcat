@@ -557,6 +557,35 @@ class SpectralSpreadAnalysisTests(globalTests):
         del self.TestAudio
         pathops.delete_if_exists("./.TestAudio.wav")
 
+class SpectralFluxAnalysisTests(globalTests):
+    """Tests Spectral Flux analysis generation."""
+
+    def setUp(self):
+        self.TestAudio = self.create_test_audio()
+        # Specify frequency of the sine wave
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(44100)
+        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        self.white_noise = np.random.random(44100)
+        self.input = np.concatenate((self.sine_wave, self.white_noise))
+
+    def test_GenerateSpectralFlux(self):
+        fft = analysis.FFTAnalysis.stft(self.input, 512)
+        output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(fft, 512, self.sr)
+
+
+    def tearDown(self):
+        """
+        Delete anything that is left over once tests are complete.
+
+        For example, remove all temporary test audio files generated during the
+        tests.
+        """
+        del self.TestAudio
+        pathops.delete_if_exists("./.TestAudio.wav")
+
+
 class F0AnalysisTests(globalTests):
     """Tests Spectral Spread analysis generation."""
 
@@ -729,13 +758,9 @@ class PitchShiftTests(globalTests):
         self.sine_audio.write_frames(self.sine_wave)
         del self.sine_audio
 
-        p_shift_args = ["sox", "./.test_db3/test_sine.wav", "./.test_db3/pitch.wav", "pitch", "1000"]
-
-        p = subprocess.Popen(p_shift_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (output, err) = p.communicate()
-
     def test_ShiftingAccuracy(self):
         pitch = 2.
+        # TODO: Write a test here...
 
     def tearDown(self):
         """

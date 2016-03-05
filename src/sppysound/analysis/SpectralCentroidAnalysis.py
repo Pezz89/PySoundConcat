@@ -74,11 +74,13 @@ class SpectralCentroidAnalysis(Analysis):
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
+        # Get the highest magnitude.
         mag_max = np.max(magnitudes)
         if not mag_max:
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
+        # Normalize magnitudes.
         magnitudes = magnitudes / mag_max
         # Calculate the centre frequency of each rfft bin.
         if output_format == "freq":

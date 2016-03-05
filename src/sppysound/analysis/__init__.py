@@ -4,6 +4,7 @@ from ZeroXAnalysis import ZeroXAnalysis
 from FFTAnalysis import FFTAnalysis
 from SpectralCentroidAnalysis import SpectralCentroidAnalysis
 from SpectralSpreadAnalysis import SpectralSpreadAnalysis
+from SpectralFluxAnalysis import SpectralFluxAnalysis
 from F0Analysis import F0Analysis
 import AnalysisTools
 __all__ = [

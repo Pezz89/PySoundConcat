@@ -95,7 +95,7 @@ def main():
     output_db.load_database(reanalyse=False)
 
     synthesizer = Synthesizer(source_db, output_db, target_db=target_db, config=config)
-    synthesizer.synthesize(grain_size=100, overlap=2)
+    synthesizer.synthesize(grain_size=100, overlap=4)
 
 if __name__ == "__main__":
     main()
