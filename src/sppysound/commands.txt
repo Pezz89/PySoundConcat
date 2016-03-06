@@ -1,0 +1,3 @@
+./create_database.py ~/AudioDatabases/Vocal_examples ~/AnalysedAudioDatabases/Vocal_examples --reanalyse
+./synthesize_output.py ~/AnalysedAudioDatabases/Viola3 ~/OutputDatabases/TestOutput ~/AnalysedAudioDatabases/Vocal_examples
+./run_matching.py ~/AnalysedAudioDatabases/Viola3 ~/AnalysedAudioDatabases/Vocal_examples ~/OutputDatabases/TestOutput --rematch

@@ -577,7 +577,6 @@ class SpectralFluxAnalysisTests(globalTests):
         output_max_index = np.argmax(output)
         self.assertTrue(output_max_index == output.size/2)
 
-
     def tearDown(self):
         """
         Delete anything that is left over once tests are complete.

@@ -21,6 +21,7 @@ import analysis.ZeroXAnalysis as ZeroXAnalysis
 import analysis.FFTAnalysis as FFTAnalysis
 import analysis.SpectralCentroidAnalysis as SpectralCentroidAnalysis
 import analysis.SpectralSpreadAnalysis as SpectralSpreadAnalysis
+import analysis.SpectralFluxAnalysis as SpectralFluxAnalysis
 import analysis.F0Analysis as F0Analysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -833,6 +834,7 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("zerox", ZeroXAnalysis),
             analysis_object("spccntr", SpectralCentroidAnalysis),
             analysis_object("spcsprd", SpectralSpreadAnalysis),
+            analysis_object("spcflux", SpectralFluxAnalysis),
             analysis_object("f0", F0Analysis)
         ]
 

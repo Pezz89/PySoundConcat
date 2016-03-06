@@ -10,6 +10,7 @@ matcher_weightings = {
         "f0" : 1.,
         "spccntr" : 1.,
         "spcsprd" : 1.,
+        "spcflux" : 1.,
         "zerox" : 1.,
         "rms" : 1.,
     }

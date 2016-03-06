@@ -55,7 +55,7 @@ class AudioDatabase:
         self.logger = logging.getLogger(__name__ + '.AudioDatabase')
 
         # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr', 'spcsprd', 'f0'}
+        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr', 'spcsprd', 'spcflux', 'f0'}
         for analysis in analysis_list:
             if analysis not in valid_analyses:
                 raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))
@@ -258,7 +258,7 @@ class Matcher:
         # selected match analyses.
         for key in self.analysis_dict.iterkeys():
             if key not in common_analyses:
-                self.logger.warning("Analysis: \"{0}\" not avilable in {1} and/or {2}".format(key, source_entry, target_entry))
+                self.logger.warning("Analysis: \"{0}\" not avilable in {1} and/or {2}".format(key, self.source_db, self.target_db))
             else:
                 self.matcher_analyses.append(key)
 
