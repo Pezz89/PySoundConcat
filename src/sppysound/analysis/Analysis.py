@@ -26,8 +26,8 @@ class Analysis(object):
             "mean": self.mean_formatter,
             "median": self.median_formatter,
             "raw": self.raw_formatter,
-            "log10_mean": self.log10_median_formatter,
-            "log10_median": self.log10_median_formatter
+            "log2_mean": self.log2_median_formatter,
+            "log2_median": self.log2_median_formatter
         }
 
     def create_analysis(self, *args, **kwargs):
@@ -108,21 +108,21 @@ class Analysis(object):
     def raw_formatter(self, data):
         return data
 
-    def log10_median_formatter(self, data):
+    def log2_median_formatter(self, data):
         """Calculate the median value of the analysis data"""
         values = data[0]
 
         output = np.empty(len(data))
         for ind, i in enumerate(values):
-            output[ind] = log10(np.median(i))
+            output[ind] = log2(np.median(i))
         return output
 
-    def log10_mean_formatter(self, data):
+    def log2_mean_formatter(self, data):
         """Calculate the mean value of the analysis data"""
 
         values = data[0]
 
         output = np.empty(len(values))
         for ind, i in enumerate(values):
-            output[ind] = log10(np.mean(i))
+            output[ind] = log2(np.mean(i))
         return output

@@ -574,6 +574,9 @@ class SpectralFluxAnalysisTests(globalTests):
         fft = analysis.FFTAnalysis.stft(self.input, 512)
         output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(fft, 512, self.sr)
 
+        output_max_index = np.argmax(output)
+        self.assertTrue(output_max_index == output.size/2)
+
 
     def tearDown(self):
         """
