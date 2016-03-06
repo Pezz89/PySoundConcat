@@ -101,7 +101,7 @@ def main():
     output_db.load_database(reanalyse=False)
 
     analysis_dict = {
-        "f0": "log10_median",
+        "f0": "log2_median",
         "rms": "mean",
         "zerox": "mean",
         "spccntr": "mean",
