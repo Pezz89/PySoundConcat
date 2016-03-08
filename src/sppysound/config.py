@@ -2,6 +2,11 @@ f0 = {
     "threshold": 0.6
 }
 
+RMS = {
+    "window_size": 150,
+    "overlap": 2
+}
+
 analyser = {
     "fft_size": 65536
 }
@@ -21,7 +26,7 @@ matcher_weightings = {
 
 matcher = {
     "rematch": True,
-    "grain_size": 70,
+    "grain_size": 150,
     "overlap": 2
 }
 
@@ -30,7 +35,7 @@ synthesizer = {
     "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 50,
+    "grain_size": 150,
     "overlap": 2
 }
 

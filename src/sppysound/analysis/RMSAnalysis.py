@@ -35,6 +35,10 @@ class RMSAnalysis(Analysis):
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
+        if config:
+            self.window_size = config.RMS["window_size"] * self.AnalysedAudioFile.samplerate
+            self.overlap = config.RMS["overlap"]
+
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating RMS analysis for {0}".format(self.AnalysedAudioFile.name))

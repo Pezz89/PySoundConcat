@@ -78,9 +78,9 @@ class CentroidAnalysis(Analysis):
         ).copy()
 
         frames *= win
-        weighted_sum = (np.arange(frames.shape[1])+1) * frames
+        weighted_sum = np.sum((np.arange(frames.shape[1])+1) * frames, axis=1)
 
-        centroid = weighted_sum / np.vstack(np.sum(frames, axis=1))
+        centroid = weighted_sum / np.sum(frames, axis=1)
 
         return centroid
 
@@ -99,7 +99,6 @@ class CentroidAnalysis(Analysis):
 
         grain_data = [[],[]]
         for grain in selection:
-            pdb.set_trace()
             grain_data[0].append(self.analysis_group["Centroid"]["frames"][grain])
             grain_data[1].append(times[grain])
 
