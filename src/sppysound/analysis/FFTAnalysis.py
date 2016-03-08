@@ -33,9 +33,13 @@ class FFTAnalysis(Analysis):
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
+        if config:
+            window_size = config.analyser["fft_size"]
+        else:
+            window_size = 2048
         self.analysis_group = analysis_group
         self.logger.info("Creating FFT analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis()
+        self.create_analysis(window_size=window_size)
         self.fft_window_count = None
 
 

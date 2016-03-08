@@ -11,7 +11,6 @@ import sys
 import traceback
 import logging
 import h5py
-from celery import group
 import pitch_shift
 
 from fileops import pathops
@@ -55,7 +54,18 @@ class AudioDatabase:
         self.logger = logging.getLogger(__name__ + '.AudioDatabase')
 
         # Check that all analysis list args are valid
-        valid_analyses = {'rms', 'zerox', 'fft', 'spccntr', 'spcsprd', 'spcflux', 'f0'}
+        valid_analyses = {
+            'rms',
+            'zerox',
+            'fft',
+            'spccntr',
+            'spcsprd',
+            'spcflux',
+            'spccf',
+            'spcflatness',
+            'f0',
+            'peak'
+        }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
                 raise ValueError("\'{0}\' is not a valid analysis type".format(analysis))
@@ -307,8 +317,6 @@ class Matcher:
             # added to by each analysis.
             distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
             for analysis in self.matcher_analyses:
-                #if not analysis == 'f0':
-                    #continue
                 self.logger.debug("Current analysis: {0}".format(analysis))
                 analysis_formatting = self.analysis_dict[analysis]
                 # Get the analysis object for the current entry
@@ -347,6 +355,8 @@ class Matcher:
                 # an analysis presedence over others.
                 self.data_distance *= (1/self.data_distance.max()) * weightings[analysis]
                 distance_accum += self.data_distance
+
+            # Sort indexes so that best matches are at the start of the array.
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)

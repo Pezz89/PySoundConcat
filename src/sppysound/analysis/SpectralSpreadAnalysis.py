@@ -83,7 +83,6 @@ class SpectralSpreadAnalysis(Analysis):
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
-        magnitudes = magnitudes / mag_max
         # Get the index for each bin
         if output_format == "ind":
             freqs = np.arange(np.size(fft, axis=1))

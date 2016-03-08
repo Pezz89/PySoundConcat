@@ -2,6 +2,7 @@ from __future__ import print_function, division
 import numpy as np
 import logging
 import pdb
+import warnings
 
 from Analysis import Analysis
 
@@ -75,19 +76,17 @@ class SpectralCrestFactorAnalysis(Analysis):
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get highest magnitude
-        mag_max = np.max(magnitudes)
-        if not mag_max:
+        if not np.nonzero(magnitudes)[0].any():
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
-        # Normalize magnitudes.
-        magnitudes = magnitudes / mag_max
-        # Roll magnitudes as crest factor is calculated using the difference between
-        # consecutive magnitudes. Rolling allows for quick access to previous
-        # magnitude.
-        rolled_mags = np.roll(magnitudes, 1, axis=0)[1:]
-        sum_of_squares = np.sum((magnitudes[1:]-rolled_mags)**2., axis=1)
-        spectral_cf = np.sqrt(sum_of_squares) / (length/2)
+            # Get the highest magnitude value for each spectral frame
+        max_bins = np.max(magnitudes, axis=1)
+        mag_sum = np.sum(magnitudes, axis=1)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore')
+            spectral_cf = max_bins / mag_sum
+
 
         return spectral_cf
 

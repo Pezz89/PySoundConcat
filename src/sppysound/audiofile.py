@@ -16,12 +16,15 @@ from collections import namedtuple, defaultdict
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
+import analysis.PeakAnalysis as PeakAnalysis
 import analysis.AttackAnalysis as AttackAnalysis
 import analysis.ZeroXAnalysis as ZeroXAnalysis
 import analysis.FFTAnalysis as FFTAnalysis
 import analysis.SpectralCentroidAnalysis as SpectralCentroidAnalysis
 import analysis.SpectralSpreadAnalysis as SpectralSpreadAnalysis
 import analysis.SpectralFluxAnalysis as SpectralFluxAnalysis
+import analysis.SpectralCrestFactorAnalysis as SpectralCrestFactorAnalysis
+import analysis.SpectralFlatnessAnalysis as SpectralFlatnessAnalysis
 import analysis.F0Analysis as F0Analysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -835,7 +838,10 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("spccntr", SpectralCentroidAnalysis),
             analysis_object("spcsprd", SpectralSpreadAnalysis),
             analysis_object("spcflux", SpectralFluxAnalysis),
-            analysis_object("f0", F0Analysis)
+            analysis_object("spccf", SpectralCrestFactorAnalysis),
+            analysis_object("spcflatness", SpectralFlatnessAnalysis),
+            analysis_object("f0", F0Analysis),
+            analysis_object("peak", PeakAnalysis)
         ]
 
         self.analyses = defaultdict(None)

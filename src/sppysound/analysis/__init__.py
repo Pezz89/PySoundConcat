@@ -5,6 +5,9 @@ from FFTAnalysis import FFTAnalysis
 from SpectralCentroidAnalysis import SpectralCentroidAnalysis
 from SpectralSpreadAnalysis import SpectralSpreadAnalysis
 from SpectralFluxAnalysis import SpectralFluxAnalysis
+from SpectralCrestFactorAnalysis import SpectralCrestFactorAnalysis
+from SpectralFlatnessAnalysis import SpectralFlatnessAnalysis
+from PeakAnalysis import PeakAnalysis
 from F0Analysis import F0Analysis
 import AnalysisTools
 __all__ = [
@@ -15,5 +18,9 @@ __all__ = [
     "FFTAnalysis",
     "SpectralCentroidAnalysis",
     "SpectralSpreadAnalysis",
-    "F0Analysis"
+    "SpectralFluxAnalysis",
+    "SpectralCrestFactorAnalysis",
+    "SpectralFlatnessAnalysis",
+    "F0Analysis",
+    "PeakAnalysis"
 ]

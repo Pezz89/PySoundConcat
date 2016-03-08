@@ -9,6 +9,7 @@ from fileops import loggerops
 import pdb
 import os
 from database import AudioDatabase
+import config
 import __builtin__
 
 filename = os.path.splitext(__file__)[0]
@@ -67,7 +68,7 @@ def main():
         nargs='*',
         help='Specify analyses to be created. Valid analyses are: \'rms\''
         '\'f0\' \'atk\' \'fft\'',
-        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "f0"]
+        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "spccf", "spcflatness", "f0", "peak"]
     )
     parser.add_argument(
         '--rms',
@@ -101,6 +102,7 @@ def main():
         args.source,
         args.target,
         analysis_list=args.analyse,
+        config=config
     )
     # Create/load a pre-existing database
     database.load_database(reanalyse=args.reanalyse)

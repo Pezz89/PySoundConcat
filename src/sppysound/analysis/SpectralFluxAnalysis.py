@@ -75,13 +75,10 @@ class SpectralFluxAnalysis(Analysis):
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get highest magnitude
-        mag_max = np.max(magnitudes)
-        if not mag_max:
+        if not np.nonzero(magnitudes)[0].any():
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
-        # Normalize magnitudes.
-        magnitudes = magnitudes / mag_max
         # Roll magnitudes as flux is calculated using the difference between
         # consecutive magnitudes. Rolling allows for quick access to previous
         # magnitude.

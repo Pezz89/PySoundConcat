@@ -80,8 +80,6 @@ class SpectralCentroidAnalysis(Analysis):
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
-        # Normalize magnitudes.
-        magnitudes = magnitudes / mag_max
         # Calculate the centre frequency of each rfft bin.
         if output_format == "freq":
             freqs = np.fft.rfftfreq(length, 1.0/samplerate)

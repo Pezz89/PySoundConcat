@@ -487,6 +487,22 @@ class RMSAnalysisTests(globalTests):
     def test_GenerateRMS(self):
         """Check that RMS values generated are the expected values"""
 
+class PeakAnalysisTests(globalTests):
+
+    """Tests Peak analysis generation"""
+
+    def setUp(self):
+        # TODO: Write this test...
+        """Create functions and variables before each test is run."""
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(88200)
+        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+
+    def test_GeneratePeak(self):
+        """Check that RMS values generated are the expected values"""
+        output = analysis.PeakAnalysis.create_peak_analysis(self.sine_wave)
+        self.assertTrue(np.all(output > 0.8))
 
 class SpectralCentroidAnalysisTests(globalTests):
     """Tests Spectral Centroid analysis generation."""
@@ -561,7 +577,6 @@ class SpectralFluxAnalysisTests(globalTests):
     """Tests Spectral Flux analysis generation."""
 
     def setUp(self):
-        self.TestAudio = self.create_test_audio()
         # Specify frequency of the sine wave
         self.sr = 44100
         self.f = 440
@@ -577,16 +592,41 @@ class SpectralFluxAnalysisTests(globalTests):
         output_max_index = np.argmax(output)
         self.assertTrue(output_max_index == output.size/2)
 
-    def tearDown(self):
-        """
-        Delete anything that is left over once tests are complete.
+class SpectralCrestFactorAnalysisTests(globalTests):
+    """Tests Spectral Crest Factor analysis generation."""
 
-        For example, remove all temporary test audio files generated during the
-        tests.
-        """
-        del self.TestAudio
-        pathops.delete_if_exists("./.TestAudio.wav")
+    def setUp(self):
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(44100)
+        sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        white_noise = np.random.random(44100)
+        silence = np.zeros(44100)
+        self.input = np.concatenate((sine_wave, white_noise, silence))
 
+    def test_GenerateSpectralCrestFactor(self):
+        fft = analysis.FFTAnalysis.stft(self.input, 512)
+        output = analysis.SpectralCrestFactorAnalysis.create_spccf_analysis(fft, 512, self.sr)
+        # TODO: Write assertions for results. This isn't testing anything
+        # otherwise...
+
+class SpectralFlatnessAnalysisTests(globalTests):
+    """Tests Spectral Crest Factor analysis generation."""
+
+    def setUp(self):
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(44100)
+        sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        white_noise = np.random.random(44100)
+        silence = np.zeros(44100)
+        self.input = np.concatenate((sine_wave, white_noise, silence))
+
+    def test_GenerateSpectralFlatness(self):
+        fft = analysis.FFTAnalysis.stft(self.input, 512)
+        output = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis(fft, 512, self.sr)
+        # TODO: Write assertions for results. This isn't testing anything
+        # otherwise...
 
 class F0AnalysisTests(globalTests):
     """Tests Spectral Spread analysis generation."""

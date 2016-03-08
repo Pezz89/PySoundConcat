@@ -70,7 +70,7 @@ def main():
         nargs='*',
         help='Specify analyses to be used. Valid analyses are: \'rms\''
         '\'f0\' \'fft\'',
-        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "f0"]
+        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "spccf", "spcflatness", "f0"]
     )
     parser.add_argument(
         "--rematch", action="store_true",
@@ -106,7 +106,11 @@ def main():
         "zerox": "mean",
         "spccntr": "mean",
         "spcsprd": "mean",
-        "spcflux": "mean"
+        "spcflux": "mean",
+        "spccf": "mean",
+        "spcflatness": "mean",
+        "peak": "mean"
+
     }
 
     matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=1, rematch=args.rematch)
