@@ -3,7 +3,7 @@ f0 = {
 }
 
 analyser = {
-    "fft_size": 8192
+    "fft_size": 65536
 }
 
 matcher_weightings = {
@@ -16,17 +16,22 @@ matcher_weightings = {
         "zerox" : 1.,
         "rms" : 1.,
         "peak": 1.,
+        "centroid": 1.,
     }
 
 matcher = {
     "rematch": True,
+    "grain_size": 70,
+    "overlap": 2
 }
 
 synthesizer = {
     "enforce_rms": True,
     "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
-    "enf_f0_ratio_limit": 10000.,
+    "enf_f0_ratio_limit": 10.,
+    "grain_size": 50,
+    "overlap": 2
 }
 
 output_file = {

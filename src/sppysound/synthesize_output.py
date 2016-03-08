@@ -71,7 +71,7 @@ def main():
     source_db = AudioDatabase(
         args.source,
         config=config,
-        analysis_list={"f0", "rms"}
+        analysis_list={"f0", "rms", "peak"}
     )
     # Create/load a pre-existing database
     source_db.load_database(reanalyse=False)
@@ -82,7 +82,7 @@ def main():
     target_db = AudioDatabase(
         args.target,
         config=config,
-        analysis_list={"f0", "rms"}
+        analysis_list={"f0", "rms", "peak"}
     )
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)
@@ -95,7 +95,7 @@ def main():
     output_db.load_database(reanalyse=False)
 
     synthesizer = Synthesizer(source_db, output_db, target_db=target_db, config=config)
-    synthesizer.synthesize(grain_size=100, overlap=4)
+    synthesizer.synthesize(grain_size=config.synthesizer["grain_size"], overlap=config.synthesizer["overlap"])
 
 if __name__ == "__main__":
     main()

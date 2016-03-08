@@ -9,6 +9,7 @@ from SpectralCrestFactorAnalysis import SpectralCrestFactorAnalysis
 from SpectralFlatnessAnalysis import SpectralFlatnessAnalysis
 from PeakAnalysis import PeakAnalysis
 from F0Analysis import F0Analysis
+from CentroidAnalysis import CentroidAnalysis
 import AnalysisTools
 __all__ = [
     "ZeroXAnalysis",
@@ -22,5 +23,6 @@ __all__ = [
     "SpectralCrestFactorAnalysis",
     "SpectralFlatnessAnalysis",
     "F0Analysis",
-    "PeakAnalysis"
+    "PeakAnalysis",
+    "CentroidAnalysis"
 ]

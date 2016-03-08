@@ -23,6 +23,7 @@ import analysis.FFTAnalysis as FFTAnalysis
 import analysis.SpectralCentroidAnalysis as SpectralCentroidAnalysis
 import analysis.SpectralSpreadAnalysis as SpectralSpreadAnalysis
 import analysis.F0Analysis as F0Analysis
+import analysis.CentroidAnalysis as CentroidAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -64,7 +65,8 @@ class AudioDatabase:
             'spccf',
             'spcflatness',
             'f0',
-            'peak'
+            'peak',
+            'centroid'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
@@ -515,7 +517,7 @@ class Synthesizer:
                             # Get the target sample from the database
                             target_sample = self.target_db[job_ind]
 
-                            # Calculate garin times for sample to allow for
+                            # Calculate grain times for sample to allow for
                             # indexing.
                             target_sample.generate_grain_times(match_grain_size, match_overlap)
 
@@ -533,15 +535,14 @@ class Synthesizer:
         target_times = target_sample.times[target_grain_ind-1]
 
         # Get mean of f0 frames in time range specified.
-        target_f0 = target_sample.analysis_data_grains(target_times, "f0", format="mean")[0]
+        target_f0 = target_sample.analysis_data_grains(target_times, "f0", format="median")[0]
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
         source_times = source_sample.times[source_grain_ind-1]
 
         # Get mean of f0 frames in time range specified.
-        source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="mean")[0]
-
+        source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="median")[0]
 
         ratio_difference = target_f0 / source_f0
         # If the ratio difference is within the limits
@@ -588,6 +589,8 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0]
+        target_peak = target_sample.analysis_data_grains(target_times, "peak", format="mean")[0]
+        tval = np.mean([target_rms, target_peak])
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -595,9 +598,11 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         source_rms = source_sample.analysis_data_grains(source_times, "rms", format="mean")[0]
+        source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0]
+        sval = np.mean([source_rms, source_peak])
 
 
-        ratio_difference = target_rms / source_rms
+        ratio_difference = tval / sval
         # If the ratio difference is within the limits
         ratio_limit = self.config.synthesizer["enf_rms_ratio_limit"]
 

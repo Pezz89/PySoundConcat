@@ -25,6 +25,7 @@ import analysis.SpectralSpreadAnalysis as SpectralSpreadAnalysis
 import analysis.SpectralFluxAnalysis as SpectralFluxAnalysis
 import analysis.SpectralCrestFactorAnalysis as SpectralCrestFactorAnalysis
 import analysis.SpectralFlatnessAnalysis as SpectralFlatnessAnalysis
+import analysis.CentroidAnalysis as CentroidAnalysis
 import analysis.F0Analysis as F0Analysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -841,7 +842,8 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("spccf", SpectralCrestFactorAnalysis),
             analysis_object("spcflatness", SpectralFlatnessAnalysis),
             analysis_object("f0", F0Analysis),
-            analysis_object("peak", PeakAnalysis)
+            analysis_object("peak", PeakAnalysis),
+            analysis_object("centroid", CentroidAnalysis)
         ]
 
         self.analyses = defaultdict(None)
