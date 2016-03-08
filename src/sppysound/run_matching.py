@@ -70,7 +70,7 @@ def main():
         nargs='*',
         help='Specify analyses to be used. Valid analyses are: \'rms\''
         '\'f0\' \'fft\'',
-        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "spccf", "spcflatness", "f0", "peak", "centroid"]
+        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "spccf", "spcflatness", "f0", "peak", "centroid", "variance"]
     )
     parser.add_argument(
         "--rematch", action="store_true",
@@ -110,7 +110,8 @@ def main():
         "spccf": "mean",
         "spcflatness": "mean",
         "peak": "mean",
-        "centroid": "mean"
+        "centroid": "mean",
+        "variance": "mean"
 
     }
 

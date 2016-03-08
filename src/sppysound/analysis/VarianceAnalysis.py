@@ -36,17 +36,16 @@ class VarianceAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.variance["window_size"] * self.AnalysedAudioFile.samplerate
-            self.overlap = config.variance["overlap"]
+            self.window_size = config.variance["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.overlap = 1. / config.variance["overlap"]
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating variance analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(frames)
+        self.create_analysis(frames, self.window_size, overlapFac=self.overlap)
 
     @staticmethod
     def create_variance_analysis(frames, window_size=512,
-                            window=signal.triang,
                             overlapFac=0.5):
         """
         Generate an energy contour analysis.
@@ -62,8 +61,6 @@ class VarianceAnalysis(Analysis):
         # TODO: Fix filter
         # frames = filter.filter_butter(frames)
 
-        # Generate a window function to apply to variance windows before analysis
-        win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
@@ -80,8 +77,9 @@ class VarianceAnalysis(Analysis):
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
 
-        frames *= win
-        variance = np.sqrt(np.mean(np.square(frames), axis=1))
+        frame_mean = np.mean(frames, axis=1)
+        variance = (1 / window_size) * np.sum((frames-np.vstack(frame_mean))**2, axis=1)
+        pdb.set_trace()
 
         return variance
 

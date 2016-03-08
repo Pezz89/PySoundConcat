@@ -66,7 +66,8 @@ class AudioDatabase:
             'spcflatness',
             'f0',
             'peak',
-            'centroid'
+            'centroid',
+            'variance'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
