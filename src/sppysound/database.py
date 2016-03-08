@@ -396,7 +396,11 @@ class Matcher:
         # Calculate euclidean distances between the two data arrays.
         distances = np.abs(np.vstack(data1)-data2)**2
         # Find the largest non-Nan distance
-        largest_distance = np.max(distances[np.isfinite(distances)])
+        # If all values ar nan then skip this.
+        if distances[np.isfinite(distances)].size:
+            largest_distance = np.max(distances[np.isfinite(distances)])
+        else:
+            largest_distance = 1.
 
         # Find grains where both the source and target values are Nan.
         nan_intersects = np.vstack(data1_other_inds) & data2_other_inds
