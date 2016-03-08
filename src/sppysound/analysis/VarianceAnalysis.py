@@ -15,44 +15,43 @@ from Analysis import Analysis
 logger = logging.getLogger(__name__)
 
 
-class RMSAnalysis(Analysis):
+class VarianceAnalysis(Analysis):
 
     """
-    An encapsulation of the RMS analysis of an AnalysedAudioFile.
+    An encapsulation of the Variance analysis of an AnalysedAudioFile.
 
-    On initialization, the RMS analysis is either created, or a pre existing
+    On initialization, the variance analysis is either created, or a pre existing
     file already exists.
     In either case, once the file is generated, it's values can be obtained
-    through use of the get_rms_from_file method
+    through use of the get_variance_from_file method
 
-    Note: Due to the large size of RMS analysis it is not stored in a class
-    member as other such analyses are. Use get_rms_from_file.
+    Note: Due to the large size of variance analysis it is not stored in a class
+    member as other such analyses are. Use get_variance_from_file.
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(RMSAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'RMS')
+        super(VarianceAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'variance')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            # TODO: create case for when config isn't present.
-            self.window_size = config.RMS["window_size"] * self.AnalysedAudioFile.samplerate
-            self.overlap = config.RMS["overlap"]
+            self.window_size = config.variance["window_size"] * self.AnalysedAudioFile.samplerate
+            self.overlap = config.variance["overlap"]
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
-        self.logger.info("Creating RMS analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(frames, window_size=self.window_size, overlapFac=self.overlap)
+        self.logger.info("Creating variance analysis for {0}".format(self.AnalysedAudioFile.name))
+        self.create_analysis(frames)
 
     @staticmethod
-    def create_rms_analysis(frames, window_size=512,
+    def create_variance_analysis(frames, window_size=512,
                             window=signal.triang,
                             overlapFac=0.5):
         """
         Generate an energy contour analysis.
 
-        Calculate the RMS values of windowed segments of the audio file and
+        Calculate the Variance values of windowed segments of the audio file and
         save to disk.
         """
         # Calculate the period of the window in hz
@@ -63,7 +62,7 @@ class RMSAnalysis(Analysis):
         # TODO: Fix filter
         # frames = filter.filter_butter(frames)
 
-        # Generate a window function to apply to rms windows before analysis
+        # Generate a window function to apply to variance windows before analysis
         win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
@@ -82,9 +81,9 @@ class RMSAnalysis(Analysis):
         ).copy()
 
         frames *= win
-        rms = np.sqrt(np.mean(np.square(frames), axis=1))
+        variance = np.sqrt(np.mean(np.square(frames), axis=1))
 
-        return rms
+        return variance
 
     def get_analysis_grains(self, start, end):
         """
@@ -92,7 +91,7 @@ class RMSAnalysis(Analysis):
         arrays of start and end time pairs will produce an array of equivelant
         size containing frames for these times.
         """
-        times = self.analysis_group["RMS"]["times"][:]
+        times = self.analysis_group["variance"]["times"][:]
         start = start / 1000
         end = end / 1000
         vtimes = times.reshape(-1, 1)
@@ -101,7 +100,7 @@ class RMSAnalysis(Analysis):
 
         grain_data = [[],[]]
         for grain in selection:
-            grain_data[0].append(self.analysis_group["RMS"]["frames"][grain])
+            grain_data[0].append(self.analysis_group["variance"]["frames"][grain])
             grain_data[1].append(times[grain])
 
         return grain_data
@@ -111,22 +110,22 @@ class RMSAnalysis(Analysis):
         Formats the output from the analysis method to save to the HDF5 file.
         '''
         samplerate = self.AnalysedAudioFile.samplerate
-        rms = self.create_rms_analysis(*args, **kwargs)
-        rms_times = self.calc_rms_frame_times(rms, args[0], samplerate)
-        return ({'frames': rms, 'times': rms_times}, {})
+        variance = self.create_variance_analysis(*args, **kwargs)
+        variance_times = self.calc_variance_frame_times(variance, args[0], samplerate)
+        return ({'frames': variance, 'times': variance_times}, {})
 
     @staticmethod
-    def calc_rms_frame_times(rmsframes, sample_frames, samplerate):
+    def calc_variance_frame_times(varianceframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
 
         # Get number of frames for time and frequency
-        timebins = rmsframes.shape[0]
+        timebins = varianceframes.shape[0]
         # Create array ranging from 0 to number of time frames
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
         # multiply by the frame numbers.
-        rms_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
+        variance_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        rms_times = rms_times / samplerate
-        return rms_times
+        variance_times = variance_times / samplerate
+        return variance_times
