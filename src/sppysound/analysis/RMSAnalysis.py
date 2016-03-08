@@ -37,13 +37,13 @@ class RMSAnalysis(Analysis):
 
         if config:
             # TODO: create case for when config isn't present.
-            self.window_size = config.RMS["window_size"] * self.AnalysedAudioFile.samplerate
+            self.window_size = config.RMS["window_size"] * self.AnalysedAudioFile.samplerate / 1000
             self.overlap = 1. / config.RMS["overlap"]
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating RMS analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(frames, window_size=512, overlapFac=0.5)
+        self.create_analysis(frames, window_size=self.window_size, overlapFac=self.overlap)
 
     @staticmethod
     def create_rms_analysis(frames, window_size=512,

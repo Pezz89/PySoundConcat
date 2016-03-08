@@ -6,6 +6,10 @@ RMS = {
     "window_size": 50,
     "overlap": 2
 }
+variance = {
+    "window_size": 50,
+    "overlap": 2
+}
 
 analyser = {
     "fft_size": 65536
@@ -22,6 +26,7 @@ matcher_weightings = {
     "rms" : 1.,
     "peak": 1.,
     "centroid": 1.,
+    "variance": 1.
 }
 
 matcher = {
