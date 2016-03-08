@@ -3,7 +3,7 @@ f0 = {
 }
 
 RMS = {
-    "window_size": 150,
+    "window_size": 200,
     "overlap": 8
 }
 
@@ -26,7 +26,7 @@ matcher_weightings = {
 
 matcher = {
     "rematch": True,
-    "grain_size": 70,
+    "grain_size": 200,
     "overlap": 2
 }
 
@@ -35,7 +35,7 @@ synthesizer = {
     "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 70,
+    "grain_size": 200,
     "overlap": 2
 }
 
