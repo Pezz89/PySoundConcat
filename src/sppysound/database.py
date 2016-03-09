@@ -67,7 +67,8 @@ class AudioDatabase:
             'f0',
             'peak',
             'centroid',
-            'variance'
+            'variance',
+            'kurtosis'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
@@ -291,9 +292,14 @@ class Matcher:
         grain_indexes[:, 0] = grain_indexes[:, 1] - grain_indexes[:, 0]
         return grain_indexes
 
+    def k_nearest_neighbour_matching(self, grain_size, overlap):
+        '''
+        Uses the K-nearest-neighbour algorithm to find matches in a more
+        efficient manner than the brute force method.
+        '''
+
     def brute_force_matcher(self, grain_size, overlap):
-        # Source database = musical samples database
-        # Target database = Human samples database
+        '''Searches for matches to each grain by brute force comparison'''
 
         # Count grains of the source database
         source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)

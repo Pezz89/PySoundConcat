@@ -6,8 +6,6 @@ from scipy import signal
 from numpy.lib import stride_tricks
 import pdb
 
-
-from AnalysisTools import ButterFilter
 from fileops import pathops
 
 from Analysis import Analysis
@@ -15,42 +13,48 @@ from Analysis import Analysis
 logger = logging.getLogger(__name__)
 
 
-class VarianceAnalysis(Analysis):
+class KurtosisAnalysis(Analysis):
 
     """
-    An encapsulation of the Variance analysis of an AnalysedAudioFile.
+    An encapsulation of the Kurtosis analysis of an AnalysedAudioFile.
 
-    On initialization, the variance analysis is either created, or a pre existing
+    On initialization, the kurtosis analysis is either created, or a pre existing
     file already exists.
     In either case, once the file is generated, it's values can be obtained
-    through use of the get_variance_from_file method
+    through use of the get_kurtosis_from_file method
 
-    Note: Due to the large size of variance analysis it is not stored in a class
-    member as other such analyses are. Use get_variance_from_file.
+    Note: Due to the large size of kurtosis analysis it is not stored in a class
+    member as other such analyses are. Use get_kurtosis_from_file.
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(VarianceAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'variance')
+        super(KurtosisAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'kurtosis')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.variance["window_size"] * self.AnalysedAudioFile.samplerate / 1000
-            self.overlap = 1. / config.variance["overlap"]
+            self.window_size = config.kurtosis["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.overlap = 1. / config.kurtosis["overlap"]
+
+        try:
+            variance = self.AnalysedAudioFile.analyses["variance"]
+        except KeyError:
+            raise KeyError("Variance analysis is required for Kurtosis "
+                             "analysis.")
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
-        self.logger.info("Creating variance analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(frames, self.window_size, overlapFac=self.overlap)
+        self.logger.info("Creating kurtosis analysis for {0}".format(self.AnalysedAudioFile.name))
+        self.create_analysis(frames, variance.analysis['frames'][:], self.window_size, overlapFac=self.overlap)
 
     @staticmethod
-    def create_variance_analysis(frames, window_size=512,
+    def create_kurtosis_analysis(frames, variance, window_size=512,
                             overlapFac=0.5):
         """
         Generate an energy contour analysis.
 
-        Calculate the Variance values of windowed segments of the audio file and
+        Calculate the Kurtosis values of windowed segments of the audio file and
         save to disk.
         """
         # Calculate the period of the window in hz
@@ -78,9 +82,14 @@ class VarianceAnalysis(Analysis):
         ).copy()
 
         frame_mean = np.mean(frames, axis=1)
-        variance = (1 / window_size) * np.sum((frames-np.vstack(frame_mean))**2, axis=1)
 
-        return variance
+        variance_sqrd = variance**2
+
+        a =  ((1 / window_size)) * np.sum(((frames-np.vstack(frame_mean))**4), axis=1)
+        kurtosis = a / variance_sqrd
+        kurtosis -= 3
+
+        return kurtosis
 
     def get_analysis_grains(self, start, end):
         """
@@ -88,7 +97,7 @@ class VarianceAnalysis(Analysis):
         arrays of start and end time pairs will produce an array of equivelant
         size containing frames for these times.
         """
-        times = self.analysis_group["variance"]["times"][:]
+        times = self.analysis_group["kurtosis"]["times"][:]
         start = start / 1000
         end = end / 1000
         vtimes = times.reshape(-1, 1)
@@ -97,7 +106,7 @@ class VarianceAnalysis(Analysis):
 
         grain_data = [[],[]]
         for grain in selection:
-            grain_data[0].append(self.analysis_group["variance"]["frames"][grain])
+            grain_data[0].append(self.analysis_group["kurtosis"]["frames"][grain])
             grain_data[1].append(times[grain])
 
         return grain_data
@@ -107,22 +116,22 @@ class VarianceAnalysis(Analysis):
         Formats the output from the analysis method to save to the HDF5 file.
         '''
         samplerate = self.AnalysedAudioFile.samplerate
-        variance = self.create_variance_analysis(*args, **kwargs)
-        variance_times = self.calc_variance_frame_times(variance, args[0], samplerate)
-        return ({'frames': variance, 'times': variance_times}, {})
+        kurtosis = self.create_kurtosis_analysis(*args, **kwargs)
+        kurtosis_times = self.calc_kurtosis_frame_times(kurtosis, args[0], samplerate)
+        return ({'frames': kurtosis, 'times': kurtosis_times}, {})
 
     @staticmethod
-    def calc_variance_frame_times(varianceframes, sample_frames, samplerate):
+    def calc_kurtosis_frame_times(kurtosisframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
 
         # Get number of frames for time and frequency
-        timebins = varianceframes.shape[0]
+        timebins = kurtosisframes.shape[0]
         # Create array ranging from 0 to number of time frames
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then
         # multiply by the frame numbers.
-        variance_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
+        kurtosis_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        variance_times = variance_times / samplerate
-        return variance_times
+        kurtosis_times = kurtosis_times / samplerate
+        return kurtosis_times

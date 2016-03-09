@@ -1,14 +1,17 @@
 f0 = {
     "threshold": 0.6
 }
-
 RMS = {
-    "window_size": 50,
-    "overlap": 2
+    "window_size": 100,
+    "overlap": 4
 }
 variance = {
-    "window_size": 50,
-    "overlap": 2
+    "window_size": 100,
+    "overlap": 4
+}
+kurtosis = {
+    "window_size": 100,
+    "overlap": 4
 }
 
 analyser = {
@@ -26,12 +29,26 @@ matcher_weightings = {
     "rms" : 1.,
     "peak": 1.,
     "centroid": 1.,
-    "variance": 1.
+    "kurtosis": 1.
+}
+
+analysis_dict = {
+    "f0": "log2_median",
+    "rms": "mean",
+    "zerox": "mean",
+    "spccntr": "mean",
+    "spcsprd": "mean",
+    "spcflux": "mean",
+    "spccf": "mean",
+    "spcflatness": "mean",
+    "peak": "mean",
+    "centroid": "mean",
+    "kurtosis": "mean"
 }
 
 matcher = {
     "rematch": True,
-    "grain_size": 50,
+    "grain_size": 100,
     "overlap": 2
 }
 
@@ -40,7 +57,7 @@ synthesizer = {
     "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 50,
+    "grain_size": 100,
     "overlap": 2
 }
 

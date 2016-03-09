@@ -11,6 +11,7 @@ from PeakAnalysis import PeakAnalysis
 from F0Analysis import F0Analysis
 from CentroidAnalysis import CentroidAnalysis
 from VarianceAnalysis import VarianceAnalysis
+from KurtosisAnalysis import KurtosisAnalysis
 import AnalysisTools
 __all__ = [
     "ZeroXAnalysis",
@@ -26,5 +27,6 @@ __all__ = [
     "F0Analysis",
     "PeakAnalysis",
     "CentroidAnalysis",
-    "VarianceAnalysis"
+    "VarianceAnalysis",
+    "KurtosisAnalysis"
 ]

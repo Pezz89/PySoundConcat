@@ -39,6 +39,9 @@ class RMSAnalysis(Analysis):
             # TODO: create case for when config isn't present.
             self.window_size = config.RMS["window_size"] * self.AnalysedAudioFile.samplerate / 1000
             self.overlap = 1. / config.RMS["overlap"]
+        else:
+            self.window_size=512
+            self.overlap = 0.5
 
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()

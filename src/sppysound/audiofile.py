@@ -28,6 +28,7 @@ import analysis.SpectralFlatnessAnalysis as SpectralFlatnessAnalysis
 import analysis.CentroidAnalysis as CentroidAnalysis
 import analysis.F0Analysis as F0Analysis
 import analysis.VarianceAnalysis as VarianceAnalysis
+import analysis.KurtosisAnalysis as KurtosisAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -640,7 +641,7 @@ class AudioFile(object):
         hop_size = grain_length / overlap
         grain_count = int(length / hop_size) - 1
         times = np.arange(grain_count).reshape(-1, 1)
-        times = np.hstack((times, times))
+        times = np.hstack((times, times)).astype(np.dtype('float64'))
         times *= hop_size
         times[:, 1] += grain_length
         # Save grain times as a member variable for later refference.
@@ -770,7 +771,7 @@ class AudioFile(object):
              np.linspace(gain, sustain, (decay*samplerate)+1)[1:],
              sustain_array,
              np.linspace(sustain, 0.0, (release*samplerate)+1)[1:]),
-            axis=2
+            axis=0
         )
         return envelope
 
@@ -845,7 +846,8 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("f0", F0Analysis),
             analysis_object("peak", PeakAnalysis),
             analysis_object("centroid", CentroidAnalysis),
-            analysis_object("variance", VarianceAnalysis)
+            analysis_object("variance", VarianceAnalysis),
+            analysis_object("kurtosis", KurtosisAnalysis)
         ]
 
         self.analyses = defaultdict(None)

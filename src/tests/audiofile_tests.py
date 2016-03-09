@@ -4,6 +4,7 @@ import numpy as np
 from sppysound import AudioFile, analysis
 from sppysound.database import AudioDatabase, Matcher
 import subprocess
+from scipy import signal
 
 from fileops import pathops
 import pdb
@@ -625,6 +626,30 @@ class SpectralFlatnessAnalysisTests(globalTests):
     def test_GenerateSpectralFlatness(self):
         fft = analysis.FFTAnalysis.stft(self.input, 512)
         output = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis(fft, 512, self.sr)
+        # TODO: Write assertions for results. This isn't testing anything
+        # otherwise...
+
+class KurtosisAnalysisTests(globalTests):
+    """Tests Kurtosis analysis generation."""
+
+    def setUp(self):
+        self.sr = 44100
+        self.f = 440
+        x = np.arange(44100)
+        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        self.white_noise = np.random.random(44100)
+        self.silence = np.zeros(44100)
+        self.gausian = signal.gaussian(512, std=7)
+
+    def test_GenerateKurtosis(self):
+        sine_variance = analysis.VarianceAnalysis.create_variance_analysis(self.sine_wave)
+        sine_output = analysis.KurtosisAnalysis.create_kurtosis_analysis(self.sine_wave, sine_variance)
+
+        noise_variance = analysis.VarianceAnalysis.create_variance_analysis(self.white_noise)
+        noise_output = analysis.KurtosisAnalysis.create_kurtosis_analysis(self.white_noise, noise_variance)
+
+        silence_variance = analysis.VarianceAnalysis.create_variance_analysis(self.silence)
+        silence_output = analysis.KurtosisAnalysis.create_kurtosis_analysis(self.silence, silence_variance)
         # TODO: Write assertions for results. This isn't testing anything
         # otherwise...
 

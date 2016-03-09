@@ -70,7 +70,21 @@ def main():
         nargs='*',
         help='Specify analyses to be used. Valid analyses are: \'rms\''
         '\'f0\' \'fft\'',
-        default=["rms", "zerox", "fft", "spccntr", "spcsprd", "spcflux", "spccf", "spcflatness", "f0", "peak", "centroid", "variance"]
+        default=[
+            "rms",
+            "zerox",
+            "fft",
+            "spccntr",
+            "spcsprd",
+            "spcflux",
+            "spccf",
+            "spcflatness",
+            "f0",
+            "peak",
+            "centroid",
+            "kurtosis",
+            "variance"
+        ]
     )
     parser.add_argument(
         "--rematch", action="store_true",
@@ -100,22 +114,8 @@ def main():
     # Create/load a pre-existing database
     output_db.load_database(reanalyse=False)
 
-    analysis_dict = {
-        "f0": "log2_median",
-        "rms": "mean",
-        "zerox": "mean",
-        "spccntr": "mean",
-        "spcsprd": "mean",
-        "spcflux": "mean",
-        "spccf": "mean",
-        "spcflatness": "mean",
-        "peak": "mean",
-        "centroid": "mean",
-        "variance": "mean"
 
-    }
-
-    matcher = Matcher(source_db, target_db, analysis_dict, output_db=output_db, config=config, quantity=1, rematch=args.rematch)
+    matcher = Matcher(source_db, target_db, config.analysis_dict, output_db=output_db, config=config, quantity=1, rematch=args.rematch)
     matcher.match(matcher.brute_force_matcher, grain_size=config.matcher["grain_size"], overlap=config.matcher["overlap"])
 
 if __name__ == "__main__":
