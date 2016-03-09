@@ -91,6 +91,7 @@ class CentroidAnalysis(Analysis):
         size containing frames for these times.
         """
         times = self.analysis_group["Centroid"]["times"][:]
+        frames = self.analysis_group["Centroid"]["frames"][:]
         start = start / 1000
         end = end / 1000
         vtimes = times.reshape(-1, 1)
@@ -99,7 +100,7 @@ class CentroidAnalysis(Analysis):
 
         grain_data = [[],[]]
         for grain in selection:
-            grain_data[0].append(self.analysis_group["Centroid"]["frames"][grain])
+            grain_data[0].append(frames[grain])
             grain_data[1].append(times[grain])
 
         return grain_data

@@ -13,7 +13,6 @@ import logging
 import h5py
 import pitch_shift
 
-import panns
 
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
@@ -307,10 +306,6 @@ class Matcher:
         if self.rematch:
             self.output_db.data["match"].clear()
 
-        indexing_object = panns.PannsIndex(metric='euclidean')
-        pdb.set_trace()
-
-
 
         # Get weightings for each analysis type.
         if self.config:
@@ -322,8 +317,11 @@ class Matcher:
         target_sample_indexes = self.count_grains(self.target_db, grain_size, overlap)
 
         for analysis in self.matcher_analyses:
+            self.logger.debug("Current analysis: {0}".format(analysis))
+            analysis_formatting = self.analysis_dict[analysis]
             # For each target entry in the database...
             for tind, target_entry in enumerate(self.target_db.analysed_audio):
+                analysis_object = target_entry.analyses[analysis]
 
                 # Create an array of grain times for target sample
                 target_times = target_entry.generate_grain_times(grain_size, overlap)
@@ -335,17 +333,18 @@ class Matcher:
                 # objects match formatting function.
                 target_data = analysis_object.formatters[analysis_formatting](target_data)
 
-            for sind, source_entry in enumerate(self.source_db.analysed_audio):
+                for sind, source_entry in enumerate(self.source_db.analysed_audio):
 
-                # Get the start and end array indexes allocated for the
-                # current entry's grains.
-                start_index, end_index = source_sample_indexes[sind]
+                    self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
+                    # Get the start and end array indexes allocated for the
+                    # current entry's grains.
+                    start_index, end_index = source_sample_indexes[sind]
 
-                # Create an array of grain times for source sample
-                source_times = source_entry.generate_grain_times(grain_size, overlap)
+                    # Create an array of grain times for source sample
+                    source_times = source_entry.generate_grain_times(grain_size, overlap)
 
-                # Get data for all source grains for each analysis
-                source_data = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
+                    # Get data for all source grains for each analysis
+                    source_data = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
 
     def brute_force_matcher(self, grain_size, overlap):
         '''Searches for matches to each grain by brute force comparison'''

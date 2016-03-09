@@ -50,6 +50,8 @@ class F0Analysis(Analysis):
         size containing frames for these times.
         """
         times = self.analysis_group["F0"]["times"][:]
+        frames = self.analysis_group["F0"]["frames"][:]
+        hr = self.analysis_group["F0"]["harmonic_ratio"][:]
         start = start / 1000
         end = end / 1000
         vtimes = times.reshape(-1, 1)
@@ -58,8 +60,8 @@ class F0Analysis(Analysis):
 
         grain_data = [[], [], []]
         for grain in selection:
-            grain_data[0].append(self.analysis_group["F0"]["frames"][grain])
-            grain_data[1].append(self.analysis_group["F0"]["harmonic_ratio"][grain])
+            grain_data[0].append(frames[grain])
+            grain_data[1].append(hr[grain])
             grain_data[2].append(times[grain])
 
         return grain_data

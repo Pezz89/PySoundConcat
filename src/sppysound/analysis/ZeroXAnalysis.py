@@ -58,26 +58,6 @@ class ZeroXAnalysis(Analysis):
         zerox_times = zerox_times / samplerate
         return zerox_times
 
-    def get_analysis_grains(self, start, end):
-        """
-        Retrieve analysis frames for period specified in start and end times.
-        arrays of start and end time pairs will produce an array of equivelant
-        size containing frames for these times.
-        """
-        times = self.analysis_group["ZeroCrossing"]["times"][:]
-        start = start / 1000
-        end = end / 1000
-        vtimes = times.reshape(-1, 1)
-
-        selection = np.transpose((vtimes >= start) & (vtimes <= end))
-
-        grain_data = [[],[]]
-        for grain in selection:
-            grain_data[0].append(self.analysis_group["ZeroCrossing"]["frames"][grain])
-            grain_data[1].append(times[grain])
-
-        return grain_data
-
     def hdf5_dataset_formatter(self, *args, **kwargs):
         '''
         Formats the output from the analysis method to save to the HDF5 file.
