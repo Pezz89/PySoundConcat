@@ -116,7 +116,9 @@ def main():
 
 
     matcher = Matcher(source_db, target_db, config.analysis_dict, output_db=output_db, config=config, quantity=1, rematch=args.rematch)
-    matcher.match(matcher.brute_force_matcher, grain_size=config.matcher["grain_size"], overlap=config.matcher["overlap"])
+    #matcher.match(matcher.brute_force_matcher, grain_size=config.matcher["grain_size"], overlap=config.matcher["overlap"])
+
+    matcher.match(matcher.k_nearest_neighbour_matching, grain_size=config.matcher["grain_size"], overlap=config.matcher["overlap"])
 
 if __name__ == "__main__":
     main()
