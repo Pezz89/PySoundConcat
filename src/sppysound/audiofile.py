@@ -917,12 +917,12 @@ class AnalysedAudioFile(AudioFile):
 
         if times.size == 2:
             times = np.array([times])
-        analysis_frames = analysis_object.get_analysis_grains(times[:, 0], times[:, 1])
+        analysis_frames, selection = analysis_object.get_analysis_grains(times[:, 0], times[:, 1])
 
         if format_type:
-            analysis_frames = analysis_object.formatters[format_type](analysis_frames)
+            analysis_frames = analysis_object.analysis_formatter(analysis_frames, selection, format_type)
 
-        return analysis_frames
+        return analysis_frames, selection
 
     def plot_rms_to_graph(self):
         """

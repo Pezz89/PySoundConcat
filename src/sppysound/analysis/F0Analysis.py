@@ -58,13 +58,7 @@ class F0Analysis(Analysis):
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
 
-        grain_data = [[], [], []]
-        for grain in selection:
-            grain_data[0].append(frames[grain])
-            grain_data[1].append(hr[grain])
-            grain_data[2].append(times[grain])
-
-        return grain_data
+        return ((frames, times, hr), selection)
 
     @staticmethod
     def create_f0_analysis(
@@ -259,86 +253,45 @@ class F0Analysis(Analysis):
         f0_times = f0_times / samplerate
         return f0_times
 
-    def mean_formatter(self, data):
-        if not self.threshold:
-            raise ValueError("Threshold not set for F0Analysis object.")
-        frames = data[0]
-        confidence = data[1]
-        output = np.empty(len(frames))
-        for i, (frame, conf) in enumerate(zip(frames, confidence)):
-            valid_inds = np.isfinite(frame) & np.isfinite(conf)
-            frame = frame[valid_inds]
-            if not frame.size:
-                output[i] = np.nan
-                continue
-            conf = conf[valid_inds]
-            med_conf = np.mean(conf)
-            if med_conf > self.threshold:
-                output[i] = np.mean(frame[conf > self.threshold])/self.nyquist_rate
-            else:
-                output[i] = np.nan
+    def log2_median(self, x):
+        return np.log2(np.median(x))
 
+    def log2_mean(self, x):
+        return np.log2(np.mean(x))
+
+    def formatter_func(self, selection, frames, valid_inds, harm_ratio, formatter=None):
+        # get all valid frames from current grain
+        frames = frames[selection & valid_inds]
+        conf = harm_ratio[selection & valid_inds]
+        med_conf = np.median(conf)
+
+        if not frames.size:
+            return np.nan
+
+        #if less than half the frames are valid then the grain is not valid.
+        if med_conf > self.threshold:
+            return formatter(frames[conf > self.threshold])/self.nyquist_rate
+        else:
+            return np.nan
+
+    def analysis_formatter(self, data, selection, format):
+        """Calculate the average analysis value of the grain using the match format specified."""
+        frames, times, harm_ratio = data
+        # set ratios less than the threshold to nan
+        # harm_ratio[harm_ratio < self.threshold] = np.nan
+        # Get indexes of all valid frames (that aren't nan)
+        valid_inds = np.isfinite(frames) & np.isfinite(harm_ratio)
+
+        format_style_dict = {
+            'mean': np.mean,
+            'median': np.median,
+            'log2_mean': self.log2_mean,
+            'log2_median': self.log2_median,
+        }
+        output = np.empty(len(selection))
+        for ind, i in enumerate(selection):
+            output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
+
+        # output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
         return output
 
-    def median_formatter(self, data):
-        if not self.threshold:
-            raise ValueError("Threshold not set for F0Analysis object.")
-        frames = data[0]
-        confidence = data[1]
-        output = np.empty(len(frames))
-        for i, (frame, conf) in enumerate(zip(frames, confidence)):
-            valid_inds = np.isfinite(frame) & np.isfinite(conf)
-            frame = frame[valid_inds]
-            if not frame.size:
-                output[i] = np.nan
-                continue
-            conf = conf[valid_inds]
-            med_conf = np.median(conf)
-            if med_conf > self.threshold:
-                output[i] = np.median(frame[conf > self.threshold])/self.nyquist_rate
-            else:
-                output[i] = np.nan
-
-        return output
-
-    def log2_mean_formatter(self, data):
-        if not self.threshold:
-            raise ValueError("Threshold not set for F0Analysis object.")
-        frames = data[0]
-        confidence = data[1]
-        output = np.empty(len(frames))
-        for i, (frame, conf) in enumerate(zip(frames, confidence)):
-            valid_inds = np.isfinite(frame) & np.isfinite(conf)
-            frame = frame[valid_inds]
-            if not frame.size:
-                output[i] = np.nan
-                continue
-            conf = conf[valid_inds]
-            med_conf = np.mean(conf)
-            if med_conf > self.threshold:
-                output[i] = np.log2(np.mean(frame[conf > self.threshold]))/self.nyquist_rate
-            else:
-                output[i] = np.nan
-
-        return output
-
-    def log2_median_formatter(self, data):
-        if not self.threshold:
-            raise ValueError("Threshold not set for F0Analysis object.")
-        frames = data[0]
-        confidence = data[1]
-        output = np.empty(len(frames))
-        for i, (frame, conf) in enumerate(zip(frames, confidence)):
-            valid_inds = np.isfinite(frame) & np.isfinite(conf)
-            frame = frame[valid_inds]
-            if not frame.size:
-                output[i] = np.nan
-                continue
-            conf = conf[valid_inds]
-            med_conf = np.median(conf)
-            if med_conf > self.threshold:
-                output[i] = np.log2(np.median(frame[conf > self.threshold]))/self.nyquist_rate
-            else:
-                output[i] = np.nan
-
-        return output

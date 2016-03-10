@@ -90,29 +90,3 @@ class SpectralCentroidAnalysis(Analysis):
         spccntr_times = spccntr_times / samplerate
         return spccntr_times
 
-    def mean_formatter(self, data):
-        """Calculate the mean value of the analysis data"""
-
-        values = data[0]
-
-        output = np.empty(len(values))
-        for ind, i in enumerate(values):
-            mean_i = np.mean(i)
-            if mean_i == 0:
-                output[ind] = np.nan
-            else:
-                output[ind] = np.log10(np.mean(i))/self.nyquist_rate
-        return output
-
-    def median_formatter(self, data):
-        """Calculate the median value of the analysis data"""
-        values = data[0]
-
-        output = np.empty(len(data))
-        for ind, i in enumerate(values):
-            median_i = np.median(i)
-            if median_i == 0:
-                output[ind] = np.nan
-            else:
-                output[ind] = np.log10(np.median(i))/self.nyquist_rate
-        return output

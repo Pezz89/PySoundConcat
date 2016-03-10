@@ -19,16 +19,6 @@ class Analysis(object):
         self.AnalysedAudioFile = AnalysedAudioFile
         self.analysis_group = analysis_group
         self.name = name
-        # Define default formaters for formatting raw analysis data. This can
-        # be used to convert data into a useable format for processed such as
-        # frame comparisson.
-        self.formatters = {
-            "mean": self.mean_formatter,
-            "median": self.median_formatter,
-            "raw": self.raw_formatter,
-            "log2_mean": self.log2_median_formatter,
-            "log2_median": self.log2_median_formatter
-        }
 
     def create_analysis(self, *args, **kwargs):
         """
@@ -89,13 +79,9 @@ class Analysis(object):
 
         #start_ind = np.min(selection)
         #end_ind = np.argmax(selection)
-        pdb.set_trace()
         frames = self.analysis_group[self.name]["frames"][:]
 
-        grain_data = [[],[]]
-        for grain in selection:
-            grain_data[0].append(frames[grain])
-            grain_data[1].append(times[grain])
+        grain_data = (frames, selection)
 
         return grain_data
 
@@ -111,43 +97,39 @@ class Analysis(object):
         output, attributes = analysis_method(*args, **kwargs)
         return ({'data': output}, {'attrs': attributes})
 
-    def mean_formatter(self, data):
-        """Calculate the mean value of the analysis data"""
+    ################################################################################
+    # Formatting functions
+    ################################################################################
 
-        values = data[0]
+    def log2_median(self, x):
+        return np.log2(np.median(x))
 
-        output = np.empty(len(values))
-        for ind, i in enumerate(values):
-            output[ind] = np.mean(i)
-        return output
+    def log2_mean(self, x):
+        return np.log2(np.mean(x))
 
-    def median_formatter(self, data):
-        """Calculate the median value of the analysis data"""
-        values = data[0]
+    def formatter_func(self, selection, frames, valid_inds, formatter=None):
+        # get all valid frames from current grain
+        frames = frames[selection & valid_inds]
 
-        output = np.empty(len(data))
-        for ind, i in enumerate(values):
-            output[ind] = np.median(i)
-        return output
+        #if less than half the frames are valid then the grain is not valid.
+        if frames.size < valid_inds[selection].nonzero()[0].size/2:
+            return np.nan
+        else:
+            return formatter(frames)
+        return formatter(frames)
 
-    def raw_formatter(self, data):
-        return data
+    def analysis_formatter(self, frames, selection, format):
+        """Calculate the average analysis value of the grain using the match format specified."""
+        valid_inds = np.isfinite(frames)
 
-    def log2_median_formatter(self, data):
-        """Calculate the median value of the analysis data"""
-        values = data[0]
-
-        output = np.empty(len(data))
-        for ind, i in enumerate(values):
-            output[ind] = log2(np.median(i))
-        return output
-
-    def log2_mean_formatter(self, data):
-        """Calculate the mean value of the analysis data"""
-
-        values = data[0]
-
-        output = np.empty(len(values))
-        for ind, i in enumerate(values):
-            output[ind] = log2(np.mean(i))
+        format_style_dict = {
+            'mean': np.mean,
+            'median': np.median,
+            'log2_mean': self.log2_mean,
+            'log2_median': self.log2_median,
+        }
+        output = np.empty(len(selection))
+        for ind, i in enumerate(selection):
+            output[ind] = self.formatter_func(i, frames, valid_inds, formatter=format_style_dict[format])
+        # output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, formatter=format_style_dict[format])
         return output

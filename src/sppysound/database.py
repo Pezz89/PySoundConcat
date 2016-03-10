@@ -381,11 +381,7 @@ class Matcher:
 
 
                 # Get data for all target grains for each analysis
-                target_data = target_entry.analysis_data_grains(target_times, analysis)
-
-                # Format the target data ready for matching using the analysis
-                # objects match formatting function.
-                target_data = analysis_object.formatters[analysis_formatting](target_data)
+                target_data, s = target_entry.analysis_data_grains(target_times, analysis, format=analysis_formatting)
 
                 # Allocate memory for storing accumulated distances between
                 # source and target grains
@@ -402,17 +398,20 @@ class Matcher:
                     self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
-                    source_data = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
+                    source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
 
                     # Calculate the euclidean distance between the source and
                     # source values of each grain and add to array
-                    self.data_distance[:, start_index:end_index] = self.distance_calc(target_data, source_data)
+                    a = self.distance_calc(target_data, source_data)
+
+                    self.data_distance[:, start_index:end_index] = a
 
                 # Normalize and weight the distances. A higher weighting gives
                 # an analysis presedence over others.
                 self.data_distance *= (1/self.data_distance.max()) * weightings[analysis]
                 distance_accum += self.data_distance
 
+            pdb.set_trace()
             # Sort indexes so that best matches are at the start of the array.
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
 
