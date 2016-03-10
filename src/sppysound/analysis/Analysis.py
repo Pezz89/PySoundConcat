@@ -129,7 +129,10 @@ class Analysis(object):
             'log2_median': self.log2_median,
         }
         output = np.empty(len(selection))
-        for ind, i in enumerate(selection):
-            output[ind] = self.formatter_func(i, frames, valid_inds, formatter=format_style_dict[format])
-        # output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, formatter=format_style_dict[format])
+
+        # For debugging apply_along_axis:
+        #for ind, i in enumerate(selection):
+        #    output[ind] = self.formatter_func(i, frames, valid_inds, formatter=format_style_dict[format])
+
+        output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, formatter=format_style_dict[format])
         return output

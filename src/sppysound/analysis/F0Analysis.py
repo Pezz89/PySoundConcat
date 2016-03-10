@@ -253,32 +253,11 @@ class F0Analysis(Analysis):
         f0_times = f0_times / samplerate
         return f0_times
 
-    def log2_median(self, x):
-        return np.log2(np.median(x))
-
-    def log2_mean(self, x):
-        return np.log2(np.mean(x))
-
-    def formatter_func(self, selection, frames, valid_inds, harm_ratio, formatter=None):
-        # get all valid frames from current grain
-        frames = frames[selection & valid_inds]
-        conf = harm_ratio[selection & valid_inds]
-        med_conf = np.median(conf)
-
-        if not frames.size:
-            return np.nan
-
-        #if less than half the frames are valid then the grain is not valid.
-        if med_conf > self.threshold:
-            return formatter(frames[conf > self.threshold])/self.nyquist_rate
-        else:
-            return np.nan
-
     def analysis_formatter(self, data, selection, format):
         """Calculate the average analysis value of the grain using the match format specified."""
         frames, times, harm_ratio = data
         # set ratios less than the threshold to nan
-        # harm_ratio[harm_ratio < self.threshold] = np.nan
+        harm_ratio[harm_ratio < self.threshold] = np.nan
         # Get indexes of all valid frames (that aren't nan)
         valid_inds = np.isfinite(frames) & np.isfinite(harm_ratio)
 
@@ -289,9 +268,11 @@ class F0Analysis(Analysis):
             'log2_median': self.log2_median,
         }
         output = np.empty(len(selection))
-        for ind, i in enumerate(selection):
-            output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
 
-        # output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
+        # For debugging apply along axis:
+        #for ind, i in enumerate(selection):
+        #    output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
+
+        output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, formatter=format_style_dict[format])/self.nyquist_rate
         return output
 

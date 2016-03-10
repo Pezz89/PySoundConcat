@@ -71,19 +71,19 @@ def main():
         help='Specify analyses to be used. Valid analyses are: \'rms\''
         '\'f0\' \'fft\'',
         default=[
-           #"rms",
-           #"zerox",
-           #"fft",
-           #"spccntr",
-           #"spcsprd",
-           #"spcflux",
-           #"spccf",
-           #"spcflatness",
+            "rms",
+            "zerox",
+            "fft",
+            "spccntr",
+            "spcsprd",
+            "spcflux",
+            "spccf",
+            "spcflatness",
             "f0",
-           #"peak",
-           #"centroid",
-           #"kurtosis",
-           #"variance"
+            "peak",
+            "centroid",
+            "kurtosis",
+            "variance"
         ]
     )
     parser.add_argument(
