@@ -29,6 +29,7 @@ import analysis.CentroidAnalysis as CentroidAnalysis
 import analysis.F0Analysis as F0Analysis
 import analysis.VarianceAnalysis as VarianceAnalysis
 import analysis.KurtosisAnalysis as KurtosisAnalysis
+import analysis.SkewnessAnalysis as SkewnessAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -847,7 +848,8 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("peak", PeakAnalysis),
             analysis_object("centroid", CentroidAnalysis),
             analysis_object("variance", VarianceAnalysis),
-            analysis_object("kurtosis", KurtosisAnalysis)
+            analysis_object("kurtosis", KurtosisAnalysis),
+            analysis_object("skewness", SkewnessAnalysis)
         ]
 
         self.analyses = defaultdict(None)

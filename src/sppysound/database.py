@@ -69,7 +69,8 @@ class AudioDatabase:
             'peak',
             'centroid',
             'variance',
-            'kurtosis'
+            'kurtosis',
+            'skewness',
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:

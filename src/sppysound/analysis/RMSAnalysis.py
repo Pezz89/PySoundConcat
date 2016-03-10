@@ -5,6 +5,7 @@ import logging
 from scipy import signal
 from numpy.lib import stride_tricks
 import pdb
+from scipy.signal import butter, lfilter
 
 
 from AnalysisTools import ButterFilter
@@ -46,10 +47,10 @@ class RMSAnalysis(Analysis):
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating RMS analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(frames, window_size=self.window_size, overlapFac=self.overlap)
+        self.create_analysis(frames, self.AnalysedAudioFile.samplerate, window_size=self.window_size, overlapFac=self.overlap, )
 
     @staticmethod
-    def create_rms_analysis(frames, window_size=512,
+    def create_rms_analysis(frames,samplerate, window_size=512,
                             window=signal.triang,
                             overlapFac=0.5):
         """
@@ -58,13 +59,23 @@ class RMSAnalysis(Analysis):
         Calculate the RMS values of windowed segments of the audio file and
         save to disk.
         """
+        def butter_lowpass(cutoff, fs, order=5):
+            # red: taken from http://stackoverflow.com/questions/25191620/creating-lowpass-filter-in-scipy-understanding-methods-and-units
+            nyq = 0.5 * fs
+            normal_cutoff = cutoff / nyq
+            b, a = butter(order, normal_cutoff, btype='highpass', analog=False)
+            return b, a
+        def butter_lowpass_filter(data, cutoff, fs, order=5):
+            # red: taken from http://stackoverflow.com/questions/25191620/creating-lowpass-filter-in-scipy-understanding-methods-and-units
+            b, a = butter_lowpass(cutoff, fs, order=order)
+            y = lfilter(b, a, data)
+            return y
+
+
         # Calculate the period of the window in hz
-        # lowest_freq = 1.0 / window_size
-        # Filter frequencies lower than the period of the window
-        # filter = ButterFilter()
-        # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
-        # TODO: Fix filter
-        # frames = filter.filter_butter(frames)
+        lowest_freq = 1.0 / (window_size / samplerate)
+        frames = butter_lowpass_filter(frames, lowest_freq, samplerate)
+
 
         # Generate a window function to apply to rms windows before analysis
         win = window(window_size)

@@ -83,7 +83,8 @@ def main():
             "peak",
             "centroid",
             "kurtosis",
-            "variance"
+            "variance",
+            "skewness"
         ]
     )
     parser.add_argument(

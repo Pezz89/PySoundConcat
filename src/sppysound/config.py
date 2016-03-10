@@ -13,6 +13,10 @@ kurtosis = {
     "window_size": 100,
     "overlap": 4
 }
+skewness = {
+    "window_size": 100,
+    "overlap": 4
+}
 
 analyser = {
     "fft_size": 65536
@@ -29,7 +33,9 @@ matcher_weightings = {
     "rms" : 1.,
     "peak": 1.,
     "centroid": 1.,
-    "kurtosis": 1.
+    "kurtosis": 1.,
+    "skewness": 1.,
+    "variance": 3.
 }
 
 analysis_dict = {
@@ -43,7 +49,9 @@ analysis_dict = {
     "spcflatness": "mean",
     "peak": "mean",
     "centroid": "mean",
-    "kurtosis": "mean"
+    "kurtosis": "mean",
+    "skewness": "mean",
+    "variance": "mean"
 }
 
 matcher = {
