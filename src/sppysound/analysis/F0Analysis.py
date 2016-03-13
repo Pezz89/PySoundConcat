@@ -153,9 +153,11 @@ class F0Analysis(Analysis):
 
         def autocorr(x):
             """
-            #FFT based autocorrelation function, which is faster than numpy.correlate
-            #Operates on muti-dimensional arrays on a per element basis.
-            #Ref: http://stackoverflow.com/questions/4503325/autocorrelation-of-a-multidimensional-array-in-numpy
+            FFT based autocorrelation function, which is faster than numpy.correlate
+            Operates on muti-dimensional arrays on a per element basis.
+
+            Ref: http://stackoverflow.com/questions/4503325/autocorrelation-of-a-multidimensional-array-in-numpy
+
             """
             length = np.size(x, axis=1)
             # x is supposed to be an array of sequences, of shape (totalelements, length)
@@ -170,8 +172,7 @@ class F0Analysis(Analysis):
                 f0 = np.nan
                 return f0, HR
 
-            R=autocorr([frames])
-            R = R[0]
+            R=autocorr([frames])[0]
             g=R[frames.size]
 
             R=R[frames.size-1:]
@@ -220,9 +221,10 @@ class F0Analysis(Analysis):
                 HR = 1
             return (f0, HR)
 
-        output = np.empty((frames.shape[0], 2))
-        for ind, i in enumerate(frames):
-            output[ind] = per_frame_f0(i, m0, M)
+        output = np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
+        # output = np.empty((frames.shape[0], 2))
+        # for ind, i in enumerate(frames):
+        #     output[ind] = per_frame_f0(i, m0, M)
 
         return output
 
