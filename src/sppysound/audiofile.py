@@ -917,7 +917,7 @@ class AnalysedAudioFile(AudioFile):
 
         analysis_object = self.analyses[analysis]
 
-        if times.size == 2:
+        if len(times.shape) != 2:
             times = np.array([times])
         analysis_frames, selection = analysis_object.get_analysis_grains(times[:, 0], times[:, 1])
 

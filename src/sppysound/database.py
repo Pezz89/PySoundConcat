@@ -525,6 +525,7 @@ class Synthesizer:
     def synthesize(self, grain_size, overlap):
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
+        # TODO: insert error here if there are no jobs.
 
         for job_ind, (name, job) in enumerate(jobs):
             # Generate output file name/path
