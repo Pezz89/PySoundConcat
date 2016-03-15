@@ -117,8 +117,20 @@ def parse_arguments():
 
     args = parser.parse_args()
 
+    if args.rematch:
+        config.matcher["rematch"] = True
+
+    if args.reanalyse:
+        config.analysis["reanalyse"] = True
+
+    if args.enforcef0:
+        config.synthesizer["enforce_f0"] = True
+
+    if args.enforcerms:
+        config.synthesizer["enforce_rms"] = True
+
     if not args.verbose:
-        args.verbose = 50
+        args.verbose = 20
     else:
         levels = [50, 40, 30, 20, 10]
         if args.verbose > 5:
@@ -138,8 +150,6 @@ def main():
         log_filename=modpath,
         logger_filelevel=args.verbose
     )
-    if not args.verbose:
-        logger.disables = True
 
     # Create/load a pre-existing source database
     source_db = AudioDatabase(
@@ -147,7 +157,7 @@ def main():
         analysis_list=args.analyse,
         config=config
     )
-    source_db.load_database(reanalyse=False)
+    source_db.load_database(reanalyse=config.analysis["reanalyse"])
 
     # Create/load a pre-existing target database
     target_db = AudioDatabase(
@@ -155,7 +165,7 @@ def main():
         analysis_list=args.analyse,
         config=config
     )
-    target_db.load_database(reanalyse=False)
+    target_db.load_database(reanalyse=config.analysis["reanalyse"])
 
     # Create/load a pre-existing output database
     output_db = AudioDatabase(

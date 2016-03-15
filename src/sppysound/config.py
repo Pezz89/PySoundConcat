@@ -56,6 +56,10 @@ analysis_dict = {
     "harm_ratio": "mean"
 }
 
+analysis = {
+    "reanalyse": False
+}
+
 matcher = {
     "rematch": True,
     "grain_size": 130,
