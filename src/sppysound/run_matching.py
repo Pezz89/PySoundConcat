@@ -114,13 +114,11 @@ def main():
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)
 
-    pdb.set_trace()
     output_db = AudioDatabase(
         args.output,
         config=config
     )
 
-    pdb.set_trace()
     # Create/load a pre-existing database
     output_db.load_database(reanalyse=False)
 

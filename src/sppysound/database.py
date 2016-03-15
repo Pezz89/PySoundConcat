@@ -248,17 +248,20 @@ class Matcher:
     Used to compare and match entries in two AnalysedAudioFile databases.
     """
 
-    def __init__(self, database1, database2, analysis_dict,*args, **kwargs):
+    def __init__(self, database1, database2, analysis_dict, *args, **kwargs):
+        # Get matcher configurations object
         self.config = kwargs.pop('config', None)
-        self.match_quantity = kwargs.pop('quantity', 1)
         self.logger = logging.getLogger(__name__ + '.Matcher')
+
+        # Set the number of best matches for each grain to store for use in synthesis.
+        self.match_quantity = self.config.matcher["match_quantity"]
         self.source_db = database1
         self.target_db = database2
         self.output_db = kwargs.pop("output_db", None)
         self.rematch = self.config.matcher["rematch"]
 
+        # Store a dictionary of analyses to perform matching on.
         self.analysis_dict = analysis_dict
-        self.common_analyses = []
 
         self.logger.debug("Initialised Matcher")
 
@@ -557,7 +560,6 @@ class Synthesizer:
                     # If there are multiple matches, choose a match at random
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
-                    pdb.set_trace()
                     match_db_ind, match_grain_ind = matches[match_index]
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap)
