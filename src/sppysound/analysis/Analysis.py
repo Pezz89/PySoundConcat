@@ -116,7 +116,6 @@ class Analysis(object):
             return np.nan
         else:
             return formatter(frames)
-        return formatter(frames)
 
     def analysis_formatter(self, frames, selection, format):
         """Calculate the average analysis value of the grain using the match format specified."""
