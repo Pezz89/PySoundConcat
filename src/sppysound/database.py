@@ -71,6 +71,7 @@ class AudioDatabase:
             'variance',
             'kurtosis',
             'skewness',
+            'harm_ratio'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:

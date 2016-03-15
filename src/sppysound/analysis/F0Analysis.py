@@ -256,8 +256,6 @@ class F0Analysis(Analysis):
     def analysis_formatter(self, data, selection, format):
         """Calculate the average analysis value of the grain using the match format specified."""
         frames, times, harm_ratio = data
-        # set ratios less than the threshold to nan
-        harm_ratio[harm_ratio < self.threshold] = np.nan
         # Get indexes of all valid frames (that aren't nan)
         valid_inds = np.isfinite(frames) & np.isfinite(harm_ratio)
 
@@ -267,12 +265,19 @@ class F0Analysis(Analysis):
             'log2_mean': self.log2_mean,
             'log2_median': self.log2_median,
         }
-        output = np.empty(len(selection))
 
         # For debugging apply along axis:
         #for ind, i in enumerate(selection):
         #    output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
 
-        output = np.apply_along_axis(self.formatter_func, 1, selection, frames, valid_inds, formatter=format_style_dict[format])/self.nyquist_rate
+        output = np.apply_along_axis(
+            self.formatter_func,
+            1,
+            selection,
+            frames,
+            valid_inds,
+            formatter=format_style_dict[format]
+        )/self.nyquist_rate
+
         return output
 

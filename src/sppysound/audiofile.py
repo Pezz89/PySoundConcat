@@ -30,6 +30,7 @@ import analysis.F0Analysis as F0Analysis
 import analysis.VarianceAnalysis as VarianceAnalysis
 import analysis.KurtosisAnalysis as KurtosisAnalysis
 import analysis.SkewnessAnalysis as SkewnessAnalysis
+import analysis.F0HarmRatioAnalysis as F0HarmRatioAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -355,18 +356,22 @@ class AudioFile(object):
             start_index = self.get_frames() + start_index
         if not grain_size:
             grain_size = self.get_frames()
+        grain_size = int(grain_size)
         position = self.get_seek_position()
         # Read grain
         index = self.pysndfile_object.seek(start_index, 0)
         if index + grain_size > self.get_frames():
             grain = self.read_frames(self.get_frames() - index)
             if padding:
-                grain = np.pad(
-                    grain,
-                    (0, index + grain_size - self.get_frames()),
-                    'constant',
-                    constant_values=(0, 0)
-                )
+                try:
+                    grain = np.pad(
+                        grain,
+                        (0, index + grain_size - self.get_frames()),
+                        'constant',
+                        constant_values=(0, 0)
+                    )
+                except TypeError:
+                    pdb.set_trace()
         else:
             grain = self.read_frames(grain_size)
         self.seek(position, 0)
@@ -849,7 +854,8 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("centroid", CentroidAnalysis),
             analysis_object("variance", VarianceAnalysis),
             analysis_object("kurtosis", KurtosisAnalysis),
-            analysis_object("skewness", SkewnessAnalysis)
+            analysis_object("skewness", SkewnessAnalysis),
+            analysis_object("harm_ratio", F0HarmRatioAnalysis)
         ]
 
         self.analyses = defaultdict(None)

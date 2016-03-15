@@ -84,7 +84,8 @@ def main():
             "centroid",
             "kurtosis",
             "variance",
-            "skewness"
+            "skewness",
+            "harm_ratio"
         ]
     )
     parser.add_argument(

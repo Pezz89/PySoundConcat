@@ -2,19 +2,19 @@ f0 = {
     "threshold": 0.6
 }
 RMS = {
-    "window_size": 100,
+    "window_size": 60,
     "overlap": 4
 }
 variance = {
-    "window_size": 100,
+    "window_size": 60,
     "overlap": 4
 }
 kurtosis = {
-    "window_size": 100,
+    "window_size": 60,
     "overlap": 4
 }
 skewness = {
-    "window_size": 100,
+    "window_size": 60,
     "overlap": 4
 }
 
@@ -35,7 +35,8 @@ matcher_weightings = {
     "centroid": 1.,
     "kurtosis": 1.,
     "skewness": 1.,
-    "variance": 3.
+    "variance": 3.,
+    "harm_ratio": 1.
 }
 
 analysis_dict = {
@@ -51,22 +52,23 @@ analysis_dict = {
     "centroid": "mean",
     "kurtosis": "mean",
     "skewness": "mean",
-    "variance": "mean"
+    "variance": "mean",
+    "harm_ratio": "mean"
 }
 
 matcher = {
     "rematch": True,
-    "grain_size": 100,
-    "overlap": 2
+    "grain_size": 60,
+    "overlap": 4
 }
 
 synthesizer = {
     "enforce_rms": True,
-    "enf_rms_ratio_limit": 100.,
+    "enf_rms_ratio_limit": 10.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 100,
-    "overlap": 2
+    "grain_size": 60,
+    "overlap": 4
 }
 
 output_file = {
