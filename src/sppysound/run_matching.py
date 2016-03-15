@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-"""Command line interface for matching databases"""
-
 import argparse
 import audiofile
 import logging
@@ -12,9 +10,14 @@ import __builtin__
 import config
 from database import AudioDatabase, Matcher
 pdb.pm
-filename = os.path.splitext(__file__)[0]
-logger = loggerops.create_logger(log_filename='./{0}.log'.format(filename))
 
+import sys
+modpath = sys.argv[0]
+modpath = os.path.splitext(modpath)[0]+'.log'
+
+logger = loggerops.create_logger(log_filename=modpath)
+
+'''
 ###########################################################################
 # File open and closing monitoring
 openfiles = set()
@@ -41,6 +44,7 @@ def printOpenFiles():
     logger.debug("%d OPEN FILES: [%s]" % (len(openfiles), ", ".join(f.x for f in openfiles)))
 
 ###########################################################################
+'''
 
 def main():
     """Parse arguments then generate database."""
@@ -105,13 +109,17 @@ def main():
         analysis_list=args.analyse,
         config=config
     )
+
     # Create/load a pre-existing database
     target_db.load_database(reanalyse=False)
 
+    pdb.set_trace()
     output_db = AudioDatabase(
         args.output,
         config=config
     )
+
+    pdb.set_trace()
     # Create/load a pre-existing database
     output_db.load_database(reanalyse=False)
 

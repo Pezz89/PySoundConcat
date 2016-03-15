@@ -13,6 +13,7 @@ import logging
 import h5py
 import multiprocessing as mp
 from collections import namedtuple, defaultdict
+import gc
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -859,6 +860,8 @@ class AnalysedAudioFile(AudioFile):
         for analysis in analysis_object_list:
             if analysis.name in self.available_analyses:
                 self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=self.config)
+        self.analysis_storage.file.flush()
+        gc.collect()
 
 
     def create_analysis_group(self, analysis_file):

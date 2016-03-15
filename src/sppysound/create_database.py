@@ -111,6 +111,7 @@ def main():
         "analyses"
     )
     args = parser.parse_args()
+    pdb.set_trace()
 
     # Create database object
     database = AudioDatabase(

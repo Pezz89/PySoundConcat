@@ -13,7 +13,6 @@ import logging
 import h5py
 import pitch_shift
 
-
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
 from helper import OrderedSet
@@ -98,10 +97,10 @@ class AudioDatabase:
             # Check that audio directory exists
             if not os.path.exists(self.audio_dir):
                 raise IOError("The audio directory provided ({0}) doesn't "
-                            "exist").format(self.audio_dir)
+                            "exist".format(self.audio_dir))
             self.organize_audio(subdir_paths)
 
-        analysed_audio = self.analyse_database(subdir_paths, reanalyse)
+        self.analyse_database(subdir_paths, reanalyse)
 
     def analyse_database(self, subdir_paths, reanalyse):
         # Create data file for storing analysis data for the database
@@ -526,6 +525,8 @@ class Synthesizer:
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
         # TODO: insert error here if there are no jobs.
+        if not jobs:
+            raise RuntimeError("There is no match data to synthesize. The match program may need to be run first.")
 
         for job_ind, (name, job) in enumerate(jobs):
             # Generate output file name/path
