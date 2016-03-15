@@ -363,15 +363,12 @@ class AudioFile(object):
         if index + grain_size > self.get_frames():
             grain = self.read_frames(self.get_frames() - index)
             if padding:
-                try:
-                    grain = np.pad(
-                        grain,
-                        (0, index + grain_size - self.get_frames()),
-                        'constant',
-                        constant_values=(0, 0)
-                    )
-                except TypeError:
-                    pdb.set_trace()
+                grain = np.pad(
+                    grain,
+                    (0, index + grain_size - self.get_frames()),
+                    'constant',
+                    constant_values=(0, 0)
+                )
         else:
             grain = self.read_frames(grain_size)
         self.seek(position, 0)

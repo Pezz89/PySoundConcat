@@ -59,16 +59,23 @@ analysis_dict = {
 matcher = {
     "rematch": True,
     "grain_size": 60,
-    "overlap": 4
+    "overlap": 4,
+    # Defines the number of matches to keep for synthesis. Note that this must
+    # also be specified in the synthesis config
+    "match_quantity": 20
 }
 
 synthesizer = {
     "enforce_rms": True,
-    "enf_rms_ratio_limit": 10.,
+    "enf_rms_ratio_limit": 5.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
     "grain_size": 60,
-    "overlap": 4
+    "overlap": 4,
+    "normalize" : True,
+    # Defines the number of potential grains to choose from matches when
+    # synthesizing output.
+    "match_quantity": 20
 }
 
 output_file = {

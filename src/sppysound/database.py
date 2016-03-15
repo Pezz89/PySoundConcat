@@ -585,6 +585,10 @@ class Synthesizer:
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
+                # If output normalization is active, normalize output.
+                pdb.set_trace()
+                if self.config.synthesizer["normalize"]:
+                    output_frames = output_frames / np.max(output_frames)
                 output.write_frames(output_frames)
 
     def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
@@ -649,7 +653,6 @@ class Synthesizer:
         # Get mean of RMS frames in time range specified.
         target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0][0]
         target_peak = target_sample.analysis_data_grains(target_times, "peak", format="mean")[0][0]
-        tval = np.mean([target_rms, target_peak])
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -660,6 +663,7 @@ class Synthesizer:
         source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0][0]
         sval = np.mean([source_rms, source_peak])
 
+        if any(tval, sval)
 
         ratio_difference = tval / sval
         # If the ratio difference is within the limits
@@ -679,20 +683,6 @@ class Synthesizer:
                                     target_grain_ind
                                 ))
             ratio_difference = ratio_limit
-        elif ratio_difference < 1./ratio_limit:
-            self.logger.warning("Grain RMS ratio too large ({0}), enforcing RMS at limit ({1})\n"
-                                "Source sample: {2}\n"
-                                "Source grain index: {3}\n"
-                                "Target sample: {4}\n"
-                                "Target grain index: {5}".format(
-                                    ratio_difference,
-                                    1./ratio_limit,
-                                    source_sample,
-                                    source_grain_ind,
-                                    target_sample,
-                                    target_grain_ind
-                                ))
-            ratio_difference = 1./ratio_limit
 
         grain *= ratio_difference
 
