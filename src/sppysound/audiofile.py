@@ -87,16 +87,16 @@ class AudioFile(object):
             return self
 
     def open(self):
-        self.logger.info("Opening soundfile {0}".format(self.filepath))
+        self.logger.debug("Opening soundfile {0}".format(self.filepath))
         return self.__enter__()
 
     def close(self):
-        self.logger.info("Closing soundfile {0}".format(self.filepath))
+        self.logger.debug("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
-        self.logger.info("Closing soundfile {0}".format(self.filepath))
+        self.logger.debug("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __if_open(method):

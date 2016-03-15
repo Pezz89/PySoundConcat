@@ -212,10 +212,13 @@ class AudioDatabase:
                     filename = os.path.basename(filepath)
                     destination = os.path.abspath(os.path.join(subdir_paths["audio"], os.path.basename(filepath)))
 
-                    if not (os.path.isfile(destination) and os.path.lexists(destination)):
+                    if not os.path.isfile(destination) and not os.path.lexists(destination):
                         # Copy the file to the database
                         if symlink:
-                            os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
+                            try:
+                                os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
+                            except:
+                                pdb.set_trace()
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:

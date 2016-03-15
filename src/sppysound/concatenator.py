@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import argparse
 import audiofile
@@ -6,8 +6,13 @@ import logging
 from fileops import loggerops
 import pdb
 import os
+import sys
 from database import AudioDatabase, Matcher, Synthesizer
 import config
+
+modpath = sys.argv[0]
+modpath = os.path.splitext(modpath)[0]+'.log'
+
 
 def parse_arguments():
     """
@@ -22,22 +27,22 @@ def parse_arguments():
     parser.add_argument(
         'source',
         type=str,
-        help='Directory of audio files to be added to the database'
+        help='Directory of source files/database to take grains from '
+        'when synthesizing output'
     )
 
     parser.add_argument(
         'target',
         type=str,
-        nargs='?',
-        default='',
-        help='Directory to generate the database in. If the directory does not'
-        ' exist then it will be created if possible'
+        help='Directory of target files/database to match source grains to.'
     )
 
     parser.add_argument(
         'output',
         type=str,
-        help='output database directory'
+        help='Directory to use as database for outputing results and match '
+        'information.\nOutput audio will be stored in the /audio sub-directory '
+        'and match data will be stored in the /data directory.'
     )
 
     parser.add_argument(
@@ -45,7 +50,8 @@ def parse_arguments():
         '-a',
         nargs='*',
         help='Specify analyses to be created. Valid analyses are: \'rms\''
-        '\'f0\' \'atk\' \'fft\'',
+        '\'f0\' \'zerox\' \'fft\' etc... (see the documentation for full '
+        'details on available analyses)',
         default=[
             "rms",
             "zerox",
@@ -83,24 +89,57 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--reanalyse", action="store_true",
+        "--reanalyse",
+        action="store_true",
         help="Force re-analysis of all analyses, overwriting any existing "
         "analyses"
     )
 
     parser.add_argument(
-        "--rematch", action="store_true",
+        "--rematch",
+        action="store_true",
         help="Force re-matching, overwriting any existing match data "
     )
 
+    parser.add_argument(
+        "--enforcef0",
+        action="store_true",
+        help="This flag enables pitch shifting of matched grainsto better match the target."
+    )
+
+    parser.add_argument(
+        "--enforcerms",
+        action="store_true",
+        help="This flag enables scaling of matched grains to better match the target's volume."
+    )
+
+    parser.add_argument('--verbose', '-v', action='count')
+
     args = parser.parse_args()
+
+    if not args.verbose:
+        args.verbose = 50
+    else:
+        levels = [50, 40, 30, 20, 10]
+        if args.verbose > 5:
+            args.verbose = 5
+        args.verbose -= 1
+        args.verbose = levels[args.verbose]
 
     return args
 
 
 def main():
     # Process commandline arguments
-    main_args = parse_arguments()
+    args = parse_arguments()
+
+    logger = loggerops.create_logger(
+        logger_streamlevel=args.verbose,
+        log_filename=modpath,
+        logger_filelevel=args.verbose
+    )
+    if not args.verbose:
+        logger.disables = True
 
     # Create/load a pre-existing source database
     source_db = AudioDatabase(
@@ -133,7 +172,6 @@ def main():
         config.analysis_dict,
         output_db=output_db,
         config=config,
-        quantity=,
         rematch=args.rematch
     )
 
