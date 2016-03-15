@@ -556,6 +556,7 @@ class Synthesizer:
                     # If there are multiple matches, choose a match at random
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
+                    pdb.set_trace()
                     match_db_ind, match_grain_ind = matches[match_index]
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap)
