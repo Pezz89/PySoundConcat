@@ -30,6 +30,7 @@ import analysis.F0Analysis as F0Analysis
 import analysis.VarianceAnalysis as VarianceAnalysis
 import analysis.KurtosisAnalysis as KurtosisAnalysis
 import analysis.SkewnessAnalysis as SkewnessAnalysis
+import analysis.F0HarmRatioAnalysis as F0HarmRatioAnalysis
 
 logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -355,6 +356,7 @@ class AudioFile(object):
             start_index = self.get_frames() + start_index
         if not grain_size:
             grain_size = self.get_frames()
+        grain_size = int(grain_size)
         position = self.get_seek_position()
         # Read grain
         index = self.pysndfile_object.seek(start_index, 0)
@@ -849,7 +851,8 @@ class AnalysedAudioFile(AudioFile):
             analysis_object("centroid", CentroidAnalysis),
             analysis_object("variance", VarianceAnalysis),
             analysis_object("kurtosis", KurtosisAnalysis),
-            analysis_object("skewness", SkewnessAnalysis)
+            analysis_object("skewness", SkewnessAnalysis),
+            analysis_object("harm_ratio", F0HarmRatioAnalysis)
         ]
 
         self.analyses = defaultdict(None)

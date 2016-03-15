@@ -71,6 +71,7 @@ class AudioDatabase:
             'variance',
             'kurtosis',
             'skewness',
+            'harm_ratio'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
@@ -585,6 +586,9 @@ class Synthesizer:
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
+                # If output normalization is active, normalize output.
+                if self.config.synthesizer["normalize"]:
+                    output_frames = output_frames / np.max(output_frames)
                 output.write_frames(output_frames)
 
     def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
@@ -604,6 +608,10 @@ class Synthesizer:
         source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="median")[0][0]
 
         ratio_difference = target_f0 / source_f0
+
+        if not np.isfinite(ratio_difference):
+            return grain
+
         # If the ratio difference is within the limits
         ratio_limit = self.config.synthesizer["enf_f0_ratio_limit"]
 
@@ -660,8 +668,9 @@ class Synthesizer:
         source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0][0]
         sval = np.mean([source_rms, source_peak])
 
-
         ratio_difference = tval / sval
+        if not np.isfinite(ratio_difference):
+            return grain
         # If the ratio difference is within the limits
         ratio_limit = self.config.synthesizer["enf_rms_ratio_limit"]
 
@@ -679,20 +688,6 @@ class Synthesizer:
                                     target_grain_ind
                                 ))
             ratio_difference = ratio_limit
-        elif ratio_difference < 1./ratio_limit:
-            self.logger.warning("Grain RMS ratio too large ({0}), enforcing RMS at limit ({1})\n"
-                                "Source sample: {2}\n"
-                                "Source grain index: {3}\n"
-                                "Target sample: {4}\n"
-                                "Target grain index: {5}".format(
-                                    ratio_difference,
-                                    1./ratio_limit,
-                                    source_sample,
-                                    source_grain_ind,
-                                    target_sample,
-                                    target_grain_ind
-                                ))
-            ratio_difference = 1./ratio_limit
 
         grain *= ratio_difference
 
