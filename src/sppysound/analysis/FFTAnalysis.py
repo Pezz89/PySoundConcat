@@ -34,7 +34,7 @@ class FFTAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            window_size = config.analyser["fft_size"]
+            window_size = config.fft["window_size"]
         else:
             window_size = 2048
         self.analysis_group = analysis_group

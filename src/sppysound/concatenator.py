@@ -9,19 +9,50 @@ import os
 import sys
 from database import AudioDatabase, Matcher, Synthesizer
 import config
+import json
 
 modpath = sys.argv[0]
 modpath = os.path.splitext(modpath)[0]+'.log'
 
+def parse_sub_args(args, analysis):
+    try:
+        args = getattr(args, analysis)
+        if not args:
+            return
+        sub_parser = argparse.ArgumentParser()
+
+        try:
+            config_dict = getattr(config, analysis)
+
+            for item in config_dict:
+                sub_parser.add_argument(
+                    '--{0}'.format(item),
+                    metavar='',
+                    type=int
+                )
+
+            sub_args = sub_parser.parse_args(args.split())
+
+            for item in config_dict.iterkeys():
+                argument = getattr(sub_args, item)
+                if argument != None:
+                    config_dict[item] = argument
+            setattr(config, analysis, config_dict)
+        except AttributeError:
+            # If there is no configurations for this analysis
+            pass
+    except AttributeError:
+        # If this analysis' flag is not present in the arguments provided
+        pass
 
 def parse_arguments():
     """
     Parses arguments
     Returns a namespace with values for each argument
     """
+    # TODO: Write program description.
     parser = argparse.ArgumentParser(
-        description='Generate a database at argument 1 based on files in '
-        'argument 2.'
+        description='',
     )
 
     parser.add_argument(
@@ -45,14 +76,7 @@ def parse_arguments():
         'and match data will be stored in the /data directory.'
     )
 
-    parser.add_argument(
-        '--analyse',
-        '-a',
-        nargs='*',
-        help='Specify analyses to be created. Valid analyses are: \'rms\''
-        '\'f0\' \'zerox\' \'fft\' etc... (see the documentation for full '
-        'details on available analyses)',
-        default=[
+    analyses = [
             "rms",
             "zerox",
             "fft",
@@ -66,27 +90,27 @@ def parse_arguments():
             "centroid",
             "variance",
             "kurtosis",
-            "skewness"
+            "skewness",
+            "harm_ratio"
         ]
-    )
 
     parser.add_argument(
-        '--rms',
-        nargs='+',
-        help='Specify arguments for creating RMS analyses'
+        '--analyse',
+        '-a',
+        nargs='*',
+        help='Specify analyses to be created. Valid analyses are: \'rms\''
+        '\'f0\' \'zerox\' \'fft\' etc... (see the documentation for full '
+        'details on available analyses)',
+        default=analyses
     )
 
-    parser.add_argument(
-        '--zerox',
-        nargs='+',
-        help='Specify arguments for creating zero-crossing analyses'
-    )
-
-    parser.add_argument(
-        '--fft',
-        nargs='+',
-        help='Specify arguments for creating zero-crossing analyses'
-    )
+    for item in analyses:
+        parser.add_argument(
+            '--{0}'.format(item),
+            type=str,
+            metavar='',
+            help='Specify argument string for creating {0} analyses'.format(item)
+        )
 
     parser.add_argument(
         "--reanalyse",
@@ -116,6 +140,8 @@ def parse_arguments():
     parser.add_argument('--verbose', '-v', action='count')
 
     args = parser.parse_args()
+    for item in analyses:
+        parse_sub_args(args, item)
 
     if args.rematch:
         config.matcher["rematch"] = True

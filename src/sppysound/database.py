@@ -381,7 +381,7 @@ class Matcher:
             # added to by each analysis.
             distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
             for analysis in self.matcher_analyses:
-                self.logger.debug("Current analysis: {0}".format(analysis))
+                self.logger.info("Current analysis: {0}".format(analysis))
                 analysis_formatting = self.analysis_dict[analysis]
                 # Get the analysis object for the current entry
                 analysis_object = target_entry.analyses[analysis]
@@ -402,7 +402,7 @@ class Matcher:
 
                     # Create an array of grain times for source sample
                     source_times = source_entry.generate_grain_times(grain_size, overlap)
-                    self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
+                    self.logger.info("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)

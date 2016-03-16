@@ -1,7 +1,4 @@
-f0 = {
-    "threshold": 0.6
-}
-RMS = {
+rms = {
     "window_size": 130,
     "overlap": 16
 }
@@ -18,9 +15,10 @@ skewness = {
     "overlap": 16
 }
 
-analyser = {
-    "fft_size": 65536
+fft = {
+    "window_size": 65536
 }
+
 
 matcher_weightings = {
     "f0" : 1.,
