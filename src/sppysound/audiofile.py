@@ -808,20 +808,20 @@ class AnalysedAudioFile(AudioFile):
 
     """Generates and stores analysis information for an audio file."""
 
-    def __init__(self, data_file=None, analyses=[], db_dir=None, config=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         # Initialise the AudioFile parent class
         self.logger = logging.getLogger('audiofile.AnalysedAudioFile')
         super(AnalysedAudioFile, self).__init__(*args, **kwargs)
 
         # Initialise database variables
         # Stores the path to the database if object is part of a database.
-        self.db_dir = db_dir
+        self.db_dir = kwargs.pop('db_dir', None)
 
         # Store configuration file used for various settings.
-        self.config = config
+        self.config = kwargs.pop('config', None)
 
         # Refferences the HDF5 file object to use for storing analysis data.
-        analysis_file = data_file
+        analysis_file = kwargs.pop('data_file', None)
 
         self.analysis_storage = self.create_analysis_group(analysis_file)
 
@@ -832,7 +832,7 @@ class AnalysedAudioFile(AudioFile):
         # a filepath, it will be generated and either saved at the path
         # specified or if one isn't specified, it will be created.
         # A set containing tags for analyses to be created for the file
-        self.available_analyses = analyses
+        self.available_analyses = kwargs.pop("analyses", None)
 
     def create_analysis(self):
         """Generate all analyses that have been set in the self.available_analyses member."""

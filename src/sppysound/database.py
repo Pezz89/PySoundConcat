@@ -87,6 +87,11 @@ class AudioDatabase:
         self.data = None
 
     def __getitem__(self, key):
+        """
+        Allow for entry retreival via indexing.
+
+        Returns and AnalysedAudioFile object at the index provided.
+        """
         return self.analysed_audio[key]
 
     def load_database(self, reanalyse=False):
@@ -104,6 +109,13 @@ class AudioDatabase:
         self.analyse_database(subdir_paths, reanalyse)
 
     def analyse_database(self, subdir_paths, reanalyse):
+        """
+        create selected analyses for audio files in the database.
+
+        Parameters:
+            subdir_paths: a dictionary containing paths to the 'audio' directory and 'data' directory of the database.
+            reanalyse: If previous analyses are found this can be set to True to overwrite them.
+        """
         # Create data file for storing analysis data for the database
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
         self.data = h5py.File(datapath, 'a')
@@ -117,10 +129,10 @@ class AudioDatabase:
                 with AnalysedAudioFile(
                     filepath,
                     'r',
+                    data_file=self.data,
                     analyses=self.analysis_list,
                     name=os.path.basename(item),
                     db_dir=self.db_dir,
-                    data_file=self.data,
                     reanalyse=reanalyse,
                     config=self.config
                 ) as AAF:
@@ -146,7 +158,11 @@ class AudioDatabase:
             raise TypeError("Object {0} of type {1} cannot be added to the database".format(file_object, file_object.__class__.__name__))
 
     def create_subdirs(self):
+        """
+        Generate database folder structure at the self.db_dir location
 
+        If the folder structure already exists this will be used, else a new structure will be generated.
+        """
         # If the database directory isnt specified then the directory where the
         # audio files are stored will be used
         if not self.db_dir:
@@ -195,6 +211,15 @@ class AudioDatabase:
         return subdir_paths
 
     def organize_audio(self, subdir_paths, symlink=True):
+        """
+        Moves/symlinks any audio from the audio directory specified to the database.
+
+        Parameters:
+            subdir_paths: A dictionary of 'audio' and 'data' sub directories of the database.
+            symlink: If true, symbolic links will be used for audio files
+            rather than copying. This allows audio files to stay in there
+            origonal locations.
+        """
         self.logger.info("Moving any audio to sub directory...")
 
         valid_filetypes = {'.wav', '.aif', '.aiff'}
@@ -218,7 +243,7 @@ class AudioDatabase:
                             try:
                                 os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
                             except:
-                                pdb.set_trace()
+                                pass
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:
@@ -299,59 +324,6 @@ class Matcher:
         grain_indexes[:, 1] = np.cumsum(grain_indexes[:, 0])
         grain_indexes[:, 0] = grain_indexes[:, 1] - grain_indexes[:, 0]
         return grain_indexes
-
-    def k_nearest_neighbour_matching(self, grain_size, overlap):
-        '''
-        Uses the K-nearest-neighbour algorithm to find matches in a more
-        efficient manner than the brute force method.
-        '''
-        # Create match data file entry.
-        try:
-            self.output_db.data.create_group("match")
-        except ValueError:
-            self.logger.debug("Match group already exists in the {0} HDF5 file.".format(self.output_db))
-        if self.rematch:
-            self.output_db.data["match"].clear()
-
-
-        # Get weightings for each analysis type.
-        if self.config:
-            weightings = self.config.matcher_weightings
-        else:
-            weightings = {x: 1. for x in self.matcher_analyses}
-
-        source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
-        target_sample_indexes = self.count_grains(self.target_db, grain_size, overlap)
-
-        for analysis in self.matcher_analyses:
-            self.logger.debug("Current analysis: {0}".format(analysis))
-            analysis_formatting = self.analysis_dict[analysis]
-            # For each target entry in the database...
-            for tind, target_entry in enumerate(self.target_db.analysed_audio):
-                analysis_object = target_entry.analyses[analysis]
-
-                # Create an array of grain times for target sample
-                target_times = target_entry.generate_grain_times(grain_size, overlap)
-
-                # Get data for all target grains for each analysis
-                target_data = target_entry.analysis_data_grains(target_times, analysis)
-
-                # Format the target data ready for matching using the analysis
-                # objects match formatting function.
-                target_data = analysis_object.formatters[analysis_formatting](target_data)
-
-                for sind, source_entry in enumerate(self.source_db.analysed_audio):
-
-                    self.logger.debug("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
-                    # Get the start and end array indexes allocated for the
-                    # current entry's grains.
-                    start_index, end_index = source_sample_indexes[sind]
-
-                    # Create an array of grain times for source sample
-                    source_times = source_entry.generate_grain_times(grain_size, overlap)
-
-                    # Get data for all source grains for each analysis
-                    source_data = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
 
     def brute_force_matcher(self, grain_size, overlap):
         '''Searches for matches to each grain by brute force comparison'''
@@ -599,6 +571,7 @@ class Synthesizer:
                 output.write_frames(output_frames)
 
     def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
+        """Shifts the pitch of the grain by the difference between it's f0 and the f0 of the grain specified."""
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -656,6 +629,7 @@ class Synthesizer:
         return grain
 
     def enforce_rms(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
+        """Scales the amplitude of the grain by the difference between it's rms and the rms of the grain specified."""
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
