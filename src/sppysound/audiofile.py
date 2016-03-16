@@ -13,6 +13,7 @@ import logging
 import h5py
 import multiprocessing as mp
 from collections import namedtuple, defaultdict
+import gc
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -86,16 +87,16 @@ class AudioFile(object):
             return self
 
     def open(self):
-        self.logger.info("Opening soundfile {0}".format(self.filepath))
+        self.logger.debug("Opening soundfile {0}".format(self.filepath))
         return self.__enter__()
 
     def close(self):
-        self.logger.info("Closing soundfile {0}".format(self.filepath))
+        self.logger.debug("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __exit__(self, type, value, traceback):
         """Closes sound file when exiting 'with' statement."""
-        self.logger.info("Closing soundfile {0}".format(self.filepath))
+        self.logger.debug("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
     def __if_open(method):
@@ -862,6 +863,8 @@ class AnalysedAudioFile(AudioFile):
         for analysis in analysis_object_list:
             if analysis.name in self.available_analyses:
                 self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=self.config)
+        self.analysis_storage.file.flush()
+        gc.collect()
 
 
     def create_analysis_group(self, analysis_file):

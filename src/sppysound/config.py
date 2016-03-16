@@ -2,20 +2,20 @@ f0 = {
     "threshold": 0.6
 }
 RMS = {
-    "window_size": 60,
-    "overlap": 4
+    "window_size": 130,
+    "overlap": 16
 }
 variance = {
-    "window_size": 60,
-    "overlap": 4
+    "window_size": 130,
+    "overlap": 16
 }
 kurtosis = {
-    "window_size": 60,
-    "overlap": 4
+    "window_size": 130,
+    "overlap": 16
 }
 skewness = {
-    "window_size": 60,
-    "overlap": 4
+    "window_size": 130,
+    "overlap": 16
 }
 
 analyser = {
@@ -56,10 +56,14 @@ analysis_dict = {
     "harm_ratio": "mean"
 }
 
+analysis = {
+    "reanalyse": False
+}
+
 matcher = {
     "rematch": True,
-    "grain_size": 60,
-    "overlap": 4,
+    "grain_size": 130,
+    "overlap": 16,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
     "match_quantity": 20
@@ -70,8 +74,8 @@ synthesizer = {
     "enf_rms_ratio_limit": 5.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 60,
-    "overlap": 4,
+    "grain_size": 130,
+    "overlap": 16,
     "normalize" : True,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.

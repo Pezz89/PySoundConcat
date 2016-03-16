@@ -13,7 +13,6 @@ import logging
 import h5py
 import pitch_shift
 
-
 from fileops import pathops
 from audiofile import AnalysedAudioFile, AudioFile
 from helper import OrderedSet
@@ -99,10 +98,10 @@ class AudioDatabase:
             # Check that audio directory exists
             if not os.path.exists(self.audio_dir):
                 raise IOError("The audio directory provided ({0}) doesn't "
-                            "exist").format(self.audio_dir)
+                            "exist".format(self.audio_dir))
             self.organize_audio(subdir_paths)
 
-        analysed_audio = self.analyse_database(subdir_paths, reanalyse)
+        self.analyse_database(subdir_paths, reanalyse)
 
     def analyse_database(self, subdir_paths, reanalyse):
         # Create data file for storing analysis data for the database
@@ -213,10 +212,13 @@ class AudioDatabase:
                     filename = os.path.basename(filepath)
                     destination = os.path.abspath(os.path.join(subdir_paths["audio"], os.path.basename(filepath)))
 
-                    if not (os.path.isfile(destination) and os.path.lexists(destination)):
+                    if not os.path.isfile(destination) and not os.path.lexists(destination):
                         # Copy the file to the database
                         if symlink:
-                            os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
+                            try:
+                                os.symlink(item, os.path.join(os.path.abspath(subdir_paths["audio"]), filename))
+                            except:
+                                pdb.set_trace()
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:
@@ -249,17 +251,20 @@ class Matcher:
     Used to compare and match entries in two AnalysedAudioFile databases.
     """
 
-    def __init__(self, database1, database2, analysis_dict,*args, **kwargs):
+    def __init__(self, database1, database2, analysis_dict, *args, **kwargs):
+        # Get matcher configurations object
         self.config = kwargs.pop('config', None)
-        self.match_quantity = kwargs.pop('quantity', 1)
         self.logger = logging.getLogger(__name__ + '.Matcher')
+
+        # Set the number of best matches for each grain to store for use in synthesis.
+        self.match_quantity = self.config.matcher["match_quantity"]
         self.source_db = database1
         self.target_db = database2
         self.output_db = kwargs.pop("output_db", None)
         self.rematch = self.config.matcher["rematch"]
 
+        # Store a dictionary of analyses to perform matching on.
         self.analysis_dict = analysis_dict
-        self.common_analyses = []
 
         self.logger.debug("Initialised Matcher")
 
@@ -527,6 +532,8 @@ class Synthesizer:
         """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
         # TODO: insert error here if there are no jobs.
+        if not jobs:
+            raise RuntimeError("There is no match data to synthesize. The match program may need to be run first.")
 
         for job_ind, (name, job) in enumerate(jobs):
             # Generate output file name/path
@@ -556,7 +563,6 @@ class Synthesizer:
                     # If there are multiple matches, choose a match at random
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
-                    pdb.set_trace()
                     match_db_ind, match_grain_ind = matches[match_index]
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap)
