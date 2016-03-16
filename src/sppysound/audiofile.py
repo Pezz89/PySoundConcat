@@ -37,13 +37,25 @@ logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 class AudioFile(object):
 
-    """Object for storing and accessing basic information for an audio file."""
+    """
+    Object for storing and accessing basic information for an audio file.
 
-    def __init__(self, filepath, mode,
-                 format=None,
-                 channels=None,
-                 samplerate=None,
-                 name=None, *args, **kwargs):
+    This object is a wrapper for the pysndfile audio object. It provides
+    additional functionality alongside the ability to open and close audiofiles
+    without deleting their containing object.
+    """
+
+    def __init__(
+        self,
+        filepath,
+        mode,
+        format=None,
+        channels=None,
+        samplerate=None,
+        name=None,
+        *args,
+        **kwargs
+    ):
         self.logger = logging.getLogger(__name__ + '.AudioFile')
         self.logger.debug("Initialised AudioFile")
 
@@ -87,10 +99,12 @@ class AudioFile(object):
             return self
 
     def open(self):
+        """Use for opening the associated audio file outside of a with statement"""
         self.logger.debug("Opening soundfile {0}".format(self.filepath))
         return self.__enter__()
 
     def close(self):
+        """Use for closing the associated audio file outside of a with statement"""
         self.logger.debug("Closing soundfile {0}".format(self.filepath))
         self.pysndfile_object = None
 
@@ -323,27 +337,6 @@ class AudioFile(object):
         """
         return self.pysndfile_object.get_sndfile_encodings(major)
 
-    def __iter__(self):
-        """
-        Allows the AudioFile object to be iterated over
-        Each iteration returns a chunk of audio.
-        Audio chunk size is based on the self.chunksize member
-        """
-
-    def audio_file_info(self):
-        """ Prints audio information """
-        print('*************************************************')
-        print('File:                    ', os.path.relpath(self.filepath))
-        print('No. channels:            ', self.channels())
-        print('Samplerate:              ', self.samplerate())
-        print('Format:                  ', self.format())
-        print('No. Frames:              ', self.get_frames())
-        print('Encoding string:         ', self.encoding_str())
-        print('Major format string:     ', self.major_format_str())
-        print('Seekable?:               ', bool(self.seekable()))
-        print('Errors?:                 ', self.error())
-        print('*************************************************')
-
     @__if_open
     def read_grain(self, start_index=0, grain_size=None, padding=True):
         """
@@ -436,6 +429,14 @@ class AudioFile(object):
         self.__enter__()
 
     def convert_to_mono(self, overwrite_original=False):
+        """
+        Converts stereo audiofiles to mono.
+
+        Parameters:
+            overwrite_original: If True then the current object will be
+            reloaded as the mono file. Otherwise, the new mono file will be
+            returned as a new AudioFile object.
+        """
         # TODO: Implement mixdown for multi-channel audio other than 2 channel
         # stereo.
 
@@ -614,6 +615,12 @@ class AudioFile(object):
         return True
 
     def switch_mode(self, mode):
+        """
+        Switch audiofile to mode specified.
+
+        This allows for convenient reading and writing of audiofiles without
+        direct closing and opening of the underlying pysndfile object.
+        """
         assert mode == 'r' or mode == 'w'
         # Change mode only if it is different from the currently set mode
         if self.mode != mode:
@@ -634,7 +641,8 @@ class AudioFile(object):
 
     def generate_grain_times(self, grain_length, overlap):
         """
-        Generates an array of start and finish pairs.
+        Generates an array of start and finish pairs based on overlapping
+        frames at the grain length specified.
 
         Note that only full grains within the size of the sample are returned.
         incomplete grains found at the end of files are ignored.
@@ -653,6 +661,7 @@ class AudioFile(object):
         return times
 
     def __getitem__(self, key):
+        """Allow for grains to be retreived by indexing ones grain times for the file have been generated."""
         if self.times == None:
             raise IndexError("AudioFile object grain times must be generated "
                              "before grains can be accesed by index. Try running "
@@ -736,18 +745,6 @@ class AudioFile(object):
         gain (silence 0.0 - full volume 1.0)
         """
         return np.random.uniform(low=-gain, high=gain, size=length)
-
-    @staticmethod
-    def gen_tone(length, gain, frequency, wavetype):
-        """
-        Generate a wave form.
-
-        length (ms)
-        gain (silence 0.0 - full volume 1.0)
-        frequency (hz)
-        wavetype: "sine" "square" "triangle" "saw" "rev-saw"
-        """
-        pass
 
     @staticmethod
     def gen_ADSR_envelope(
@@ -837,6 +834,7 @@ class AnalysedAudioFile(AudioFile):
         self.available_analyses = kwargs["analyses"]
 
     def create_analysis(self):
+        """Generate all analyses that have been set in the self.available_analyses member."""
         analysis_object = namedtuple("AnalysisObject", "name, analysis_object")
         analysis_object_list = [
             analysis_object("fft", FFTAnalysis),
@@ -869,7 +867,7 @@ class AnalysedAudioFile(AudioFile):
 
     def create_analysis_group(self, analysis_file):
         """
-        Create group for object to store analyses for this audio file.
+        Create HDF5 group for object to store analyses for this audio file.
 
         Audio file analyses are organized in groups per audio file.
         This function creates a group in the analysis HDF5 file with the name
@@ -901,6 +899,7 @@ class AnalysedAudioFile(AudioFile):
         return analysis_file[group_name]
 
     def __enter__(self):
+        """Allow AudioFile object to be opened by 'with' statements"""
         super(AnalysedAudioFile, self).__enter__()
         if not self.check_valid(force_mono=True):
             raise IOError(
@@ -910,6 +909,7 @@ class AnalysedAudioFile(AudioFile):
         return self
 
     def open(self):
+        """Use for opening the associated audio file outside of a with statement"""
         return self
 
     def analysis_data_grains(self, times, analysis, *args, **kwargs):
@@ -931,24 +931,6 @@ class AnalysedAudioFile(AudioFile):
             analysis_frames = analysis_object.analysis_formatter(analysis_frames, selection, format_type)
 
         return analysis_frames, selection
-
-    def plot_rms_to_graph(self):
-        """
-        Uses matplotlib to create a graph of the audio file and the generated
-        RMS values
-        """
-        # Get audio samples from the audio file
-        audio_array = self.read_frames()[:(44100 * 5)]
-        # Create an empty array which will contain rms frame number and value
-        # pairs
-        rms_contour = self.get_rms_from_file(start=0, end=(44100 * 5))
-        plt.plot(audio_array, 'b', rms_contour, 'r')
-        plt.xlabel("Time (samples)")
-        plt.ylabel("sample value")
-        plt.show()
-
-    # -------------------------------------------------------------------------
-    # GENERAL ANALYSIS METHODS
 
     def __repr__(self):
         return ('AnalysedAudioFile(name={0})'.format(self.name))
