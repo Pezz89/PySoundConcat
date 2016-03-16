@@ -1,15 +1,18 @@
 rms = {
     "window_size": 130,
-    "overlap": 16
+    "overlap": 16,
 }
+
 variance = {
     "window_size": 130,
     "overlap": 16
 }
+
 kurtosis = {
     "window_size": 130,
     "overlap": 16
 }
+
 skewness = {
     "window_size": 130,
     "overlap": 16

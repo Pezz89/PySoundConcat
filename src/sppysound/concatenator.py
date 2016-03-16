@@ -28,7 +28,7 @@ def parse_sub_args(args, analysis):
                 sub_parser.add_argument(
                     '--{0}'.format(item),
                     metavar='',
-                    type=int
+                    type=type(config_dict[item]),
                 )
 
             sub_args = sub_parser.parse_args(args.split())
@@ -104,12 +104,26 @@ def parse_arguments():
         default=analyses
     )
 
-    for item in analyses:
+    helpstrings = {
+        "rms": "Overwrite default config setting for rms analysis. Example: \'--window_size 100 --overlap 2\'",
+        "fft": "Overwrite default config setting for fft analysis. Example: \'--window_size 2048\'",
+        "variance": "Overwrite default config setting for variance analysis. Example: \'--window_size 100 --overlap 2\'",
+        "skewness": "Overwrite default config setting for skewness analysis. Example: \'--window_size 100 --overlap 2\'",
+        "kurtosis": "Overwrite default config setting for kurtosis analysis. Example: \'--window_size 100 --overlap 2\'",
+        "matcher_weightings" : "Set weighting for analysis to set their presedence when matching. Example: \'--f0 2 --rms 1.5\'",
+        "analysis_dict" : "Set the formatting of each analysis for grain matching. Example: \'--f0 median --rms mean\'",
+        "synthesizer": "Set synthesis settings. Example: \'--enf_rms_ratio_limit 2\'",
+        "matcher": "Set matcher settings. Example: \'match_quantity\'"
+    }
+
+    config_items = [item for item in dir(config) if not item.startswith("__") and item in helpstrings.keys()]
+
+    for item in config_items:
         parser.add_argument(
             '--{0}'.format(item),
             type=str,
             metavar='',
-            help='Specify argument string for creating {0} analyses'.format(item)
+            help=helpstrings[item]
         )
 
     parser.add_argument(
@@ -140,7 +154,7 @@ def parse_arguments():
     parser.add_argument('--verbose', '-v', action='count')
 
     args = parser.parse_args()
-    for item in analyses:
+    for item in config_items:
         parse_sub_args(args, item)
 
     if args.rematch:
@@ -164,6 +178,7 @@ def parse_arguments():
         args.verbose -= 1
         args.verbose = levels[args.verbose]
 
+    pdb.set_trace()
     return args
 
 
