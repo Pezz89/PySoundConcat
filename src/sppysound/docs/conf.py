@@ -33,7 +33,10 @@ sys.path.insert(0, os.path.abspath('../'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
+    'nbsphinx',
+    'sphinx.ext.mathjax',
 ]
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -50,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'The Concatenator'
+project = u'Concatenator'
 copyright = u'2016, Sam Perry'
 author = u'Sam Perry'
 
@@ -205,7 +208,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TheConcatenatordoc'
+htmlhelp_basename = 'Concatenatordoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -227,7 +230,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'TheConcatenator.tex', u'The Concatenator Documentation',
+  (master_doc, 'Concatenator.tex', u'Concatenator Documentation',
    u'Sam Perry', 'manual'),
 ]
 
@@ -257,7 +260,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'theconcatenator', u'The Concatenator Documentation',
+    (master_doc, 'concatenator', u'Concatenator Documentation',
      [author], 1)
 ]
 
@@ -271,8 +274,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'TheConcatenator', u'The Concatenator Documentation',
-   author, 'TheConcatenator', 'One line description of project.',
+  (master_doc, 'Concatenator', u'Concatenator Documentation',
+   author, 'Concatenator', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -287,3 +290,6 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# nbsphinx settings
+nbsphinx_allow_errors = True

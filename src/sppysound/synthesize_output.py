@@ -15,33 +15,6 @@ from database import AudioDatabase, Synthesizer
 filename = os.path.splitext(__file__)[0]
 logger = loggerops.create_logger(log_filename='./{0}.log'.format(filename))
 
-###########################################################################
-# File open and closing monitoring
-openfiles = set()
-oldfile = __builtin__.file
-
-class newfile(oldfile):
-    def __init__(self, *args):
-        self.x = args[0]
-        logger.debug("OPENING %s" % str(self.x))
-        oldfile.__init__(self, *args)
-        openfiles.add(self)
-
-    def close(self):
-        logger.debug("CLOSING %s" % str(self.x))
-        oldfile.close(self)
-        openfiles.remove(self)
-oldopen = __builtin__.open
-def newopen(*args):
-    return newfile(*args)
-__builtin__.file = newfile
-__builtin__.open = newopen
-
-def printOpenFiles():
-    logger.debug("%d OPEN FILES: [%s]" % (len(openfiles), ", ".join(f.x for f in openfiles)))
-
-###########################################################################
-
 def main():
     """Parse arguments then generate database."""
     logger.info('Started')

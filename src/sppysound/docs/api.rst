@@ -1,31 +1,31 @@
 API
 ===
 -------------------
-The AudioFile Class
+AudioFile Class
 -------------------
 .. autoclass:: audiofile.AudioFile
    :members:
 
 ---------------------------
-The AnalysedAudioFile Class
+AnalysedAudioFile Class
 ---------------------------
 .. autoclass:: audiofile.AnalysedAudioFile
    :members:
 
 -------------------
-The Database Class
+Database Class
 -------------------
 .. autoclass:: database.AudioDatabase
    :members:
 
 -------------------
-The Matcher Class
+Matcher Class
 -------------------
 .. autoclass:: database.Matcher
    :members:
 
 ---------------------------
-The Synthesizer Class
+Synthesizer Class
 ---------------------------
 .. autoclass:: database.Synthesizer
    :members:

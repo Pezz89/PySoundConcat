@@ -58,7 +58,6 @@ class PeakAnalysis(Analysis):
         # frames = filter.filter_butter(frames)
 
         # Generate a window function to apply to peak windows before analysis
-        win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
@@ -75,7 +74,6 @@ class PeakAnalysis(Analysis):
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
 
-        frames *= win
         peak = np.max(np.abs(frames), axis=1)
 
         return peak

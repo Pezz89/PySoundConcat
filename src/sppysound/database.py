@@ -123,7 +123,6 @@ class AudioDatabase:
 
         for item in self.audio_file_list:
             filepath = os.path.join(subdir_paths['audio'], os.path.basename(item))
-            print("--------------------------------------------------")
             # if there is no wav file then skip
             try:
                 with AnalysedAudioFile(
@@ -146,7 +145,6 @@ class AudioDatabase:
                 traceback.print_exception(exc_type, exc_value, exc_traceback,
                                           file=sys.stdout)
                 continue
-        print("--------------------------------------------------")
         self.logger.debug("Analysis Finished.")
 
     def add_file(self, file_object):
@@ -276,7 +274,7 @@ class Matcher:
     Used to compare and match entries in two AnalysedAudioFile databases.
     """
 
-    def __init__(self, database1, database2, analysis_dict, *args, **kwargs):
+    def __init__(self, database1, database2, *args, **kwargs):
         # Get matcher configurations object
         self.config = kwargs.pop('config', None)
         self.logger = logging.getLogger(__name__ + '.Matcher')
@@ -286,17 +284,26 @@ class Matcher:
         self.source_db = database1
         self.target_db = database2
         self.output_db = kwargs.pop("output_db", None)
-        self.rematch = self.config.matcher["rematch"]
+        self.rematch = kwargs.pop("rematch", self.config.matcher["rematch"])
 
         # Store a dictionary of analyses to perform matching on.
-        self.analysis_dict = analysis_dict
+        self.analysis_dict = self.config.analysis_dict
 
         self.logger.debug("Initialised Matcher")
 
-    def match(self, match_function, grain_size, overlap):
+    def match(
+        self,
+        match_function,
+        grain_size=None,
+        overlap=None
+    ):
         """
         Find the closest match to each object in database 1 in database 2 using the matching function specified.
         """
+        if not grain_size:
+            grain_size = self.config.matcher["grain_size"]
+        if not overlap:
+            overlap = self.config.matcher["overlap"]
 
         # Find all analyses shared by both the source and target entry
         common_analyses = self.source_db.analysis_list & self.target_db.analysis_list
@@ -500,8 +507,16 @@ class Synthesizer:
             if not self.target_db:
                 raise ValueError("Target database must be provided if rms or F0 enforcement is enabled.")
 
-    def synthesize(self, grain_size, overlap):
-        """Takes a 3D array containing the sample and grain indexes for each grain to be synthesized"""
+    def synthesize(self, grain_size=None, overlap=None):
+        """
+        Takes a 3D array containing the sample and grain indexes for each grain to be synthesized.
+
+        If grain size or overlap isn't specified, the values from config are used.
+        """
+        if not grain_size:
+            grain_size = self.config.synthesizer["grain_size"]
+        if not overlap:
+            overlap = self.config.synthesizer["overlap"]
         jobs = [(i, self.output_db.data["match"][i]) for i in self.output_db.data["match"]]
         # TODO: insert error here if there are no jobs.
         if not jobs:
@@ -567,7 +582,7 @@ class Synthesizer:
                     offset += hop_size
                 # If output normalization is active, normalize output.
                 if self.config.synthesizer["normalize"]:
-                    output_frames = output_frames / np.max(output_frames)
+                    output_frames = (output_frames / np.max(np.abs(output_frames))) * 0.9
                 output.write_frames(output_frames)
 
     def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
