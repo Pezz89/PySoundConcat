@@ -18,10 +18,8 @@ Welcome to Concatenator's documentation!
 
 
 
-Indices and tables
+Indices
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

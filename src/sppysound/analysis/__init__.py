@@ -1,4 +1,4 @@
-from AttackAnalysis import AttackAnalysis
+from Analysis import Analysis
 from RMSAnalysis import RMSAnalysis
 from ZeroXAnalysis import ZeroXAnalysis
 from FFTAnalysis import FFTAnalysis
@@ -16,9 +16,9 @@ from SkewnessAnalysis import SkewnessAnalysis
 from F0HarmRatioAnalysis import F0HarmRatioAnalysis
 import AnalysisTools
 __all__ = [
+    "Analysis",
     "ZeroXAnalysis",
     "RMSAnalysis",
-    "AttackAnalysis",
     "AnalysisTools",
     "FFTAnalysis",
     "SpectralCentroidAnalysis",
