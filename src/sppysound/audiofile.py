@@ -14,6 +14,7 @@ import h5py
 import multiprocessing as mp
 from collections import namedtuple, defaultdict
 import gc
+from functools import wraps
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -43,6 +44,21 @@ class AudioFile(object):
     This object is a wrapper for the pysndfile audio object. It provides
     additional functionality alongside the ability to open and close audiofiles
     without deleting their containing object.
+
+    Arguments:
+
+    - filepath: path to the file to be opened/written to
+
+    - mode: mode to open file in. either 'r' (read) or 'w' (write)
+
+    - format: the file format to use when opening a new file for writing. see
+      get_sndfile_formats() for more information.
+
+    - channels: the number of audio channels to use.
+
+    - samplerate: the samplerate in herts to use.
+
+    - name: the sound file object name.
     """
 
     def __init__(
@@ -115,6 +131,7 @@ class AudioFile(object):
 
     def __if_open(method):
         """Handles error from using methods when the audio file is closed"""
+        @wraps(method)
         def wrapper(*args, **kwargs):
             try:
                 return method(*args, **kwargs)
@@ -134,8 +151,8 @@ class AudioFile(object):
         """
         Return string representation of encoding (e.g. pcm16).
 
-        See pysndfile.get_sndfile_encodings() for a list of available
-        encoding strings that are supported by a given sndfile format
+        See get_sndfile_encodings() for a list of available encoding strings
+        that are supported by a given sndfile format
         """
         return self.pysndfile_object.encoding_str()
 
@@ -170,8 +187,8 @@ class AudioFile(object):
         """
         return short string representation of major format.
 
-        (e.g. aiff) see pysndfile.get_sndfile_formats() for a complete
-        lst of fileformats
+        (e.g. aiff) see get_sndfile_formats() for a complete
+        list of file formats
         """
         return self.pysndfile_object.major_format_str()
 
@@ -180,13 +197,17 @@ class AudioFile(object):
         """
         Read the given number of frames and fill numpy array.
 
-        Parameters
-        nframes: <int>
-        number of frames to read (default = -1 -> read all).
-        dtype: <numpy dtype>
-        dtype of the returned array containing read data (see note).
+        Arguments
 
-        Notes
+        - nframes: <int>
+
+        - number of frames to read (default = -1 -> read all).
+
+        - dtype: <numpy dtype>
+
+        - dtype of the returned array containing read data (see note).
+
+        Notes:
         One column per channel.
         """
         return self.pysndfile_object.read_frames(nframes, dtype)
@@ -210,22 +231,25 @@ class AudioFile(object):
         Seek into audio file: similar to python seek function,
         but taking only audio data into account.
 
-        Parameters
-        offset: <int>
-        the number of frames (eg two samples for stereo files) to move
-        relatively to position set by whence.
-        whence: <int>
-        only 0 (beginning), 1 (current) and 2 (end of the file) are valid.
-        mode: <string>
-        If set to 'rw', both read and write pointers are updated. If 'r'
-        is given, only read pointer is updated, if 'w', only the write one
-        is (this may of course make sense only if you open the file in a
-        certain mode).
+        Arguments
+
+        - offset: <int>
+          the number of frames (eg two samples for stereo files) to move
+          relatively to position set by whence.
+
+        - whence: <int>
+          only 0 (beginning), 1 (current) and 2 (end of the file) are valid.
+
+        - mode: <string>
+          If set to 'rw', both read and write pointers are updated. If 'r' is
+          given, only read pointer is updated, if 'w', only the write one is
+          (this may of course make sense only if you open the file in a certain
+          mode).
 
         Returns
         offset: int the number of frames from the beginning of the file
 
-        Notes
+        Notes:
         Offset relative to audio data: meta-data are ignored.
         if an invalid seek is given (beyond or before the file), an IOError
         is raised; note that this is different from the seek method of a
@@ -257,9 +281,9 @@ class AudioFile(object):
     @__if_open
     def set_string(self, stringtype_name, string):
         """
-        Set one of the stringtypes to the strig given as argument.
+        Set one of the stringtypes to the string given as argument.
 
-        If you try to write a stringtype that is not supported byty the library
+        If you try to write a stringtype that is not supported by the library
         a RuntimeError will be raised
         """
         return self.pysndfile_object.set_string(stringtype_name, string)
@@ -283,12 +307,17 @@ class AudioFile(object):
         """
         write 1 or 2 dimensional array into sndfile.
 
-        Parameters
-        input: <numpy array>
+        Arguments:
+
+        - input: <numpy array>
         containing data to write.
-        Notes
+
+        Notes:
+
         One column per channel.
+
         updates the write pointer.
+
         if the input type is float, and the file encoding is an integer type,
         you should make sure the input data are normalized normalized data
         (that is in the range [-1..1] - which will corresponds to the maximum
@@ -330,10 +359,11 @@ class AudioFile(object):
         """
         Return lists of available encoding for the given sndfile format.
 
-        Parameters
-        major sndfile format for that the list of available fomramst should
-        be returned. format should be specified as a string, using one of the
-        straings returned by get_sndfile_formats()
+        Arguments:
+
+        - major: Major sndfile format for the list of available formats.
+          format should be specified as a string, using one of the strings
+          returned by get_sndfile_formats()
         """
         return self.pysndfile_object.get_sndfile_encodings(major)
 
@@ -343,7 +373,17 @@ class AudioFile(object):
         Read a grain of audio from the file. if grain ends after the end of
         the file, the grain can be padded with zeros using the padding
         argument.
+
         Audio object seeker is not changed
+
+        Arguments:
+
+        - start_index: the index in samples to read from.
+
+        - grain_size: The size of the grain (in samples) to read
+
+        - padding: if the end of the audio file is reaches, the grain will be
+          padded with additional zeros.
         """
         self.switch_mode('r')
         if start_index < 0:
@@ -432,10 +472,11 @@ class AudioFile(object):
         """
         Converts stereo audiofiles to mono.
 
-        Parameters:
-            overwrite_original: If True then the current object will be
-            reloaded as the mono file. Otherwise, the new mono file will be
-            returned as a new AudioFile object.
+        Arguments:
+
+        - overwrite_original: If True then the current object will be
+          reloaded as the mono file. Otherwise, the new mono file will be
+          returned as a new AudioFile object.
         """
         # TODO: Implement mixdown for multi-channel audio other than 2 channel
         # stereo.
@@ -490,6 +531,10 @@ class AudioFile(object):
         """
         Renames the audio file associated with the object to the name
         specified as an argument
+
+        Arguments:
+
+        - filename: the new path of the audio file.
         """
         # TODO: Consider the race condition here. Is this a problem?
         # Check name doesn't already exist
@@ -556,7 +601,11 @@ class AudioFile(object):
         return float(samps) / self.samplerate * 1000.0
 
     def plot_grain_to_graph(self, start_index, number_of_samps):
-        """Use matplotlib to create a graph of the audio file."""
+        """
+        Convenience method.
+
+        Use matplotlib to create a graph of the audio file.
+        """
         samps = self.read_grain(start_index, self.ms_to_samps(number_of_samps))
         self.plot_array_to_graph(samps)
 
@@ -564,10 +613,16 @@ class AudioFile(object):
         """
         Fade the audio in or out linearly from the position specified over the
         time specified.
-        audio: A numpy array of audio to manipulate
-        start_position: The starting position to begin the fade from (ms)
-        fade_time: The length of the fade (ms)
-        mode: choose to fade the audio in or out (string: "in" or "out")
+
+        Arguments:
+
+        - audio: A numpy array of audio to manipulate
+
+        - start_position: The starting position to begin the fade from (ms)
+
+        - fade_time: The length of the fade (ms)
+
+        - mode: choose to fade the audio in or out (string: "in" or "out")
         """
         if mode == "in":
             # Calculate the amplitude values to multiply the audio by
@@ -628,15 +683,6 @@ class AudioFile(object):
             del self.pysndfile_object
             self.mode = mode
             self.__enter__()
-            '''
-            self.pysndfile_object = pysndfile.PySndfile(
-                self.filepath,
-                mode=mode,
-                format=self.format,
-                channels=self.channels,
-                samplerate=self.samplerate
-            )
-            '''
             self.pysndfile_object.seek(seek)
 
     def generate_grain_times(self, grain_length, overlap):
@@ -646,8 +692,12 @@ class AudioFile(object):
 
         Note that only full grains within the size of the sample are returned.
         incomplete grains found at the end of files are ignored.
-        grain_length: length of each grain in seconds.
-        overlap: the factor by which grains overlap (integer)
+
+        Arguments:
+
+        - grain_length: length of each grain in seconds.
+
+        - overlap: the factor by which grains overlap (integer)
         """
         length = self.samps_to_ms(self.frames)
         hop_size = grain_length / overlap
@@ -661,7 +711,9 @@ class AudioFile(object):
         return times
 
     def __getitem__(self, key):
-        """Allow for grains to be retreived by indexing ones grain times for the file have been generated."""
+        """
+        Allow for grains to be retreived by indexing after grain times have been generated.
+        """
         if self.times == None:
             raise IndexError("AudioFile object grain times must be generated "
                              "before grains can be accesed by index. Try running "
@@ -681,6 +733,20 @@ class AudioFile(object):
         sym: Used in the triangle window generation. When True (default),
         generates a symmetric window, for use in filter design. When False,
         generates a periodic window, for use in spectral analysis
+
+        Available window types:
+
+        - hanning
+
+        - hamming
+
+        - bartlett
+
+        - blackman
+
+        - kaiser
+
+        - triangle
         """
         if window_type is "hanning":
             return np.hanning(window_size)
@@ -708,31 +774,20 @@ class AudioFile(object):
     @staticmethod
     def normalize_audio(audio, maximum=1.0):
         """
-        Normalize array of audio so that the maximum sample value == the
-        maximum provided
+        Normalize array of audio so that the maximum sample value is equal to
+        the maximum provided
         """
         if audio.size < 1:
             raise ValueError("Audio array is empty. Cannot be normalized""")
         max_sample = np.max(np.abs(audio))
-        ratio = maximum / max_sample
-        audio = audio * ratio
+        audio *= maximum / max_sample
         return audio
 
     @staticmethod
     def mono_arrays_to_stereo(array1, array2):
         """
-        Converts to horizontal numpy arrays to one concatenated verticaly
+        Converts two horizontal numpy arrays to one concatenated verticaly
         stacked array that can be written to a stereo file.
-
-        eg:
-            array1 = np.array([0.0, 0.1, 0.2, 0.3])
-            array2 = np.array([0.4, 0.5, 0.6, 0.7])
-
-            result:
-                np.array([[0.0, 0.4]
-                          [0.1, 0.5]
-                          [0.2, 0.6]
-                          [0.3, 0.7]])
         """
         return np.hstack((np.vstack(array1), np.vstack(array2)))
 
@@ -741,48 +796,23 @@ class AudioFile(object):
         """
         Generate mono white noise of the number of samples specified.
 
-        length (samples)
-        gain (silence 0.0 - full volume 1.0)
+        Arguments:
+
+        - length (samples)
+
+        - gain (silence 0.0 - full volume 1.0)
         """
         return np.random.uniform(low=-gain, high=gain, size=length)
-
-    @staticmethod
-    def gen_ADSR_envelope(
-        attack,
-        decay,
-        sustain,
-        sustain_length,
-        release,
-        samplerate=44100,
-        gain=1.0
-    ):
-        """
-        generate an ADSR envelope and applies to the audio.
-
-        attack:         (float) attack time in ms
-        decay:          (float) decay time in ms
-        sustain:        (float) sustain level (0.0-1.0)
-        sustain_length: (float) length of sustain in ms
-        release:        (float) release time in ms
-        """
-        sustain_array = np.empty(sustain_length*samplerate)
-        sustain_array.fill(sustain)
-        envelope = np.concatenate(
-            (np.linspace(0.0, gain, attack*samplerate),
-             np.linspace(gain, sustain, (decay*samplerate)+1)[1:],
-             sustain_array,
-             np.linspace(sustain, 0.0, (release*samplerate)+1)[1:]),
-            axis=0
-        )
-        return envelope
 
     @staticmethod
     def gen_default_wav(path, overwrite_existing=False, mode='w', channels=1):
         """
         Convenience method that creates a wav file with the following spec at
         the path given:
-            Samplerate: 44.1Khz
-            Bit rate: 24Bit
+
+        - Samplerate: 44.1Khz
+
+        - Bit rate: 24Bit
         """
         if os.path.exists(path):
             if not overwrite_existing:
@@ -910,15 +940,17 @@ class AnalysedAudioFile(AudioFile):
         return self
 
     def open(self):
-        """Use for opening the associated audio file outside of a with statement"""
         return self
 
     def analysis_data_grains(self, times, analysis, *args, **kwargs):
         """
         retrieve data for analysis within start and end time pairs in the format specified.
 
-        times: an array of start and end times to retrieve analysis from (np.array)
-        analysis: analysis string specifying analysis to retrieve
+        Arguments:
+
+        - times: an array of start and end times to retrieve analysis from (np.array)
+
+        - analysis: analysis string specifying analysis to retrieve
         """
         format_type = kwargs.pop("format", None)
 

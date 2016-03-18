@@ -113,12 +113,21 @@ class AudioDatabase:
         create selected analyses for audio files in the database.
 
         Parameters:
-            subdir_paths: a dictionary containing paths to the 'audio' directory and 'data' directory of the database.
-            reanalyse: If previous analyses are found this can be set to True to overwrite them.
+
+        - subdir_paths: a dictionary containing paths to the 'audio' directory and 'data' directory of the database.
+
+        - reanalyse: If previous analyses are found this can be set to True to overwrite them.
         """
         # Create data file for storing analysis data for the database
         datapath = os.path.join(subdir_paths['data'], 'analysis_data.hdf5')
-        self.data = h5py.File(datapath, 'a')
+        try:
+            self.data = h5py.File(datapath, 'a')
+        except IOError:
+            raise IOError("Unable to create/append to file: {0}\nThis may be "
+                          "due to another instance of this program running or a "
+                          "corrupted HDF5 file.\n Make sure this is the only "
+                          "running instance and regenerate HDF5 if "
+                          "neccesary.".format(datapath))
         self.analysed_audio = []
 
         for item in self.audio_file_list:
@@ -213,10 +222,12 @@ class AudioDatabase:
         Moves/symlinks any audio from the audio directory specified to the database.
 
         Parameters:
-            subdir_paths: A dictionary of 'audio' and 'data' sub directories of the database.
-            symlink: If true, symbolic links will be used for audio files
-            rather than copying. This allows audio files to stay in there
-            origonal locations.
+
+        - subdir_paths: A dictionary of 'audio' and 'data' sub directories of the database.
+
+        - symlink: If true, symbolic links will be used for audio files
+          rather than copying. This allows audio files to stay in there
+          original locations.
         """
         self.logger.info("Moving any audio to sub directory...")
 
@@ -586,7 +597,11 @@ class Synthesizer:
                 output.write_frames(output_frames)
 
     def enforce_pitch(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
-        """Shifts the pitch of the grain by the difference between it's f0 and the f0 of the grain specified."""
+        """
+        Shifts the pitch of the grain by the difference between it's f0 and the f0 of the grain specified.
+
+        This method will fail if either AnalysedAudioFile object does not have an f0 analysis.
+        """
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -644,7 +659,11 @@ class Synthesizer:
         return grain
 
     def enforce_rms(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
-        """Scales the amplitude of the grain by the difference between it's rms and the rms of the grain specified."""
+        """
+        Scales the amplitude of the grain by the difference between it's rms and the rms of the grain specified.
+
+        This method will fail if either AnalysedAudioFile object does not have an rms analysis.
+        """
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -652,8 +671,6 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0][0]
-        target_peak = target_sample.analysis_data_grains(target_times, "peak", format="mean")[0][0]
-        tval = np.mean([target_rms, target_peak])
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -661,10 +678,8 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         source_rms = source_sample.analysis_data_grains(source_times, "rms", format="mean")[0][0]
-        source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0][0]
-        sval = np.mean([source_rms, source_peak])
 
-        ratio_difference = tval / sval
+        ratio_difference = target_rms / source_rms
         if not np.isfinite(ratio_difference):
             return grain
         # If the ratio difference is within the limits

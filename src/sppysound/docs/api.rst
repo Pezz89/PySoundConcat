@@ -129,17 +129,12 @@ Analysis Classes
 
 ----------
 
+.. autoclass:: analysis.CentroidAnalysis
+   :members:
+
+----------
+
 .. autoclass:: analysis.F0Analysis
-   :members:
-
-----------
-
-.. autoclass:: analysis.RMSAnalysis
-   :members:
-
-----------
-
-.. autoclass:: analysis.ZeroXAnalysis
    :members:
 
 ----------
@@ -149,5 +144,51 @@ Analysis Classes
 
 ----------
 
+.. autoclass:: analysis.KurtosisAnalysis
+   :members:
+
+----------
+
 .. autoclass:: analysis.PeakAnalysis
    :members:
+
+----------
+
+.. autoclass:: analysis.RMSAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.SpectralCentroidAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.SpectralCrestFactorAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.SpectralFlatnessAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.SpectralFluxAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.SpectralSpreadAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.VarianceAnalysis
+   :members:
+
+----------
+
+.. autoclass:: analysis.ZeroXAnalysis
+   :members:
+
