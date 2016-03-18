@@ -10,7 +10,22 @@ logger = logging.getLogger(__name__)
 
 class Analysis(object):
 
-    """Basic descriptor class to build analyses on."""
+    """
+    Basic descriptor class to build analyses on.
+
+    The Analysis base class works as an interface between child descriptor
+    objects and the HDF5 storage file. This is designed to seperate descriptor
+    generation from data IO, allowing for quick development of new descriptor
+    classes.  The base Analysis class has methods for retreiving analyses from
+    file and saving data created by analysis objects to file. It also has basic
+    formatting methods used to return data in the required format for processed
+    such as descriptor comparisons.
+
+    In order to create a new descriptor, the hdf5_dataset_formatter method will
+    need to be overwritten by the child class to generate and store the
+    descriptor's output in the appropriate manner. Examples of this can be seen
+    through the currently implemented descriptors.
+    """
 
     def __init__(self, AnalysedAudioFile, analysis_group, name, config=None):
         # Create object logger
@@ -87,12 +102,13 @@ class Analysis(object):
 
     def hdf5_dataset_formatter(analysis_method, *args, **kwargs):
         '''
+        Note: This is a generic formatter designed as a template to be
+        overwritten by a descriptor sub-class.
+
         Formats the output from the analysis method to save to the HDF5 file.
 
         Places data and attributes in 2 dictionaries to be stored in the HDF5
         file.
-        Note: This is a generic formatter designed as a template to be
-        overwritten by a descriptor sub-class.
         '''
         output, attributes = analysis_method(*args, **kwargs)
         return ({'data': output}, {'attrs': attributes})

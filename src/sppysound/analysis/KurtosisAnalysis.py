@@ -16,15 +16,18 @@ logger = logging.getLogger(__name__)
 class KurtosisAnalysis(Analysis):
 
     """
-    An encapsulation of the Kurtosis analysis of an AnalysedAudioFile.
+    Kurtosis descriptor class for generation of Kurtosis audio analysis.
 
-    On initialization, the kurtosis analysis is either created, or a pre existing
-    file already exists.
-    In either case, once the file is generated, it's values can be obtained
-    through use of the get_kurtosis_from_file method
+    This descriptor calculates the temporal kurtosis for overlapping grains of
+    an AnalysedAudioFile object.  A full definition of kurtosis analysis can be found
+    in the documentation.
 
-    Note: Due to the large size of kurtosis analysis it is not stored in a class
-    member as other such analyses are. Use get_kurtosis_from_file.
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
@@ -52,8 +55,6 @@ class KurtosisAnalysis(Analysis):
     def create_kurtosis_analysis(frames, variance, window_size=512,
                             overlapFac=0.5):
         """
-        Generate an energy contour analysis.
-
         Calculate the Kurtosis values of windowed segments of the audio file and
         save to disk.
         """

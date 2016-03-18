@@ -14,15 +14,19 @@ from numpy import polyfit, arange
 class F0Analysis(Analysis):
 
     """
-    An encapsulation of the F0 analysis of an AnalysedAudioFile.
+    F0 analysis descriptor class for generation of fundamental frequency
+    estimation.
 
-    On initialization, the F0 analysis is either created, or a pre existing
-    file already exists.
-    In either case, once the file is generated, it's values can be obtained
-    through use of the get_f0_from_file method
+    This descriptor calculates the fundamental frequency for overlapping grains
+    of an AnalysedAudioFile object.  A full definition of F0 analysis can be
+    found in the documentation.
 
-    Note: Due to the large size of F0 analysis it is not stored in a class
-    member as other such analyses are. Use get_rms_from_file.
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
@@ -66,23 +70,11 @@ class F0Analysis(Analysis):
         M=None,
     ):
         """
-        # function [HR, f0, Gamma] = feature_harmonic(window, Fs, M, m0)
-        # This function computes the harmonic ratio and fundamental frequency of a
-        # window
-        #
-        # ARGUMENTS
-        # - window: the samples of the window
-        # - Fs:     the sampling frequency
-        # - M:      the maximum T0 (optional)
-        # - m0:     the minimum T0 (optional)
-        #
-        # RETURNS:
-        # - HR:     harmonic ratio
-        # - f0:     fundamental frequency
-        #
-        # (c) 2014 T. Giannakopoulos, A. Pikrakis
-        """
+        Generate F0 contour analysis.
 
+        Calculate the frequency and harmonic ratio values of windowed segments
+        of the audio file and save to disk.
+        """
         if not M:
             M=round(0.016*samplerate)
 
@@ -103,49 +95,12 @@ class F0Analysis(Analysis):
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
 
+        # TODO: Replace this with zero crossing object.
         def feature_zcr(window):
-            # function  Z = feature_zcr(window);
-            #
-            # This function calculates the zero crossing rate of an audio frame.
-            #
-            # ARGUMENTS:
-            # - window: 	an array that contains the audio samples of the input frame
-            #
-            # RETURN:
-            # - Z:		the computed zero crossing rate value
-            #
-
             window2 = np.zeros(window.size)
             window2[1:-1] = window[0:-2]
             Z = (1/(2*window.size)) * np.sum(np.abs(np.sign(window)-np.sign(window2)))
             return Z
-
-        def parabolic(f, x):
-            """
-            #Quadratic interpolation for estimating the true position of an
-            #inter-sample maximum when nearby samples are known.
-
-            f is a vector and x is an index for that vector.
-
-            Returns (vx, vy), the coordinates of the vertex of a parabola that
-            goes through point x and its two neighbors.
-
-            Example:
-            Defining a vector f with a local maximum at index 3 (= 6), find
-            local maximum if points 2, 3, and 4 actually defined a parabola.
-
-            In [3]: f = [2, 3, 1, 6, 4, 2, 3, 1]
-
-            In [4]: parabolic(f, argmax(f))
-            Out[4]: (3.2142857142857144, 6.1607142857142856)
-
-            """
-            if x >= f.size-1 or x <= 2:
-                return x, f[x]
-
-            xv = 1/2. * (f[x-1] - f[x+1]) / (f[x-1] - 2 * f[x] + f[x+1]) + x
-            yv = f[x] - 1/4. * (f[x-1] - f[x+1]) * (xv - x)
-            return (xv, yv)
 
         def autocorr(x):
             """
@@ -161,6 +116,37 @@ class F0Analysis(Analysis):
             ret = ifft(fftx * np.conjugate(fftx), axis=1).real
             ret = fftshift(ret, axes=1)
             return ret
+
+        def parabolic(f, x):
+            """
+            Quadratic interpolation for estimating the true position of an
+            inter-sample maximum when nearby samples are known.
+
+            f is a vector and x is an index for that vector.
+
+            Returns (vx, vy), the coordinates of the vertex of a parabola that
+            goes through point x and its two neighbors.
+
+            Example:
+
+            Defining a vector f with a local maximum at index 3 (= 6), find
+            local maximum if points 2, 3, and 4 actually defined a parabola.
+
+            In [3]: f = [2, 3, 1, 6, 4, 2, 3, 1]
+
+            In [4]: parabolic(f, argmax(f))
+
+            Out[4]: (3.2142857142857144, 6.1607142857142856)
+
+            Ref: https://gist.github.com/endolith/255291
+
+            """
+            if x >= f.size-1 or x <= 2:
+                return x, f[x]
+
+            xv = 1/2. * (f[x-1] - f[x+1]) / (f[x-1] - 2 * f[x] + f[x+1]) + x
+            yv = f[x] - 1/4. * (f[x-1] - f[x+1]) * (xv - x)
+            return (xv, yv)
 
         def per_frame_f0(frames, m0, M):
             if not frames.any():

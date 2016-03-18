@@ -18,15 +18,18 @@ logger = logging.getLogger(__name__)
 class VarianceAnalysis(Analysis):
 
     """
-    An encapsulation of the Variance analysis of an AnalysedAudioFile.
+    Variance descriptor class for generation of variance audio analysis.
 
-    On initialization, the variance analysis is either created, or a pre existing
-    file already exists.
-    In either case, once the file is generated, it's values can be obtained
-    through use of the get_variance_from_file method
+    This descriptor calculates the Root Mean Square analysis for overlapping
+    grains of an AnalysedAudioFile object.  A full definition of variance
+    analysis can be found in the documentation.
 
-    Note: Due to the large size of variance analysis it is not stored in a class
-    member as other such analyses are. Use get_variance_from_file.
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):

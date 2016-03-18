@@ -20,11 +20,18 @@ logger = logging.getLogger(__name__)
 
 class FFTAnalysis(Analysis):
     """
-    An encapsulation of the FFT analysis of audio.
+    FFT analysis descriptor class for generation of FFT spectral analysis.
+
+    This descriptor calculates the spectral content for overlapping grains
+    of an AnalysedAudioFile object.  A full definition of FFT analysis can be
+    found in the documentation.
 
     Arguments:
-        AnalysedAudioFile - File object to perform the analysis on
-        analysis - HDF5 file object used to store analysis
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
@@ -128,6 +135,7 @@ class FFTAnalysis(Analysis):
 
         return np.fft.rfft(frames)
 
+    '''
     def logscale_spec(self, spec, sr=44100, factor=20.):
         """Scale frequency axis logarithmically."""
         # Get a count of times and frequencies from fft frames
@@ -207,6 +215,7 @@ class FFTAnalysis(Analysis):
             plt.show()
 
         plt.clf()
+    '''
 
     def calc_fft_frame_times(self, fftframes, sample_frames, samplerate):
         """Calculate times for frames using sample size and samplerate."""

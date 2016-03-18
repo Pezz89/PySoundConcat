@@ -836,7 +836,28 @@ class AudioFile(object):
 
 class AnalysedAudioFile(AudioFile):
 
-    """Generates and stores analysis information for an audio file."""
+    """
+    Generates and stores analysis information for an audio file.
+
+    Arguments:
+
+    - (All AudioFile arguments)
+
+    - db_dir: if the object is part of a database, this is the path to the root
+      of the database.
+
+    - config: The config module used for configuration settings. See examples
+      for further details.
+
+    - data_file: the path to the HDF5 file used to store analyses for this
+      audio file.
+
+    - reanalyse: bool for whether to overwrite any previously created analyses
+      for this audio file.
+
+    - available_analyses: a list of strings for each analyses to be generated.
+      ie. [\'f0\', \'rms\']
+    """
 
     def __init__(self, *args, **kwargs):
         # Initialise the AudioFile parent class

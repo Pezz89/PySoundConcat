@@ -17,15 +17,18 @@ logger = logging.getLogger(__name__)
 class PeakAnalysis(Analysis):
 
     """
-    An encapsulation of the Peak analysis of an AnalysedAudioFile.
+    Peak descriptor class for generation of per-grain maximum peak audio analysis.
 
-    On initialization, the Peak analysis is either created, or a pre existing
-    file already exists.
-    In either case, once the file is generated, it's values can be obtained
-    through use of the get_peak_from_file method
+    This descriptor calculates the maximum peak for overlapping grains of an
+    AnalysedAudioFile object.  A full definition of peak analysis can be found in
+    the documentation.
 
-    Note: Due to the large size of Peak analysis it is not stored in a class
-    member as other such analyses are. Use get_peak_from_file.
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
@@ -44,8 +47,6 @@ class PeakAnalysis(Analysis):
                             window=signal.triang,
                             overlapFac=0.5):
         """
-        Generate an energy contour analysis.
-
         Calculate the Peak values of windowed segments of the audio file and
         save to disk.
         """

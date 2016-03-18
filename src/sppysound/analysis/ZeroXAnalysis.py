@@ -10,7 +10,21 @@ logger = logging.getLogger(__name__)
 
 class ZeroXAnalysis(Analysis):
 
-    """Zero-crossing analysis class. """
+    """
+    Zero-corssing descriptor class for generation of zero-crossing rate
+    analysis.
+
+    This descriptor calculates the zero-crossing rate for overlapping grains of
+    an AnalysedAudioFile object.  A full definition of zero-crossing analysis
+    can be found in the documentation.
+
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
+    """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
         super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'ZeroCrossing')

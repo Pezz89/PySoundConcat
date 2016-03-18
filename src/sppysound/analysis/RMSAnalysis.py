@@ -19,15 +19,18 @@ logger = logging.getLogger(__name__)
 class RMSAnalysis(Analysis):
 
     """
-    An encapsulation of the RMS analysis of an AnalysedAudioFile.
+    RMS descriptor class for generation of RMS audio analysis.
 
-    On initialization, the RMS analysis is either created, or a pre existing
-    file already exists.
-    In either case, once the file is generated, it's values can be obtained
-    through use of the get_rms_from_file method
+    This descriptor calculates the Root Mean Square analysis for overlapping
+    grains of an AnalysedAudioFile object.  A full definition of RMS analysis
+    can be found in the documentation.
 
-    Note: Due to the large size of RMS analysis it is not stored in a class
-    member as other such analyses are. Use get_rms_from_file.
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):
@@ -54,7 +57,7 @@ class RMSAnalysis(Analysis):
                             window=signal.triang,
                             overlapFac=0.5):
         """
-        Generate an energy contour analysis.
+        Generate RMS contour analysis.
 
         Calculate the RMS values of windowed segments of the audio file and
         save to disk.

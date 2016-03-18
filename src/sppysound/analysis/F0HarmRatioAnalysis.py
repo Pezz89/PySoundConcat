@@ -14,10 +14,11 @@ from numpy import polyfit, arange
 class F0HarmRatioAnalysis(Analysis):
 
     """
-    The F0 HarmRatio analysis object is a placeholder to allow access to the
-    harmonic ratio generated in the f0 analysis.  As a result it does not have
-    it's own "create analysis method as other analyses do. it is designed to be
-    used for the retreival of the f0 harmonic ratio analysis for matching.
+    The F0 HarmRatio analysis object is a placeholder class to allow access to
+    the harmonic ratio generated in the f0 analysis.  As a result it does not
+    have it's own "create analysis method as other analyses do. it is designed
+    to be used for the retreival of the f0 harmonic ratio analysis for
+    matching.
 
     F0 analysis must be generated for the AnalysedAudioFile in order to use
     this object.

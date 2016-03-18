@@ -29,7 +29,19 @@ logger = logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 class AudioDatabase:
 
-    """A class for encapsulating a database of AnalysedAudioFile objects."""
+    """
+    A class for encapsulating a database of AnalysedAudioFile objects.
+
+    Arguments:
+
+    - audio_dir: directory containing audio files to be used as the database
+
+    - db_dir: directory to be used/created for storage of analysis data and
+      storage/linking of audio files.
+
+    - analysis_list: the list of analysis strings for analyses to be used in
+      the database.
+    """
 
     def __init__(
         self,
@@ -435,6 +447,9 @@ class Matcher:
         Calculates the euclidean distance between two arrays of data.
 
         Distance is calculated with special handeling of Nan values, if they exist in the data.
+        A Nan value matched to another Nan value is classed as a perfect match.
+        a Nan matched to any other value is calculated as the furthest match +
+        10%
         """
         # Find all numbers that aren't Nan, inf, None etc...
         data1_finite_inds = np.isfinite(data1)
@@ -502,27 +517,30 @@ class Synthesizer:
 
         self.match_db = database1
         self.output_db = database2
+        self.target_db = kwargs.pop("target_db", None)
 
         self.config = kwargs.pop("config", None)
 
         self.enforce_rms_bool = self.config.synthesizer["enforce_rms"]
         # Key word arguments overwrite config file.
         self.enforce_rms_bool = kwargs.pop("enforce_rms", self.enforce_rms_bool)
+        if self.enforce_rms_bool and ("rms" not in self.target_db.analysis_list or "rms" not in self.match_db.analysis_list):
+            raise RuntimeError("BLARGHHH")
 
         self.enforce_f0_bool = self.config.synthesizer["enforce_f0"]
         # Key word arguments overwrite config file.
         self.enforce_f0_bool = kwargs.pop("enforce_f0", self.enforce_f0_bool)
+        if self.enforce_f0_bool and ("f0" not in self.target_db.analysis_list or "f0" not in self.match_db.analysis_list):
+            raise RuntimeError("F0 enforcement cannot be enabled if both databases do not have F0 analyses.")
 
-        self.target_db = kwargs.pop("target_db", None)
         if self.enforce_rms:
             if not self.target_db:
                 raise ValueError("Target database must be provided if rms or F0 enforcement is enabled.")
 
     def synthesize(self, grain_size=None, overlap=None):
         """
-        Takes a 3D array containing the sample and grain indexes for each grain to be synthesized.
-
-        If grain size or overlap isn't specified, the values from config are used.
+        Synthesized output from the match data in the output database to create
+        audio in the output database.
         """
         if not grain_size:
             grain_size = self.config.synthesizer["grain_size"]

@@ -7,7 +7,19 @@ from Analysis import Analysis
 
 class SpectralCentroidAnalysis(Analysis):
     """
-    An encapsulation of a spectral centroid analysis.
+    Spectral centroid descriptor class for generation of spectral centroid
+    audio analysis.
+
+    This descriptor calculates the spectral centroid for overlapping grains of
+    an AnalysedAudioFile object.  A full definition of spectral centroid
+    analysis can be found in the documentation.
+
+    Arguments:
+
+    - analysis_group: the HDF5 file group to use for the storage of the
+      analysis.
+
+    - config: The configuration module used to configure the analysis
     """
 
     def __init__(self, AnalysedAudioFile, analysis_group, config=None):

@@ -7,12 +7,13 @@ Welcome to Concatenator's documentation!
 ========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   intro
+   overview
    installation
    tutorial
    api
+   descriptor_defs
    examples
 
 
