@@ -6,6 +6,55 @@ Temporal Centroid
 
 F0 (Pitch detection)
 ~~~~~~~~~~~~~~~~~~~~
+An important feature of any harmonic audio is it's pitch. Pitch is defined as
+the perceived frequency of the signal. In order to determine the pitch of a
+periodic signal, the fundamental frequency (F0) is estimated. There are many
+methods developed for estimating the F0 of a signal. This program uses the
+autocorrelation method. This method was chosen for it's simplicity and
+reasonable versatility for a wide range of signals.
+
+The f0 is calculated by first calculating the autocorellation of the signal
+defined as:
+
+.. math::
+    R_i(m) = \sum_{n=1}^{W^L} x_i(n) x_i(n-m)
+
+Then normalizing:
+
+.. math::
+    T_i(m) = \frac{R_i(m)}{\sqrt{\sum_{n=1}^{W^L}x_i(n)^2 \sum_{n=1}^{W^L}x_i(n-m)^2}}
+
+The fundamental period of the signal is then calculated as the point between
+:math:`T_{min}` and :math:`T_{max}` at which the correlated signal most closely matches the
+original. :math:`T_{min}` and :math:`T_{max}` are defined as the minimum and maximum values of
+the fundamental period.
+
+.. math::
+    x = arg\,max_{T_{min} \leq m \leq T_{max}} \{T_i(m)\}
+
+In order to improve the accuracy of peak detection, parabolic interpolation is
+used to estimate the peak's location with greater accuracy by using the peak
+correlation and it's two closes neighbour's values to estimate the fractional
+peak value.
+
+The method for parabolic interpolation is defined as:
+
+.. math::
+    T_0^i = \frac{1}{2} \cdot \frac{\alpha - \gamma}{\alpha - 2\beta + \gamma} + x
+
+    &\text{Where:} \\
+    &\alpha = T_i(x-1) \\
+    &\beta = T_i(x) \\
+    &\gamma = T_i(x+1) \\
+Ref: :cite:`quadinterp`
+
+From this, the fundamental period the frequency is then calculated as:
+
+.. math::
+    f_0^i = \frac{1}{T_0^i}
+
+Ref: :cite:`itaa2014`
+
 
 FFT
 ~~~
@@ -42,3 +91,4 @@ Variance
 
 Zero-Crossing
 ~~~~~~~~~~~~~
+.. bibliography:: refs.bib

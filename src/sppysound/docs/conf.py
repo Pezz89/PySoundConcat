@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'nbsphinx',
     'sphinx.ext.mathjax',
+    'sphinxcontrib.bibtex',
 ]
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
