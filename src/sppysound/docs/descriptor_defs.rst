@@ -3,10 +3,16 @@ Audio Descriptor Definitions
 
 Temporal Centroid
 ~~~~~~~~~~~~~~~~~
+The temporal centroid is a measure of the center of gravity of a signal. It is
+used to determine the central point of a signals amplitude and is calculated
+as:
+
+.. math::
+    vc(n) = \frac{\sum_{i=i_s(n)}^{i_e(n)}(i-i_s(n)) \cdot x(i)}{\sum_{i=i_s(n)}^{i_e(n)} \cdot x(n)}
 
 F0 (Pitch detection)
 ~~~~~~~~~~~~~~~~~~~~
-An important feature of any harmonic audio is it's pitch. Pitch is defined as
+An important feature of any periodic audio is it's pitch. Pitch is defined as
 the perceived frequency of the signal. In order to determine the pitch of a
 periodic signal, the fundamental frequency (F0) is estimated. There are many
 methods developed for estimating the F0 of a signal. This program uses the
@@ -61,6 +67,14 @@ FFT
 
 Harmonic Ratio
 ~~~~~~~~~~~~~~
+The harmonic ratio can be used to differentiate between noisy and periodic
+signals. higher values suggest that the signal is more periodic (such as a sine
+wave) and lower values represent less periodicity. This can be used as a form
+of confidence measure in determining the validity of F0 values. it is
+calculated as part of the F0 estimation algorithm as:
+
+.. math::
+    HR_i = max_{T_{min} \leq m \leq T_{max}}{\{T_i(m)\}}
 
 Temporal Kurtosis
 ~~~~~~~~~~~~~~~~~
