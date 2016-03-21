@@ -21,6 +21,7 @@ import sphinx_bootstrap_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('.'))
 
 # -- General configuration ------------------------------------------------
 
@@ -36,6 +37,7 @@ extensions = [
     'nbsphinx',
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
+    'sphinx.ext.graphviz'
 ]
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
@@ -294,3 +296,10 @@ texinfo_documents = [
 
 # nbsphinx settings
 nbsphinx_allow_errors = True
+if os.environ.get('READTHEDOCS', None) == 'True':
+    os.environ["PATH"] += os.pathsep + os.path.abspath('_bin')
+    os.environ["LD_LIBRARY_PATH"] = os.path.abspath('_bin')
+
+latex_elements = {
+'preamble': '\usepackage{tikz}',
+}
