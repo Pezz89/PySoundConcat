@@ -39,7 +39,6 @@ extensions = [
     'sphinxcontrib.bibtex',
     'sphinx.ext.graphviz'
 ]
-exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -84,7 +83,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -300,6 +299,3 @@ if os.environ.get('READTHEDOCS', None) == 'True':
     os.environ["PATH"] += os.pathsep + os.path.abspath('_bin')
     os.environ["LD_LIBRARY_PATH"] = os.path.abspath('_bin')
 
-latex_elements = {
-'preamble': '\usepackage{tikz}',
-}

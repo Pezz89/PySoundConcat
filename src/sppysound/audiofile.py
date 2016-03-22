@@ -5,7 +5,6 @@ import collections
 from scipy import signal
 import numpy as np
 import pysndfile
-import matplotlib.pyplot as plt
 import pdb
 import sys
 import traceback
@@ -600,15 +599,6 @@ class AudioFile(object):
         """
         return float(samps) / self.samplerate * 1000.0
 
-    def plot_grain_to_graph(self, start_index, number_of_samps):
-        """
-        Convenience method.
-
-        Use matplotlib to create a graph of the audio file.
-        """
-        samps = self.read_grain(start_index, self.ms_to_samps(number_of_samps))
-        self.plot_array_to_graph(samps)
-
     def fade_audio(self, audio, position, fade_time, mode):
         """
         Fade the audio in or out linearly from the position specified over the
@@ -763,13 +753,6 @@ class AudioFile(object):
         else:
             raise ValueError("'{0}' is not a valid window"
                              " type".format(window_type))
-
-    @staticmethod
-    def plot_array_to_graph(array):
-        plt.plot(array, 'r')
-        plt.xlabel('Time (samples)')
-        plt.ylabel('sample value')
-        plt.show()
 
     @staticmethod
     def normalize_audio(audio, maximum=1.0):

@@ -14,7 +14,7 @@ def read(fname):
 
 setup(
     name="sppysound",
-    version="0.1",
+    version="1.0",
     author="Sam Perry",
     author_email="u1265119@unimail.hud.ac.uk",
     description=("A library for audio analysis and synthesis."),
@@ -22,7 +22,7 @@ setup(
     keywords="synthesis audio",
     url="https://github.com/Pezz89/pysound",
     package_dir={'': 'src'},
-    packages=find_packages(where='src', exclude=['tests']),
-    setup_requires=['numpy'],
-    install_requires=read('requirements.txt'),
+    packages=find_packages(where='src'),
+    setup_requires=["numpy"],  # Just numpy here
+    install_requires=read('requirements.txt')
 )
