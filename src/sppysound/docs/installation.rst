@@ -10,6 +10,8 @@ There are a few dependencies required to install concatenator:
 2. libsndfile - used for audio file IO
 3. The HDF5 Library - used for large file storage
 
+Brew Python
++++++++++++
 There are a number of ways to install python. The simplest is through
 homebrew/linuxbrew using the following command:
 
@@ -17,6 +19,8 @@ homebrew/linuxbrew using the following command:
 
     brew install python
 
+Pyenv Python
+++++++++++++
 An alternative that allows greater flexibility is to use pyenv which allows for
 easy switching between python versions and guarantees the exact version needed:
 
@@ -36,6 +40,9 @@ pyenv pythons to your path.
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
 
+Other dependencies
+++++++++++++++++++
+
 libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
 
 .. code:: bash
@@ -44,7 +51,7 @@ libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
     brew tap homebrew/science
     brew install hdf5
 
-Python library and dependancies installation
+Python library and dependencies installation
 --------------------------------------------
 
 The python package and it's dependencies can then be easily installed by
@@ -56,6 +63,11 @@ project is working correctly, simply run run_tests.
 
     ./install.sh
     ./run_tests
+
+There is a small chance that the installation may fail when installing
+depndancies such as scipy or numpy. In these cases the packages must be
+installed manually. When this has been done, simply re-run the install.sh
+script.
 
 Jupyter Notebook Examples
 ---------------------------------------
