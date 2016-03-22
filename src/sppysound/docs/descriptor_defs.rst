@@ -1,3 +1,5 @@
+.. _descriptor_defs:
+
 Audio Descriptor Definitions
 ============================
 

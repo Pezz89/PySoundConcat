@@ -1,7 +1,7 @@
 Overview
 ========
 Concatenator is a tool for synthesizing interpretations of a sound, through the
-analysis and synthesis of audio grains from a database of sounds.
+analysis and synthesis of audio grains from a corpus database.
 The program works by analysing overlapping segments of audio (known as grains)
 from both the target sound and the source database, then searching for the
 closest matching grain in the source database to the target sound. Finally, the
@@ -15,8 +15,19 @@ To create the final output, there are three main operations to perform:
       "Database Analysis" -> "Grain Matching" -> "Output Synthesis";
    }
 
+.. raw:: latex
+
+    \newpage
+
 Analysis
 --------
+
+First, the descriptor analyses are generated for each audio file in both the
+source and target database. Full details on the types of descriptor available
+and their function can be found in the :ref:`descriptor_defs` section of
+this documentation. Analyses are then stored to a HDF5 file, ready for
+matching.
+
 .. graphviz::
 
    digraph b {
@@ -37,16 +48,31 @@ Analysis
         label = "Analyses";
         labeljust="l";
       }
-    database[shape=square, label="Audio Directory"];
-    HDF[shape=square, label="HDF5 File"];
+    database[shape=rectangle, label="Audio Directory"];
+    HDF[shape=rectangle, label="HDF5 File"];
     database -> node0;
     node0 -> node2;
     node2 -> HDF
    }
 
+.. raw:: latex
+
+    \newpage
 
 Matching
 --------
+
+Both the source and target HDF5 files are loaded to compare the values of their
+analyses. Each audio file's analyses are split into equally sized overlapping
+grains and averaged in the appropriate way to be compared to grains from the
+other database.
+The matching algorithm then calculates the grains that have the smallest
+overall difference, based on user defined weightings for each of the analysis
+types. This weighting of analyses allows for certain analyses to gain
+precedence over others based on user preference.
+The best match indexes are then saved to the output database ready for
+synthesis.
+
 .. graphviz::
 
    digraph b {
@@ -123,8 +149,23 @@ Matching
     matcher -> database3
 
    }
+
+.. raw:: latex
+
+    \newpage
+
 Synthesis
 ---------
+
+The synthesis process involves loading the best match grains from the source
+database, performing any post-processing (such as pitch shifting and amplitude
+scaling) to improve the similarity of the match, then windowed overlap adding
+the grains to create the final output. The post-processing phase involves using
+the ratio difference between the source and target grain to artificially alter
+the source grain so that it better ressembles the target. This is particularly
+useful when using small source databases as it improves the similarity of any
+match (important when best matches aren't very close to the target.) The final
+output is saved to the output database's audio directory.
 
 .. graphviz::
 
