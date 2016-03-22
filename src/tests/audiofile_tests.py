@@ -461,21 +461,6 @@ class FadeAudioTest(globalTests):
         pathops.delete_if_exists("./.TestAudio.rename.wav")
 
 
-class GenerateADSRTests(globalTests):
-
-    """Tests generation of ADSR envelope arrays."""
-
-    def test_GenerateADSR(self):
-        """Check that function generates an array representing an envelope."""
-        envelope = AudioFile.gen_ADSR_envelope(1.0, 1.0, 0.5, 1.0, 1.0)
-        self.assertEqual(envelope[0], 0.0)
-        self.assertEqual(envelope[44100-1], 1.0)
-        self.assertEqual(envelope[88200-1], 0.5)
-        self.assertEqual(envelope[132300-1], 0.5)
-        self.assertEqual(envelope[176400-1], 0.0)
-        self.assertEqual(envelope.size, 176400)
-
-
 class RMSAnalysisTests(globalTests):
 
     """Tests RMS analysis generation"""
