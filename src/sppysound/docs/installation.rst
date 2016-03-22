@@ -10,8 +10,8 @@ There are a few dependencies required to install concatenator:
 2. libsndfile - used for audio file IO
 3. The HDF5 Library - used for large file storage
 
-There are a number of ways to install python. The simplest is through homebrew
-using the following command:
+There are a number of ways to install python. The simplest is through
+homebrew/linuxbrew using the following command:
 
 .. code:: bash
 
@@ -26,7 +26,17 @@ easy switching between python versions and guarantees the exact version needed:
     pyenv install 2.7.11
     pyenv global 2.7.11
 
-libsndfile and HDF5 libraries can also be installed via homebrew:
+Note that the following may need to be added to your ~/.bashrc file to add
+pyenv pythons to your path.
+
+.. code:: bash
+
+    if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+
+libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
 
 .. code:: bash
 
