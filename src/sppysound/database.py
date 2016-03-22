@@ -5,7 +5,6 @@ import collections
 from scipy import signal
 import numpy as np
 import pysndfile
-import matplotlib.pyplot as plt
 import pdb
 import sys
 import traceback
