@@ -10,7 +10,6 @@ from fileops import pathops
 import numpy as np
 from numpy.lib import stride_tricks
 import os
-from matplotlib import pyplot as plt
 from AnalysisTools import ButterFilter
 from Analysis import Analysis
 import pdb
