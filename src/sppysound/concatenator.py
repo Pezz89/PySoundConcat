@@ -76,6 +76,21 @@ def parse_arguments():
         'and match data will be stored in the /data directory.'
     )
 
+    parser.add_argument(
+        '--src-db',
+        help="Specifies the directory to create the source database and store analyses "
+        "in. If not specified then the source directory will be used directly.",
+        type=str
+    )
+
+    parser.add_argument(
+        '--tar_db',
+        help="Specifies the directory to create the target database and store analyses "
+        "in. If not specified then the target directory will be used directly.",
+        type=str,
+        default=''
+    )
+
     analyses = [
             "rms",
             "zerox",
@@ -178,13 +193,21 @@ def parse_arguments():
         args.verbose -= 1
         args.verbose = levels[args.verbose]
 
-    pdb.set_trace()
     return args
 
 
 def main():
     # Process commandline arguments
     args = parse_arguments()
+
+    src_audio_dir = None
+    if args.src_db != '':
+        src_audio_dir = args.src_db
+
+    tar_audio_dir = None
+    if args.tar_db != '':
+        tar_audio_dir = args.tar_db
+
 
     logger = loggerops.create_logger(
         logger_streamlevel=args.verbose,
@@ -196,7 +219,8 @@ def main():
     source_db = AudioDatabase(
         args.source,
         analysis_list=args.analyse,
-        config=config
+        config=config,
+        db_dir=src_audio_dir
     )
     source_db.load_database(reanalyse=config.analysis["reanalyse"])
 
@@ -204,7 +228,8 @@ def main():
     target_db = AudioDatabase(
         args.target,
         analysis_list=args.analyse,
-        config=config
+        config=config,
+        db_dir=tar_audio_dir
     )
     target_db.load_database(reanalyse=config.analysis["reanalyse"])
 

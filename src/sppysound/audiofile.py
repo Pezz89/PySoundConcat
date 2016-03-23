@@ -675,7 +675,7 @@ class AudioFile(object):
             self.__enter__()
             self.pysndfile_object.seek(seek)
 
-    def generate_grain_times(self, grain_length, overlap):
+    def generate_grain_times(self, grain_length, overlap, save_times=False):
         """
         Generates an array of start and finish pairs based on overlapping
         frames at the grain length specified.
@@ -696,8 +696,9 @@ class AudioFile(object):
         times = np.hstack((times, times)).astype(np.dtype('float64'))
         times *= hop_size
         times[:, 1] += grain_length
-        # Save grain times as a member variable for later refference.
-        self.times = times
+        if save_times:
+            # Save grain times as a member variable for later refference.
+            self.times = times
         return times
 
     def __getitem__(self, key):
@@ -708,7 +709,7 @@ class AudioFile(object):
             raise IndexError("AudioFile object grain times must be generated "
                              "before grains can be accesed by index. Try running "
                              "AnalysedAudioFile.generate_grain_times(grain_size, "
-                                                                    "overlap)")
+                                                                    "overlap, save_times=True)")
         grain_times = self.times[key].copy()
         grain_times *= (self.samplerate / 1000)
         return self.read_grain(start_index=grain_times[0], grain_size=grain_times[1]-grain_times[0])

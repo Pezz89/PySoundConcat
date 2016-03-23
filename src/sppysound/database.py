@@ -376,11 +376,22 @@ class Matcher:
 
         for tind, target_entry in enumerate(self.target_db.analysed_audio):
             # Create an array of grain times for target sample
-            target_times = target_entry.generate_grain_times(grain_size, overlap)
+            target_times = target_entry.generate_grain_times(grain_size, overlap, save_times=True)
 
             # Stores an accumulated distance between source and target grains,
             # added to by each analysis.
             distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
+            # Allocate memory for storing accumulated distances between
+            # source and target grains
+            pdb.set_trace()
+
+            x_size = target_times.shape[0]
+            y_size = int(source_sample_indexes[-1][-1])
+            chunk_size = 8192
+
+            self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
+
+            self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
             for analysis in self.matcher_analyses:
                 self.logger.info("Current analysis: {0}".format(analysis))
                 analysis_formatting = self.analysis_dict[analysis]
@@ -391,10 +402,8 @@ class Matcher:
                 # Get data for all target grains for each analysis
                 target_data, s = target_entry.analysis_data_grains(target_times, analysis, format=analysis_formatting)
 
-                # Allocate memory for storing accumulated distances between
-                # source and target grains
-                self.data_distance = np.zeros((target_data.shape[0], source_sample_indexes[-1][-1]))
 
+                data_max = 0.
                 for sind, source_entry in enumerate(self.source_db.analysed_audio):
 
                     # Get the start and end array indexes allocated for the
@@ -402,22 +411,85 @@ class Matcher:
                     start_index, end_index = source_sample_indexes[sind]
 
                     # Create an array of grain times for source sample
-                    source_times = source_entry.generate_grain_times(grain_size, overlap)
+                    source_times = source_entry.generate_grain_times(grain_size, overlap, save_times=True)
                     self.logger.info("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
 
                     # Get data for all source grains for each analysis
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
+                    source_entry.close()
 
                     # Calculate the euclidean distance between the source and
                     # source values of each grain and add to array
                     a = self.distance_calc(target_data, source_data)
 
-                    self.data_distance[:, start_index:end_index] = a
+                    self.output_db.data["data_distance"][:, int(start_index):int(end_index)] = a
+                    self.output_db.data.flush()
+                    a_max = np.max(a)
+                    if a_max > data_max:
+                        data_max = a_max
 
                 # Normalize and weight the distances. A higher weighting gives
                 # an analysis presedence over others.
-                self.data_distance *= (1/self.data_distance.max()) * weightings[analysis]
-                distance_accum += self.data_distance
+                i = 0
+                membuff = np.zeros((chunk_size, chunk_size))
+                membuff2 = np.zeros((chunk_size, chunk_size))
+                while i < x_size:
+                    j = chunk_size
+                    if i+j > x_size:
+                        j = x_size - i
+
+                    k = 0
+                    while k < y_size:
+                        l = chunk_size
+                        if k+l > y_size:
+                            l = y_size - k
+                        print(i)
+                        print(k)
+
+                        self.output_db.data["data_distance"].read_direct(membuff, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
+                        self.output_db.data["distance_accum"].read_direct(membuff2, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
+
+                        weighted_mem = membuff[0:j, 0:l] * (1/data_max) * weightings[analysis]
+                        self.output_db.data["data_distance"][i:i+j, k:k+l] = weighted_mem
+                        self.output_db.data["distance_accum"][i:i+j, k:k+l] = membuff2[0:j, 0:l] + weighted_mem
+
+                        k += chunk_size
+
+                    i += chunk_size
+
+            self.logger.info("Calculating the closest {0} overall matches...". format(self.match_quantity))
+            i = 0
+            # Allocate memory for storing chunks.
+            membuff = np.zeros((chunk_size, chunk_size))
+            # Allocate memory for storing the best matches for each target
+            # grain
+            match_indexes = np.empty((x_size, self.match_quantity)).fill(None)
+            # Allocate memory for storing the match distance of these grains.
+            match_vals = np.empty((x_size, self.match_quantity)).fill(np.inf)
+
+            while i < x_size:
+                j = chunk_size
+                if i+j > x_size:
+                    j = x_size - i
+
+                k = 0
+                while k < y_size:
+                    l = chunk_size
+                    if k+l > y_size:
+                        l = y_size - k
+                    print(i)
+                    print(k)
+
+                    # Read the current chunk to memory
+                    self.output_db.data["distance_accum"].read_direct(membuff, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
+                    # Find all matches from the current chunk that are closer
+                    # than the worst match from previous chunks.
+                    closer_matches = membuff < match_vals.max(axis=1)
+
+                    chunk_match_inds = np.argsort(membuff, axis=1)
+
+
+
 
             # Sort indexes so that best matches are at the start of the array.
             match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
