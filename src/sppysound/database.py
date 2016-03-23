@@ -383,7 +383,6 @@ class Matcher:
             distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
             # Allocate memory for storing accumulated distances between
             # source and target grains
-            pdb.set_trace()
 
             x_size = target_times.shape[0]
             y_size = int(source_sample_indexes[-1][-1])
@@ -460,13 +459,18 @@ class Matcher:
             self.logger.info("Calculating the closest {0} overall matches...". format(self.match_quantity))
             i = 0
             # Allocate memory for storing chunks.
-            membuff = np.zeros((chunk_size, chunk_size))
+            chunk_vals = np.zeros((chunk_size, chunk_size))
+            chunk_inds = np.tile(np.arange(chunk_size), (chunk_size, 1))
             # Allocate memory for storing the best matches for each target
             # grain
-            match_indexes = np.empty((x_size, self.match_quantity)).fill(None)
+            match_indexes = np.empty((x_size, self.match_quantity))
+            match_indexes.fill(np.nan)
             # Allocate memory for storing the match distance of these grains.
-            match_vals = np.empty((x_size, self.match_quantity)).fill(np.inf)
+            match_vals = np.empty((x_size, self.match_quantity))
+            match_vals.fill(np.inf)
 
+
+            pdb.set_trace()
             while i < x_size:
                 j = chunk_size
                 if i+j > x_size:
@@ -481,20 +485,33 @@ class Matcher:
                     print(k)
 
                     # Read the current chunk to memory
-                    self.output_db.data["distance_accum"].read_direct(membuff, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
-                    # Find all matches from the current chunk that are closer
-                    # than the worst match from previous chunks.
-                    closer_matches = membuff < match_vals.max(axis=1)
+                    self.output_db.data["distance_accum"].read_direct(chunk_vals, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
 
-                    chunk_match_inds = np.argsort(membuff, axis=1)
+                    # Append the chunk distances to the best matches so far.
+                    vals_append = np.append(match_vals[i:i+j], chunk_vals[i:i+j], axis=1)
+                    c_inds = chunk_inds[0:j] + i
+
+                    m = np.arange(len(vals_append))[:, np.newaxis]
+                    # Sort all values to intergrate new chunk distances with
+                    # previous best matches.
+                    vals_sort = np.argsort(vals_append, axis=1)
+                    inds_append = np.append(match_indexes[i:i+j], c_inds, axis=1)
+                    best_match_inds = inds_append[m, vals_sort]
+                    match_indexes[i:i+j] = best_match_inds[:, :self.match_quantity]
+                    best_match_vals = vals_append[m, vals_sort]
+                    match_vals[i:i+j] = best_match_vals[:, :self.match_quantity]
+                    k += chunk_size
+
+                i += chunk_size
 
 
 
 
-            # Sort indexes so that best matches are at the start of the array.
-            match_indexes = distance_accum.argsort(axis=1)[:, :self.match_quantity]
+
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
+
+            pdb.set_trace()
             # Generate the path to the data group that will store the match
             # data in the HDF5 file.
             datafile_path = ''.join(("match/", target_entry.name))
@@ -652,7 +669,7 @@ class Synthesizer:
                     match_index = np.random.randint(matches.shape[0])
                     match_db_ind, match_grain_ind = matches[match_index]
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
-                        match_sample.generate_grain_times(match_grain_size, match_overlap)
+                        match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                         # TODO: Make proper fix for grain index offset of 1
                         match_grain = match_sample[match_grain_ind-1]
@@ -663,7 +680,7 @@ class Synthesizer:
 
                             # Calculate garin times for sample to allow for
                             # indexing.
-                            target_sample.generate_grain_times(match_grain_size, match_overlap)
+                            target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                             match_grain = self.enforce_rms(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
@@ -673,7 +690,7 @@ class Synthesizer:
 
                             # Calculate grain times for sample to allow for
                             # indexing.
-                            target_sample.generate_grain_times(match_grain_size, match_overlap)
+                            target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                             match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
