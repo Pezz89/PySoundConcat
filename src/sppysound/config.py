@@ -1,21 +1,21 @@
 rms = {
-    "window_size": 130,
-    "overlap": 16,
+    "window_size": 70,
+    "overlap": 2,
 }
 
 variance = {
-    "window_size": 130,
-    "overlap": 16
+    "window_size": 70,
+    "overlap": 2
 }
 
 kurtosis = {
-    "window_size": 130,
-    "overlap": 16
+    "window_size": 70,
+    "overlap": 2
 }
 
 skewness = {
-    "window_size": 130,
-    "overlap": 16
+    "window_size": 70,
+    "overlap": 2
 }
 
 fft = {
@@ -63,24 +63,24 @@ analysis = {
 
 matcher = {
     "rematch": True,
-    "grain_size": 130,
-    "overlap": 16,
+    "grain_size": 70,
+    "overlap": 2,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 20
+    "match_quantity": 1
 }
 
 synthesizer = {
     "enforce_rms": True,
-    "enf_rms_ratio_limit": 5.,
+    "enf_rms_ratio_limit": 100.,
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 130,
-    "overlap": 16,
+    "grain_size": 70,
+    "overlap": 2,
     "normalize" : True,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
-    "match_quantity": 20
+    "match_quantity": 1
 }
 
 output_file = {

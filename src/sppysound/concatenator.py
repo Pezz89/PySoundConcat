@@ -253,7 +253,7 @@ def main():
 
     # Perform matching on databases using the method specified.
     matcher.match(
-        matcher.brute_force_matcher,
+        matcher.knn_matcher,
         grain_size=config.matcher["grain_size"],
         overlap=config.matcher["overlap"]
     )
