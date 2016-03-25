@@ -50,6 +50,7 @@ libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
     brew install libsndfile
     brew tap homebrew/science
     brew install hdf5
+    brew install sox
 
 Python library and dependencies installation
 --------------------------------------------

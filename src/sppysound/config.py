@@ -22,6 +22,11 @@ fft = {
     "window_size": 65536
 }
 
+database = {
+    # Enables creation of symbolic links to files not in the database rather
+    # than making pysical copies.
+    "symlink": True
+}
 
 matcher_weightings = {
     "f0" : 1.,

@@ -116,7 +116,7 @@ class AudioDatabase:
             if not os.path.exists(self.audio_dir):
                 raise IOError("The audio directory provided ({0}) doesn't "
                             "exist".format(self.audio_dir))
-            self.organize_audio(subdir_paths)
+            self.organize_audio(subdir_paths, symlink=self.config.database["symlink"])
 
         self.analyse_database(subdir_paths, reanalyse)
 
@@ -268,13 +268,27 @@ class AudioDatabase:
                             self.logger.info(''.join(("Linked: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
                         else:
+                            try:
+                                os.unlink(destination)
+                            except OSError:
+                                pass
                             shutil.copy2(filepath, subdir_paths["audio"])
-                            self.logger.info(''.join(("Moved: ", item, "\tTo directory: ",
+                            self.logger.info(''.join(("Copied: ", item, "\tTo directory: ",
                                 subdir_paths["audio"], "\n")))
 
                     else:
-                        self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
-                            subdir_paths["audio"])))
+                        if not symlink:
+                            try:
+                                linkpath = os.readlink(destination)
+                                os.unlink(destination)
+                            except OSError:
+                                continue
+                            shutil.copy2(linkpath, subdir_paths["audio"])
+                            self.logger.info(''.join(("Copied: ", item, "\tTo directory: ",
+                                subdir_paths["audio"], "\n")))
+                        else:
+                            self.logger.info(''.join(("File:  ", item, "\tAlready exists at: ",
+                                subdir_paths["audio"])))
                     # Add the file's path to the database content dictionary
                     self.audio_file_list.add(
                         os.path.join(subdir_paths["audio"], os.path.basename(item))
