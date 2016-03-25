@@ -86,7 +86,13 @@ concatenate.py Script Usage
                       
 --enforcerms          This flag enables scaling of matched grains to better
                       match the target's volume.
-                      
+
+--match_method        Choose the algorithm to use when matching analyses. Available algorithms are:
+
+                         Brute force: 'bruteforce'
+
+                         K-d Tree Search: 'kdtree'
+
 --verbose, -v         Specify the verbosity of the script's output. Additional
                       v will produce greater levels of detail ie. -vvvvv will 
                       produce all messages.

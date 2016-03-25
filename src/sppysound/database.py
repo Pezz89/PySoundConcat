@@ -355,18 +355,16 @@ class Matcher:
         grain_indexes[:, 0] = grain_indexes[:, 1] - grain_indexes[:, 0]
         return grain_indexes
 
-    def knn_matcher(self, grain_size, overlap):
+    def kdtree_matcher(self, grain_size, overlap):
         # Count grains of the source database
         source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
         try:
             self.output_db.data.create_group("match")
         except ValueError:
-            self.logger.debug("Match group already exists in the {0} HDF5 file.".format(self.output_db))
+            self.logger.info("Match group already exists in the {0} HDF5 file.".format(self.output_db))
 
         if self.rematch:
             self.output_db.data["match"].clear()
-        #
-        final_match_indexes = []
 
         if self.config:
             weightings = self.config.matcher_weightings
@@ -374,6 +372,14 @@ class Matcher:
             weightings = {x: 1. for x in self.matcher_analyses}
 
         for tind, target_entry in enumerate(self.target_db.analysed_audio):
+            # Check if match data already exists and use it rather than
+            # regenerating if it does.
+            if target_entry.name in self.output_db.data["match"].keys():
+                self.logger.info("Match data already exists for {0}. Using this "
+                                 "data. Run with the \'--rematch\' flag to "
+                                 "overwrite.".format(self.output_db))
+                continue
+
             # Create an array of grain times for target sample
             target_times = target_entry.generate_grain_times(grain_size, overlap, save_times=True)
             x_size = target_times.shape[0]
@@ -381,6 +387,7 @@ class Matcher:
             match_vals = np.empty((x_size, self.match_quantity))
             match_vals.fill(np.inf)
 
+            # Allocate memory for target analyses.
             all_target_analyses = np.empty((len(self.matcher_analyses), target_times.shape[0]))
 
             for i, analysis in enumerate(self.matcher_analyses):
@@ -390,10 +397,8 @@ class Matcher:
                 all_target_analyses[i] = target_data
 
             imp = Imputer(axis=1)
+            # Impute values for Nans
             all_target_analyses = imp.fit_transform(all_target_analyses)
-            # all_target_analyses[np.isnan(all_target_analyses)] = np.inf
-            # all_target_analyses = np.nan_to_num(all_target_analyses)
-
 
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
                 # Create an array of grain times for source sample
@@ -406,10 +411,9 @@ class Matcher:
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
                     all_source_analyses[i] = source_data
 
-                self.logger.info("Matching \"{0}\" for: {1} to {2}".format(analysis, source_entry.name, target_entry.name))
-                # all_source_analyses[np.isnan(all_source_analyses)] = np.inf
-                # all_source_analyses = np.nan_to_num(all_source_analyses)
+                self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
 
+                # Impute values for Nans
                 all_source_analyses = imp.fit_transform(all_source_analyses)
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
@@ -458,8 +462,6 @@ class Matcher:
 
         if self.rematch:
             self.output_db.data["match"].clear()
-        #
-        final_match_indexes = []
 
         if self.config:
             weightings = self.config.matcher_weightings

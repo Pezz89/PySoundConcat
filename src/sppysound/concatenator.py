@@ -14,6 +14,14 @@ import json
 modpath = sys.argv[0]
 modpath = os.path.splitext(modpath)[0]+'.log'
 
+class SmartFormatter(argparse.HelpFormatter):
+
+    def _split_lines(self, text, width):
+        # this is the RawTextHelpFormatter._split_lines
+        if text.startswith('R|'):
+            return text[2:].splitlines()
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
 def parse_sub_args(args, analysis):
     try:
         args = getattr(args, analysis)
@@ -53,6 +61,7 @@ def parse_arguments():
     # TODO: Write program description.
     parser = argparse.ArgumentParser(
         description='',
+        formatter_class=SmartFormatter
     )
 
     parser.add_argument(
@@ -157,7 +166,7 @@ def parse_arguments():
     parser.add_argument(
         "--enforcef0",
         action="store_true",
-        help="This flag enables pitch shifting of matched grainsto better match the target."
+        help="This flag enables pitch shifting of matched grains to better match the target."
     )
 
     parser.add_argument(
@@ -166,11 +175,23 @@ def parse_arguments():
         help="This flag enables scaling of matched grains to better match the target's volume."
     )
 
+    parser.add_argument(
+        "--match_method",
+        type=str,
+        metavar='',
+        help="R|Choose the algorithm to use when matching analyses. Available "
+        "algorithms are:\nBrute force: \'bruteforce\'\nK-d Tree Search: "
+        "'kdtree'",
+    )
+
     parser.add_argument('--verbose', '-v', action='count')
 
     args = parser.parse_args()
     for item in config_items:
         parse_sub_args(args, item)
+
+    if args.match_method:
+        config.matcher["method"] = args.match_method
 
     if args.rematch:
         config.matcher["rematch"] = True
@@ -251,9 +272,14 @@ def main():
         rematch=args.rematch
     )
 
+    match_method_dict = {
+        'bruteforce': matcher.brute_force_matcher,
+        'kdtree': matcher.kdtree_matcher
+    }
+
     # Perform matching on databases using the method specified.
     matcher.match(
-        matcher.knn_matcher,
+        match_method_dict[config.matcher["method"]],
         grain_size=config.matcher["grain_size"],
         overlap=config.matcher["overlap"]
     )

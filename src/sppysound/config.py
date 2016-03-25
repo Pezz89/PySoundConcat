@@ -1,21 +1,21 @@
 rms = {
     "window_size": 70,
-    "overlap": 2,
+    "overlap": 8,
 }
 
 variance = {
     "window_size": 70,
-    "overlap": 2
+    "overlap": 8
 }
 
 kurtosis = {
     "window_size": 70,
-    "overlap": 2
+    "overlap": 8
 }
 
 skewness = {
     "window_size": 70,
-    "overlap": 2
+    "overlap": 8
 }
 
 fft = {
@@ -64,10 +64,13 @@ analysis = {
 matcher = {
     "rematch": True,
     "grain_size": 70,
-    "overlap": 2,
+    "overlap": 8,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 1
+    "match_quantity": 1,
+    # Choose the algorithm used to perform matching. kdtree is recommended for
+    # larger datasets.
+    "method": 'kdtree'
 }
 
 synthesizer = {
@@ -76,7 +79,7 @@ synthesizer = {
     "enforce_f0": True,
     "enf_f0_ratio_limit": 10.,
     "grain_size": 70,
-    "overlap": 2,
+    "overlap": 8,
     "normalize" : True,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
