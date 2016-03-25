@@ -492,14 +492,16 @@ class Matcher:
 
 
             try:
+                del self.output_db.data["data_distance"]
                 self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
-            except IOError:
-                self.output_db.data["data_distance"].clear()
+            except RuntimeError:
+                self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
 
             try:
+                del self.output_db.data["distance_accum"]
                 self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
-            except IOError:
-                self.output_db.data["distance_accum"].clear()
+            except RuntimeError:
+                self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
 
             for analysis in self.matcher_analyses:
                 self.logger.info("Current analysis: {0}".format(analysis))
@@ -548,8 +550,12 @@ class Matcher:
                         l = chunk_size
                         if k+l > y_size:
                             l = y_size - k
-                        print(i)
-                        print(k)
+                        self.logger.info("Calculating weighted "
+                                         "distances:\nSource chunk {0} - {1} of "
+                                         "{2}\nTarget chunk {3} - {4} of "
+                                         "{5}".format(
+                                             i, i+j, x_size, k, k+l, y_size
+                                         ))
 
                         self.output_db.data["data_distance"].read_direct(membuff, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
                         self.output_db.data["distance_accum"].read_direct(membuff2, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
@@ -586,8 +592,12 @@ class Matcher:
                     l = chunk_size
                     if k+l > y_size:
                         l = y_size - k
-                    print(i)
-                    print(k)
+                    self.logger.info("Calculating best overall "
+                                        "matches:\nSource chunk {0} - {1} of "
+                                        "{2}\nTarget chunk {3} - {4} of "
+                                        "{5}".format(
+                                            i, i+j, x_size, k, k+l, y_size
+                                        ))
 
                     # Read the current chunk to memory
                     self.output_db.data["distance_accum"].read_direct(chunk_vals, np.s_[i:i+j, k:k+l], np.s_[0:j, 0:l])
