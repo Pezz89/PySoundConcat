@@ -469,6 +469,13 @@ class Matcher:
             weightings = {x: 1. for x in self.matcher_analyses}
 
         for tind, target_entry in enumerate(self.target_db.analysed_audio):
+            # Check if match data already exists and use it rather than
+            # regenerating if it does.
+            if target_entry.name in self.output_db.data["match"].keys():
+                self.logger.info("Match data already exists for {0}. Using this "
+                                 "data. Run with the \'--rematch\' flag to "
+                                 "overwrite.".format(self.output_db))
+                continue
             # Create an array of grain times for target sample
             target_times = target_entry.generate_grain_times(grain_size, overlap, save_times=True)
 
@@ -483,9 +490,16 @@ class Matcher:
             chunk_size = 8192
 
 
-            self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
 
-            self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
+            try:
+                self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
+            except IOError:
+                self.output_db.data["data_distance"].clear()
+
+            try:
+                self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
+            except IOError:
+                self.output_db.data["distance_accum"].clear()
 
             for analysis in self.matcher_analyses:
                 self.logger.info("Current analysis: {0}".format(analysis))
@@ -562,7 +576,6 @@ class Matcher:
             match_vals.fill(np.inf)
 
 
-            pdb.set_trace()
             while i < x_size:
                 j = chunk_size
                 if i+j > x_size:
@@ -593,17 +606,10 @@ class Matcher:
                     best_match_vals = vals_append[m, vals_sort]
                     match_vals[i:i+j] = best_match_vals[:, :self.match_quantity]
                     k += chunk_size
-
                 i += chunk_size
-
-
-
-
-
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
 
-            pdb.set_trace()
             # Generate the path to the data group that will store the match
             # data in the HDF5 file.
             datafile_path = ''.join(("match/", target_entry.name))
@@ -619,7 +625,6 @@ class Matcher:
                                    "file.\n Try running with the '--rematch' flag "
                                    "to overwrite this data.\n Original error: "
                                    "{0}".format(err))
-        return match_grain_inds
 
 
     def distance_calc(self, data1, data2):
