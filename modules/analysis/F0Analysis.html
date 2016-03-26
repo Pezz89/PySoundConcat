@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analysis.F0Analysis &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<h1>Source code for analysis.F0Analysis</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.lib</span> <span class="kn">import</span> <span class="n">stride_tricks</span>
+<span class="kn">from</span> <span class="nn">Analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">fft</span><span class="p">,</span> <span class="n">ifft</span><span class="p">,</span> <span class="n">fftshift</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">polyfit</span><span class="p">,</span> <span class="n">arange</span>
+
+<div class="viewcode-block" id="F0Analysis"><a class="viewcode-back" href="../../api.html#analysis.F0Analysis">[docs]</a><span class="k">class</span> <span class="nc">F0Analysis</span><span class="p">(</span><span class="n">Analysis</span><span class="p">):</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    F0 analysis descriptor class for generation of fundamental frequency</span>
+<span class="sd">    estimation.</span>
+
+<span class="sd">    This descriptor calculates the fundamental frequency for overlapping grains</span>
+<span class="sd">    of an AnalysedAudioFile object.  A full definition of F0 analysis can be</span>
+<span class="sd">    found in the documentation.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - analysis_group: the HDF5 file group to use for the storage of the</span>
+<span class="sd">      analysis.</span>
+
+<span class="sd">    - config: The configuration module used to configure the analysis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">F0Analysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;F0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c"># Store reference to the file to be analysed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mf">2.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">read_grain</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating F0 analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_analysis_grains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve analysis frames for period specified in start and end times.</span>
+<span class="sd">        arrays of start and end time pairs will produce an array of equivelant</span>
+<span class="sd">        size containing frames for these times.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span><span class="p">[</span><span class="s">&quot;F0&quot;</span><span class="p">][</span><span class="s">&quot;times&quot;</span><span class="p">][:]</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span><span class="p">[</span><span class="s">&quot;F0&quot;</span><span class="p">][</span><span class="s">&quot;frames&quot;</span><span class="p">][:]</span>
+        <span class="n">hr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span><span class="p">[</span><span class="s">&quot;F0&quot;</span><span class="p">][</span><span class="s">&quot;harmonic_ratio&quot;</span><span class="p">][:]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">vtimes</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">vtimes</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">vtimes</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">((</span><span class="n">frames</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">hr</span><span class="p">),</span> <span class="n">selection</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_f0_analysis</span><span class="p">(</span>
+        <span class="n">frames</span><span class="p">,</span>
+        <span class="n">samplerate</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+        <span class="n">overlapFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">m0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">M</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate F0 contour analysis.</span>
+
+<span class="sd">        Calculate the frequency and harmonic ratio values of windowed segments</span>
+<span class="sd">        of the audio file and save to disk.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span><span class="p">:</span>
+            <span class="n">M</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="mf">0.016</span><span class="o">*</span><span class="n">samplerate</span><span class="p">)</span>
+
+        <span class="n">hopSize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">window_size</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">overlapFac</span> <span class="o">*</span> <span class="n">window_size</span><span class="p">))</span>
+
+        <span class="c"># zeros at beginning (thus center of 1st window should be for sample nr. 0)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">frames</span>
+        <span class="c">#samples = np.concatenate((np.zeros(np.floor(window_size/2.0)), frames))</span>
+
+        <span class="c"># cols for windowing</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">window_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">hopSize</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c"># zeros at end (thus samples can be fully covered by frames)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">samples</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">window_size</span><span class="p">)))</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">stride_tricks</span><span class="o">.</span><span class="n">as_strided</span><span class="p">(</span>
+            <span class="n">samples</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">window_size</span><span class="p">),</span>
+            <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">hopSize</span><span class="p">,</span> <span class="n">samples</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c"># TODO: Replace this with zero crossing object.</span>
+        <span class="k">def</span> <span class="nf">feature_zcr</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
+            <span class="n">window2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">window2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">window2</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">Z</span>
+
+        <span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            FFT based autocorrelation function, which is faster than numpy.correlate</span>
+<span class="sd">            Operates on muti-dimensional arrays on a per element basis.</span>
+
+<span class="sd">            Ref: http://stackoverflow.com/questions/4503325/autocorrelation-of-a-multidimensional-array-in-numpy</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c"># x is supposed to be an array of sequences, of shape (totalelements, length)</span>
+            <span class="n">fftx</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="n">length</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="n">fftx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">fftx</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ret</span>
+
+        <span class="k">def</span> <span class="nf">parabolic</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Quadratic interpolation for estimating the true position of an</span>
+<span class="sd">            inter-sample maximum when nearby samples are known.</span>
+
+<span class="sd">            f is a vector and x is an index for that vector.</span>
+
+<span class="sd">            Returns (vx, vy), the coordinates of the vertex of a parabola that</span>
+<span class="sd">            goes through point x and its two neighbors.</span>
+
+<span class="sd">            Example:</span>
+
+<span class="sd">            Defining a vector f with a local maximum at index 3 (= 6), find</span>
+<span class="sd">            local maximum if points 2, 3, and 4 actually defined a parabola.</span>
+
+<span class="sd">            In [3]: f = [2, 3, 1, 6, 4, 2, 3, 1]</span>
+
+<span class="sd">            In [4]: parabolic(f, argmax(f))</span>
+
+<span class="sd">            Out[4]: (3.2142857142857144, 6.1607142857142856)</span>
+
+<span class="sd">            Ref: https://gist.github.com/endolith/255291</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">f</span><span class="o">.</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+            <span class="n">xv</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">x</span>
+            <span class="n">yv</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">xv</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">xv</span><span class="p">,</span> <span class="n">yv</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">per_frame_f0</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">frames</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">return</span> <span class="n">f0</span><span class="p">,</span> <span class="n">HR</span>
+
+            <span class="n">R</span><span class="o">=</span><span class="n">autocorr</span><span class="p">([</span><span class="n">frames</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">g</span><span class="o">=</span><span class="n">R</span><span class="p">[</span><span class="n">frames</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">[</span><span class="n">frames</span><span class="o">.</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">m0</span><span class="p">:</span>
+                <span class="c"># estimate m0 (as the first zero crossing of R)</span>
+                <span class="n">m0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="n">m0</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">m0</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">size</span>
+            <span class="k">if</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="n">R</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">M</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">Gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+            <span class="n">CSum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">frames</span><span class="o">*</span><span class="n">frames</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">Gamma</span><span class="p">[</span><span class="n">m0</span><span class="p">:</span><span class="n">M</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">m0</span><span class="p">:</span><span class="n">M</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">([</span><span class="n">g</span><span class="o">*</span><span class="n">CSum</span><span class="p">[</span><span class="o">-</span><span class="n">m0</span><span class="p">:</span><span class="o">-</span><span class="n">M</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Warning</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">feature_zcr</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">Z</span> <span class="o">&gt;</span> <span class="mf">0.15</span><span class="p">:</span>
+                <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># compute T0 and harmonic ratio:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">HR</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">blag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span>
+                    <span class="n">HR</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">[</span><span class="n">blag</span><span class="p">]</span>
+                    <span class="n">interp</span><span class="p">,</span> <span class="n">HR</span> <span class="o">=</span> <span class="n">parabolic</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">blag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">interp</span><span class="p">:</span>
+                        <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c"># get fundamental frequency:</span>
+                        <span class="n">f0</span> <span class="o">=</span> <span class="n">samplerate</span> <span class="o">/</span> <span class="n">interp</span>
+            <span class="k">if</span> <span class="n">f0</span> <span class="o">&gt;</span> <span class="n">samplerate</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;F0 value ({0}) is above the nyquist rate &quot;</span>
+                                 <span class="s">&quot;({1}). This shouldn&#39;t happen...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span>
+                                 <span class="n">samplerate</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">HR</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">HR</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">HR</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">per_frame_f0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="c"># output = np.empty((frames.shape[0], 2))</span>
+        <span class="c"># for ind, i in enumerate(frames):</span>
+        <span class="c">#     output[ind] = per_frame_f0(i, m0, M)</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">hdf5_dataset_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Formats the output from the analysis method to save to the HDF5 file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">samplerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_f0_analysis</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">harmonic_ratio</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">f0_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_f0_frame_times</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">samplerate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">({</span><span class="s">&#39;frames&#39;</span><span class="p">:</span> <span class="n">f0</span><span class="p">,</span> <span class="s">&#39;harmonic_ratio&#39;</span><span class="p">:</span> <span class="n">harmonic_ratio</span><span class="p">,</span> <span class="s">&#39;times&#39;</span><span class="p">:</span> <span class="n">f0_times</span><span class="p">},</span> <span class="p">{})</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">calc_f0_frame_times</span><span class="p">(</span><span class="n">f0frames</span><span class="p">,</span> <span class="n">sample_frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
+
+        <span class="c"># Get number of frames for time and frequency</span>
+        <span class="n">timebins</span> <span class="o">=</span> <span class="n">f0frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c"># Create array ranging from 0 to number of time frames</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">timebins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># divide the number of samples by the total number of frames, then</span>
+        <span class="c"># multiply by the frame numbers.</span>
+        <span class="n">f0_times</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">timebins</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c"># Divide by the samplerate to give times in seconds</span>
+        <span class="n">f0_times</span> <span class="o">=</span> <span class="n">f0_times</span> <span class="o">/</span> <span class="n">samplerate</span>
+        <span class="k">return</span> <span class="n">f0_times</span>
+
+    <span class="k">def</span> <span class="nf">analysis_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">format</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the average analysis value of the grain using the match format specified.&quot;&quot;&quot;</span>
+        <span class="n">frames</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">harm_ratio</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="c"># Get indexes of all valid frames (that aren&#39;t nan)</span>
+        <span class="n">valid_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">harm_ratio</span><span class="p">)</span>
+
+        <span class="n">format_style_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mean&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+            <span class="s">&#39;median&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">,</span>
+            <span class="s">&#39;log2_mean&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">log2_mean</span><span class="p">,</span>
+            <span class="s">&#39;log2_median&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">log2_median</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c"># For debugging apply along axis:</span>
+        <span class="c">#for ind, i in enumerate(selection):</span>
+        <span class="c">#    output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formatter_func</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">selection</span><span class="p">,</span>
+            <span class="n">frames</span><span class="p">,</span>
+            <span class="n">valid_inds</span><span class="p">,</span>
+            <span class="n">formatter</span><span class="o">=</span><span class="n">format_style_dict</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

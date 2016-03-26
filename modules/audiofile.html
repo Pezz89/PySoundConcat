@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>audiofile &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<h1>Source code for audiofile</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pysndfile</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="kn">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="kn">from</span> <span class="nn">fileops</span> <span class="kn">import</span> <span class="n">pathops</span>
+<span class="kn">import</span> <span class="nn">analysis.RMSAnalysis</span> <span class="kn">as</span> <span class="nn">RMSAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.PeakAnalysis</span> <span class="kn">as</span> <span class="nn">PeakAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.AttackAnalysis</span> <span class="kn">as</span> <span class="nn">AttackAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.ZeroXAnalysis</span> <span class="kn">as</span> <span class="nn">ZeroXAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.FFTAnalysis</span> <span class="kn">as</span> <span class="nn">FFTAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralCentroidAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralCentroidAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralSpreadAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralSpreadAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralFluxAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralFluxAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralCrestFactorAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralCrestFactorAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralFlatnessAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralFlatnessAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.CentroidAnalysis</span> <span class="kn">as</span> <span class="nn">CentroidAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.F0Analysis</span> <span class="kn">as</span> <span class="nn">F0Analysis</span>
+<span class="kn">import</span> <span class="nn">analysis.VarianceAnalysis</span> <span class="kn">as</span> <span class="nn">VarianceAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.KurtosisAnalysis</span> <span class="kn">as</span> <span class="nn">KurtosisAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SkewnessAnalysis</span> <span class="kn">as</span> <span class="nn">SkewnessAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.F0HarmRatioAnalysis</span> <span class="kn">as</span> <span class="nn">F0HarmRatioAnalysis</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+<div class="viewcode-block" id="AudioFile"><a class="viewcode-back" href="../api.html#audiofile.AudioFile">[docs]</a><span class="k">class</span> <span class="nc">AudioFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Object for storing and accessing basic information for an audio file.</span>
+
+<span class="sd">    This object is a wrapper for the pysndfile audio object. It provides</span>
+<span class="sd">    additional functionality alongside the ability to open and close audiofiles</span>
+<span class="sd">    without deleting their containing object.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - filepath: path to the file to be opened/written to</span>
+
+<span class="sd">    - mode: mode to open file in. either &#39;r&#39; (read) or &#39;w&#39; (write)</span>
+
+<span class="sd">    - format: the file format to use when opening a new file for writing. see</span>
+<span class="sd">      get_sndfile_formats() for more information.</span>
+
+<span class="sd">    - channels: the number of audio channels to use.</span>
+
+<span class="sd">    - samplerate: the samplerate in herts to use.</span>
+
+<span class="sd">    - name: the sound file object name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">filepath</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">,</span>
+        <span class="n">format</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">channels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">samplerate</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.AudioFile&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Initialised AudioFile&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
+        <span class="c"># TODO: If a name isn&#39;t provided then create a default name based on</span>
+        <span class="c"># the file name without an extension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">=</span> <span class="n">samplerate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Allow AudioFile object to be opened by &#39;with&#39; statements&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Opening soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;r&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                    <span class="s">&quot;Cannot open {0} for reading as it cannot be &quot;</span>
+                    <span class="s">&quot;found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span> <span class="o">=</span> <span class="n">pysndfile</span><span class="o">.</span><span class="n">PySndfile</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_samplerate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_format</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span> <span class="o">=</span> <span class="n">pysndfile</span><span class="o">.</span><span class="n">PySndfile</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                <span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span>
+                <span class="n">samplerate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for opening the associated audio file outside of a with statement&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Opening soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for closing the associated audio file outside of a with statement&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Closing soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Closes sound file when exiting &#39;with&#39; statement.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Closing soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__if_open</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handles error from using methods when the audio file is closed&quot;&quot;&quot;</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;{0}: Audio file isn&#39;t open.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">),</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return number of channels of sndfile.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">channels</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">encoding_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return string representation of encoding (e.g. pcm16).</span>
+
+<span class="sd">        See get_sndfile_encodings() for a list of available encoding strings</span>
+<span class="sd">        that are supported by a given sndfile format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">encoding_str</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Report error numbers related to the current sound file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">error</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return raw format specification from sndfile.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return number of frames in file (number of samples per channel).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">frames</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get all stringtypes from the sound file.</span>
+
+<span class="sd">        see stringtype_name_top_id.keys() for the list of strings that</span>
+<span class="sd">        are supported by the libsndfile version you use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">get_strings</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">major_format_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return short string representation of major format.</span>
+
+<span class="sd">        (e.g. aiff) see get_sndfile_formats() for a complete</span>
+<span class="sd">        list of file formats</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">major_format_str</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">read_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nframes</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the given number of frames and fill numpy array.</span>
+
+<span class="sd">        Arguments</span>
+
+<span class="sd">        - nframes: &lt;int&gt;</span>
+
+<span class="sd">        - number of frames to read (default = -1 -&gt; read all).</span>
+
+<span class="sd">        - dtype: &lt;numpy dtype&gt;</span>
+
+<span class="sd">        - dtype of the returned array containing read data (see note).</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">        One column per channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">read_frames</span><span class="p">(</span><span class="n">nframes</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">rewind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;rw&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rewind read/write/read and write position given by mode to</span>
+<span class="sd">        start of file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_samplerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the samplerate of the file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">samplerate</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;rw&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Seek into audio file: similar to python seek function,</span>
+<span class="sd">        but taking only audio data into account.</span>
+
+<span class="sd">        Arguments</span>
+
+<span class="sd">        - offset: &lt;int&gt;</span>
+<span class="sd">          the number of frames (eg two samples for stereo files) to move</span>
+<span class="sd">          relatively to position set by whence.</span>
+
+<span class="sd">        - whence: &lt;int&gt;</span>
+<span class="sd">          only 0 (beginning), 1 (current) and 2 (end of the file) are valid.</span>
+
+<span class="sd">        - mode: &lt;string&gt;</span>
+<span class="sd">          If set to &#39;rw&#39;, both read and write pointers are updated. If &#39;r&#39; is</span>
+<span class="sd">          given, only read pointer is updated, if &#39;w&#39;, only the write one is</span>
+<span class="sd">          (this may of course make sense only if you open the file in a certain</span>
+<span class="sd">          mode).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        offset: int the number of frames from the beginning of the file</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">        Offset relative to audio data: meta-data are ignored.</span>
+<span class="sd">        if an invalid seek is given (beyond or before the file), an IOError</span>
+<span class="sd">        is raised; note that this is different from the seek method of a</span>
+<span class="sd">        File object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return true for soundfiles that support seeking.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">set_auto_clipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable auto clipping when reading/writing samples from/to sndfile.</span>
+
+<span class="sd">        auto clipping is enabled by default. auto clipping is required by</span>
+<span class="sd">        libsndfile to properly handle scaling between sndfiles with pcm</span>
+<span class="sd">        encoding and float representation of the samples in numpy. When auto</span>
+<span class="sd">        clipping is set to on reading pcm data into a float vector and writing</span>
+<span class="sd">        it back with libsndfile will reproduce the original samples. If auto</span>
+<span class="sd">        clipping is off, samples will be changed slightly as soon as the</span>
+<span class="sd">        amplitude is close to the sample range because libsndfile applies</span>
+<span class="sd">        slightly different scaling factors during read and write.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">set_auto_clipping</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">set_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stringtype_name</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set one of the stringtypes to the string given as argument.</span>
+
+<span class="sd">        If you try to write a stringtype that is not supported by the library</span>
+<span class="sd">        a RuntimeError will be raised</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">set_string</span><span class="p">(</span><span class="n">stringtype_name</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">strError</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Report error strings related to the current sound file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">strError</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">writeSync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the operating system&#39;s function to force the writing of all file</span>
+<span class="sd">        cache buffers to disk.</span>
+<span class="sd">        No effect if file is open as read</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">writeSync</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">write_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        write 1 or 2 dimensional array into sndfile.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - input: &lt;numpy array&gt;</span>
+<span class="sd">        containing data to write.</span>
+
+<span class="sd">        Notes:</span>
+
+<span class="sd">        One column per channel.</span>
+
+<span class="sd">        updates the write pointer.</span>
+
+<span class="sd">        if the input type is float, and the file encoding is an integer type,</span>
+<span class="sd">        you should make sure the input data are normalized normalized data</span>
+<span class="sd">        (that is in the range [-1..1] - which will corresponds to the maximum</span>
+<span class="sd">        range allowed by the integer bitwidth).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">write_frames</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">construct_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">major</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        construct a format specification for libsndfile from major format</span>
+<span class="sd">        string and encoding string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">construct_format</span><span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_pysndfile_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;return tuple describing the version of pysndfile&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">get_pysndfile_version</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_sndfile_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return a tuple of ints representing the version of the libsdnfile that</span>
+<span class="sd">        is used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">get_sndfile_version</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_sndfile_formats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return lists of available file formats supported by libsndfile and</span>
+<span class="sd">        pysndfile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">get_sndfile_formats</span><span class="p">()</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">get_sndfile_encodings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">major</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return lists of available encoding for the given sndfile format.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - major: Major sndfile format for the list of available formats.</span>
+<span class="sd">          format should be specified as a string, using one of the strings</span>
+<span class="sd">          returned by get_sndfile_formats()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">get_sndfile_encodings</span><span class="p">(</span><span class="n">major</span><span class="p">)</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">read_grain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">grain_size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a grain of audio from the file. if grain ends after the end of</span>
+<span class="sd">        the file, the grain can be padded with zeros using the padding</span>
+<span class="sd">        argument.</span>
+
+<span class="sd">        Audio object seeker is not changed</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - start_index: the index in samples to read from.</span>
+
+<span class="sd">        - grain_size: The size of the grain (in samples) to read</span>
+
+<span class="sd">        - padding: if the end of the audio file is reaches, the grain will be</span>
+<span class="sd">          padded with additional zeros.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switch_mode</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()</span> <span class="o">+</span> <span class="n">start_index</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grain_size</span><span class="p">:</span>
+            <span class="n">grain_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()</span>
+        <span class="n">grain_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">grain_size</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_seek_position</span><span class="p">()</span>
+        <span class="c"># Read grain</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">+</span> <span class="n">grain_size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">():</span>
+            <span class="n">grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_frames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()</span> <span class="o">-</span> <span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">padding</span><span class="p">:</span>
+                <span class="n">grain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+                    <span class="n">grain</span><span class="p">,</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="n">grain_size</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()),</span>
+                    <span class="s">&#39;constant&#39;</span><span class="p">,</span>
+                    <span class="n">constant_values</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_frames</span><span class="p">(</span><span class="n">grain_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grain</span>
+
+    <span class="k">def</span> <span class="nf">normalize_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite_original</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Normalizes the entire file&quot;&quot;&quot;</span>
+        <span class="c"># Get current file name and it&#39;s extension</span>
+        <span class="p">(</span><span class="n">current_filename</span><span class="p">,</span> <span class="n">current_fileextension</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c"># Create a seperate filepath to use for the mono file to be created</span>
+        <span class="n">normalized_filename</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">current_filename</span><span class="p">,</span> <span class="s">&quot;.norm&quot;</span><span class="p">,</span> <span class="n">current_fileextension</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c"># If the mono audio file already exists then use that to replace the</span>
+        <span class="c"># stereo file, rather than computing again from scratch</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">normalized_filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replace_audiofile</span><span class="p">(</span><span class="n">normalized_filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="c"># Create the empty mono file object</span>
+        <span class="n">normalized_file</span> <span class="o">=</span> <span class="n">AudioFile</span><span class="p">(</span>
+            <span class="n">normalized_filename</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span>
+            <span class="n">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+            <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">samplerate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="c"># Read current file in chunks and convert to mono by deviding all</span>
+        <span class="c"># samples by 2 and combining to create a single signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switch_mode</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">read_frames</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_audio</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">normalized_file</span><span class="o">.</span><span class="n">write_frames</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">normalized_file</span><span class="o">.</span><span class="n">switch_mode</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="c"># If overwriting the original sound file, delete the original stereo</span>
+        <span class="c"># audio file from the system and replace the audio object with the mono</span>
+        <span class="c"># audio object created earlier. Re-name the mono audio file to be the</span>
+        <span class="c"># same as the audio file it was replacing</span>
+        <span class="k">if</span> <span class="n">overwrite_original</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replace_audiofile</span><span class="p">(</span><span class="n">normalized_filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">normalized_file</span>
+
+    <span class="k">def</span> <span class="nf">check_mono</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that the audio file is a mono audio file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">replace_audiofile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replacement_filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the current audiofile and audiofile object with the file</span>
+<span class="sd">        specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pathops</span><span class="o">.</span><span class="n">file_must_exist</span><span class="p">(</span><span class="n">replacement_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">replacement_filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">convert_to_mono</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite_original</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts stereo audiofiles to mono.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - overwrite_original: If True then the current object will be</span>
+<span class="sd">          reloaded as the mono file. Otherwise, the new mono file will be</span>
+<span class="sd">          returned as a new AudioFile object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO: Implement mixdown for multi-channel audio other than 2 channel</span>
+        <span class="c"># stereo.</span>
+
+        <span class="c"># Get current file name and it&#39;s extension</span>
+        <span class="p">(</span><span class="n">current_filename</span><span class="p">,</span> <span class="n">current_fileextension</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c"># Create a seperate filepath to use for the mono file to be created</span>
+        <span class="n">mono_filename</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">current_filename</span><span class="p">,</span> <span class="s">&quot;.mono&quot;</span><span class="p">,</span> <span class="n">current_fileextension</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c"># If the mono audio file already exists then use that to replace the</span>
+        <span class="c"># stereo file, rather than computing again from scratch</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mono_filename</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replace_audiofile</span><span class="p">(</span><span class="n">mono_filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="c"># If the file is already mono then stop</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="c"># Create the empty mono file object</span>
+        <span class="n">mono_file</span> <span class="o">=</span> <span class="n">AudioFile</span><span class="p">(</span>
+            <span class="n">mono_filename</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span>
+            <span class="n">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_format</span><span class="p">(),</span>
+            <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">samplerate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_samplerate</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="c"># Read current file in chunks and convert to mono by deviding all</span>
+        <span class="c"># samples by 2 and combining to create a single signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">2048</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">():</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_grain</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="p">((</span><span class="n">chunk</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">chunk</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
+            <span class="n">mono_file</span><span class="o">.</span><span class="n">write_frames</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+        <span class="c"># If overwriting the original sound file, delete the original stereo</span>
+        <span class="c"># audio file from the system and replace the audio object with the mono</span>
+        <span class="c"># audio object created earlier. Re-name the mono audio file to be the</span>
+        <span class="c"># same as the audio file it was replacing</span>
+        <span class="k">if</span> <span class="n">overwrite_original</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">mono_file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replace_audiofile</span><span class="p">(</span><span class="n">mono_filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mono_file</span>
+
+    <span class="nd">@__if_open</span>
+    <span class="k">def</span> <span class="nf">rename_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Renames the audio file associated with the object to the name</span>
+<span class="sd">        specified as an argument</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - filename: the new path of the audio file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO: Consider the race condition here. Is this a problem?</span>
+        <span class="c"># Check name doesn&#39;t already exist</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The filepath: {0} is an already existing file&quot;</span><span class="p">)</span>
+        <span class="c"># Check name is a valid file path</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The filepath: {0} does not point to an existing &quot;</span>
+                             <span class="s">&quot;directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="c"># Check name has the same extension as previous file</span>
+        <span class="n">old_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">old_ext</span> <span class="o">!=</span> <span class="n">new_ext</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The renamed file&#39;s extension ({0})&quot;</span>
+                             <span class="s">&quot;must be the same as the original extension&quot;</span>
+                             <span class="s">&quot;({1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_ext</span><span class="p">,</span> <span class="n">new_ext</span><span class="p">))</span>
+        <span class="c"># Delete pysndfile object</span>
+        <span class="n">seek</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_seek_position</span><span class="p">()</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span>
+        <span class="c"># Rename file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="c"># Reinitialize pysndfile object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span> <span class="o">=</span> <span class="n">pysndfile</span><span class="o">.</span><span class="n">PySndfile</span><span class="p">(</span>
+            <span class="n">filename</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span>
+            <span class="n">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+            <span class="n">samplerate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span><span class="p">,</span>
+            <span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="c"># Re-set seek position to previous position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">seek</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_seek_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the current seeker position in the file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">ms_to_samps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts milliseconds to samples based on the sample rate of the audio</span>
+<span class="sd">        file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">/</span> <span class="mf">1000.0</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">secs_to_samps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seconds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts seconds to samples based on the sample rate of the audio file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">samps_to_secs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samps</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts samples to seconds based on the sample rate of the audio</span>
+<span class="sd">        file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">samps</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span>
+
+    <span class="k">def</span> <span class="nf">samps_to_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samps</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert samples to milliseconds based on the sample rate of the audio</span>
+<span class="sd">        file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">samps</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="k">def</span> <span class="nf">fade_audio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">fade_time</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fade the audio in or out linearly from the position specified over the</span>
+<span class="sd">        time specified.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - audio: A numpy array of audio to manipulate</span>
+
+<span class="sd">        - start_position: The starting position to begin the fade from (ms)</span>
+
+<span class="sd">        - fade_time: The length of the fade (ms)</span>
+
+<span class="sd">        - mode: choose to fade the audio in or out (string: &quot;in&quot; or &quot;out&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&quot;in&quot;</span><span class="p">:</span>
+            <span class="c"># Calculate the amplitude values to multiply the audio by</span>
+            <span class="n">fade</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_to_samps</span><span class="p">(</span><span class="n">fade_time</span><span class="p">))</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_to_samps</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="c"># multiply samples by the fade values from the start position for</span>
+            <span class="c"># the duration of the fade</span>
+            <span class="n">audio</span><span class="p">[</span><span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">*=</span> <span class="n">fade</span>
+            <span class="c"># zero any samples before the fade in</span>
+            <span class="n">audio</span><span class="p">[:</span><span class="n">position</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">0</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&quot;out&quot;</span><span class="p">:</span>
+            <span class="c"># Calculate the amplitude values to multiply the audio by</span>
+            <span class="n">fade</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_to_samps</span><span class="p">(</span><span class="n">fade_time</span><span class="p">))</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_to_samps</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="c"># multiply samples by the fade values from the start position for</span>
+            <span class="c"># the duration of the fade</span>
+            <span class="n">audio</span><span class="p">[</span><span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">*=</span> <span class="n">fade</span>
+            <span class="c"># zero any samples after the fade in</span>
+            <span class="n">audio</span><span class="p">[</span><span class="n">position</span><span class="o">+</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">:]</span> <span class="o">*=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s">&quot;{0} is not a valid fade option. Use either </span><span class="se">\&quot;</span><span class="s">in</span><span class="se">\&quot;</span><span class="s"> or &quot;</span>
+                  <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">out</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">return</span> <span class="n">audio</span>
+
+    <span class="k">def</span> <span class="nf">check_not_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that the file contains audio&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frames</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">check_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_mono</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test to make sure that the audio file is valid for use.</span>
+<span class="sd">        ie mono, not empty</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_mono</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">force_mono</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_mono</span><span class="p">(</span><span class="n">overwrite_original</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_not_empty</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">switch_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch audiofile to mode specified.</span>
+
+<span class="sd">        This allows for convenient reading and writing of audiofiles without</span>
+<span class="sd">        direct closing and opening of the underlying pysndfile object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;r&#39;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;w&#39;</span>
+        <span class="c"># Change mode only if it is different from the currently set mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">!=</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">seek</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_seek_position</span><span class="p">()</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pysndfile_object</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">seek</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">generate_grain_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain_length</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates an array of start and finish pairs based on overlapping</span>
+<span class="sd">        frames at the grain length specified.</span>
+
+<span class="sd">        Note that only full grains within the size of the sample are returned.</span>
+<span class="sd">        incomplete grains found at the end of files are ignored.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - grain_length: length of each grain in seconds.</span>
+
+<span class="sd">        - overlap: the factor by which grains overlap (integer)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samps_to_ms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+        <span class="n">hop_size</span> <span class="o">=</span> <span class="n">grain_length</span> <span class="o">/</span> <span class="n">overlap</span>
+        <span class="n">grain_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">hop_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">grain_count</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">times</span><span class="p">,</span> <span class="n">times</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s">&#39;float64&#39;</span><span class="p">))</span>
+        <span class="n">times</span> <span class="o">*=</span> <span class="n">hop_size</span>
+        <span class="n">times</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">grain_length</span>
+        <span class="k">if</span> <span class="n">save_times</span><span class="p">:</span>
+            <span class="c"># Save grain times as a member variable for later refference.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">times</span>
+        <span class="k">return</span> <span class="n">times</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow for grains to be retreived by indexing after grain times have been generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;AudioFile object grain times must be generated &quot;</span>
+                             <span class="s">&quot;before grains can be accesed by index. Try running &quot;</span>
+                             <span class="s">&quot;AnalysedAudioFile.generate_grain_times(grain_size, &quot;</span>
+                                                                    <span class="s">&quot;overlap, save_times=True)&quot;</span><span class="p">)</span>
+        <span class="n">grain_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">grain_times</span> <span class="o">*=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_grain</span><span class="p">(</span><span class="n">start_index</span><span class="o">=</span><span class="n">grain_times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grain_size</span><span class="o">=</span><span class="n">grain_times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">grain_times</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">gen_window</span><span class="p">(</span><span class="n">window_type</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a window function of given size and type</span>
+<span class="sd">        Returns a 1D numpy array</span>
+
+<span class="sd">        sym: Used in the triangle window generation. When True (default),</span>
+<span class="sd">        generates a symmetric window, for use in filter design. When False,</span>
+<span class="sd">        generates a periodic window, for use in spectral analysis</span>
+
+<span class="sd">        Available window types:</span>
+
+<span class="sd">        - hanning</span>
+
+<span class="sd">        - hamming</span>
+
+<span class="sd">        - bartlett</span>
+
+<span class="sd">        - blackman</span>
+
+<span class="sd">        - kaiser</span>
+
+<span class="sd">        - triangle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;hanning&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;hamming&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hamming</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;bartlett&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bartlett</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;blackman&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">blackman</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;kaiser&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">kaiser</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">window_type</span> <span class="ow">is</span> <span class="s">&quot;triangle&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">signal</span><span class="o">.</span><span class="n">triang</span><span class="p">(</span><span class="n">window_size</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="n">sym</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid window&quot;</span>
+                             <span class="s">&quot; type&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window_type</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">normalize_audio</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalize array of audio so that the maximum sample value is equal to</span>
+<span class="sd">        the maximum provided</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">audio</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Audio array is empty. Cannot be normalized&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">max_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">audio</span><span class="p">))</span>
+        <span class="n">audio</span> <span class="o">*=</span> <span class="n">maximum</span> <span class="o">/</span> <span class="n">max_sample</span>
+        <span class="k">return</span> <span class="n">audio</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">mono_arrays_to_stereo</span><span class="p">(</span><span class="n">array1</span><span class="p">,</span> <span class="n">array2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts two horizontal numpy arrays to one concatenated verticaly</span>
+<span class="sd">        stacked array that can be written to a stereo file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">array1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">array2</span><span class="p">)))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">gen_white_noise</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">gain</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate mono white noise of the number of samples specified.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - length (samples)</span>
+
+<span class="sd">        - gain (silence 0.0 - full volume 1.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">gain</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">gen_default_wav</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">overwrite_existing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convenience method that creates a wav file with the following spec at</span>
+<span class="sd">        the path given:</span>
+
+<span class="sd">        - Samplerate: 44.1Khz</span>
+
+<span class="sd">        - Bit rate: 24Bit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite_existing</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                    <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;File: </span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s"> already exists.&quot;</span><span class="p">))</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AudioFile</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">mode</span><span class="p">,</span>
+            <span class="n">format</span><span class="o">=</span><span class="n">pysndfile</span><span class="o">.</span><span class="n">construct_format</span><span class="p">(</span><span class="s">&quot;wav&quot;</span><span class="p">,</span> <span class="s">&quot;pcm24&quot;</span><span class="p">),</span>
+            <span class="n">channels</span><span class="o">=</span><span class="n">channels</span><span class="p">,</span>
+            <span class="n">samplerate</span><span class="o">=</span><span class="mi">44100</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;AudioFile(name={0}, wav={1})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AnalysedAudioFile"><a class="viewcode-back" href="../api.html#audiofile.AnalysedAudioFile">[docs]</a><span class="k">class</span> <span class="nc">AnalysedAudioFile</span><span class="p">(</span><span class="n">AudioFile</span><span class="p">):</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates and stores analysis information for an audio file.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - (All AudioFile arguments)</span>
+
+<span class="sd">    - db_dir: if the object is part of a database, this is the path to the root</span>
+<span class="sd">      of the database.</span>
+
+<span class="sd">    - config: The config module used for configuration settings. See examples</span>
+<span class="sd">      for further details.</span>
+
+<span class="sd">    - data_file: the path to the HDF5 file used to store analyses for this</span>
+<span class="sd">      audio file.</span>
+
+<span class="sd">    - reanalyse: bool for whether to overwrite any previously created analyses</span>
+<span class="sd">      for this audio file.</span>
+
+<span class="sd">    - available_analyses: a list of strings for each analyses to be generated.</span>
+<span class="sd">      ie. [\&#39;f0\&#39;, \&#39;rms\&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c"># Initialise the AudioFile parent class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;audiofile.AnalysedAudioFile&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c"># Initialise database variables</span>
+        <span class="c"># Stores the path to the database if object is part of a database.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;db_dir&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="c"># Store configuration file used for various settings.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;config&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="c"># Refferences the HDF5 file object to use for storing analysis data.</span>
+        <span class="n">analysis_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;data_file&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis_group</span><span class="p">(</span><span class="n">analysis_file</span><span class="p">)</span>
+
+        <span class="c"># If True then files are re-analysed, discarding any previous analysis.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force_analysis</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;reanalyse&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+        <span class="c"># Analysis members. If an analysis is specified either as a tag, or as</span>
+        <span class="c"># a filepath, it will be generated and either saved at the path</span>
+        <span class="c"># specified or if one isn&#39;t specified, it will be created.</span>
+        <span class="c"># A set containing tags for analyses to be created for the file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">available_analyses</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;analyses&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate all analyses that have been set in the self.available_analyses member.&quot;&quot;&quot;</span>
+        <span class="n">analysis_object</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&quot;AnalysisObject&quot;</span><span class="p">,</span> <span class="s">&quot;name, analysis_object&quot;</span><span class="p">)</span>
+        <span class="n">analysis_object_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;fft&quot;</span><span class="p">,</span> <span class="n">FFTAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;rms&quot;</span><span class="p">,</span> <span class="n">RMSAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;zerox&quot;</span><span class="p">,</span> <span class="n">ZeroXAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;spccntr&quot;</span><span class="p">,</span> <span class="n">SpectralCentroidAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;spcsprd&quot;</span><span class="p">,</span> <span class="n">SpectralSpreadAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;spcflux&quot;</span><span class="p">,</span> <span class="n">SpectralFluxAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;spccf&quot;</span><span class="p">,</span> <span class="n">SpectralCrestFactorAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;spcflatness&quot;</span><span class="p">,</span> <span class="n">SpectralFlatnessAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;f0&quot;</span><span class="p">,</span> <span class="n">F0Analysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;peak&quot;</span><span class="p">,</span> <span class="n">PeakAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;centroid&quot;</span><span class="p">,</span> <span class="n">CentroidAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;variance&quot;</span><span class="p">,</span> <span class="n">VarianceAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;kurtosis&quot;</span><span class="p">,</span> <span class="n">KurtosisAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;skewness&quot;</span><span class="p">,</span> <span class="n">SkewnessAnalysis</span><span class="p">),</span>
+            <span class="n">analysis_object</span><span class="p">(</span><span class="s">&quot;harm_ratio&quot;</span><span class="p">,</span> <span class="n">F0HarmRatioAnalysis</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+
+        <span class="c"># Create the analysis objects for analyses that have been specified in</span>
+        <span class="c"># the analyses member variable.</span>
+        <span class="k">for</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="n">analysis_object_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">analysis</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_analyses</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span><span class="p">[</span><span class="n">analysis</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">analysis_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">create_analysis_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create HDF5 group for object to store analyses for this audio file.</span>
+
+<span class="sd">        Audio file analyses are organized in groups per audio file.</span>
+<span class="sd">        This function creates a group in the analysis HDF5 file with the name</span>
+<span class="sd">        of the audio file. Analyses of this file are stored in analysis</span>
+<span class="sd">        sub-groups.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># If an analysis file object is not provided, try to create on based on</span>
+        <span class="c"># the object&#39;s name and audio file location.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">analysis_file</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span><span class="p">:</span>
+                <span class="c"># Raise error as database should have analysis file.</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Database doesn&#39;t have an analysis file.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Attempt to create a new analysis file using the name of the</span>
+                <span class="c"># audiofile.</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;analysis_data.hdf5&#39;</span><span class="p">))</span>
+                <span class="n">datapath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">analysis_file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="c"># Create a group to store analyses for this file in</span>
+        <span class="n">group_name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;analysis/&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">analysis_file</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;A file with the same name ({0}) already &quot;</span>
+                                <span class="s">&quot;exists in the analysis data. Using data from &quot;</span>
+                                <span class="s">&quot;this file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_name</span><span class="p">))</span>
+        <span class="n">analysis_file</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;filepath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span>
+        <span class="k">return</span> <span class="n">analysis_file</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Allow AudioFile object to be opened by &#39;with&#39; statements&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_valid</span><span class="p">(</span><span class="n">force_mono</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                <span class="s">&quot;File isn&#39;t valid: {0}</span><span class="se">\n</span><span class="s">Check that file is mono and isn&#39;t &quot;</span>
+                <span class="s">&quot;empty&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">analysis_data_grains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        retrieve data for analysis within start and end time pairs in the format specified.</span>
+
+<span class="sd">        Arguments:</span>
+
+<span class="sd">        - times: an array of start and end times to retrieve analysis from (np.array)</span>
+
+<span class="sd">        - analysis: analysis string specifying analysis to retrieve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">format_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;format&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="n">analysis_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">times</span><span class="p">])</span>
+        <span class="n">analysis_frames</span><span class="p">,</span> <span class="n">selection</span> <span class="o">=</span> <span class="n">analysis_object</span><span class="o">.</span><span class="n">get_analysis_grains</span><span class="p">(</span><span class="n">times</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">format_type</span><span class="p">:</span>
+            <span class="n">analysis_frames</span> <span class="o">=</span> <span class="n">analysis_object</span><span class="o">.</span><span class="n">analysis_formatter</span><span class="p">(</span><span class="n">analysis_frames</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">format_type</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">analysis_frames</span><span class="p">,</span> <span class="n">selection</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s">&#39;AnalysedAudioFile(name={0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

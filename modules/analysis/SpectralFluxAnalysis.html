@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analysis.SpectralFluxAnalysis &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<h1>Source code for analysis.SpectralFluxAnalysis</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+
+<span class="kn">from</span> <span class="nn">Analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
+
+<div class="viewcode-block" id="SpectralFluxAnalysis"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis">[docs]</a><span class="k">class</span> <span class="nc">SpectralFluxAnalysis</span><span class="p">(</span><span class="n">Analysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Spectral flux descriptor class for generation of spectral flux audio</span>
+<span class="sd">    analysis.</span>
+
+<span class="sd">    This descriptor calculates the spectral flux for overlapping grains of an</span>
+<span class="sd">    AnalysedAudioFile object.  A full definition of spectral flux analysis can</span>
+<span class="sd">    be found in the documentation.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - analysis_group: the HDF5 file group to use for the storage of the</span>
+<span class="sd">      analysis.</span>
+
+<span class="sd">    - config: The configuration module used to configure the analysis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SpectralFluxAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;SpcFlux&#39;</span><span class="p">)</span>
+        <span class="c"># Create logger for module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c"># Store reference to the file to be analysed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">analyses</span><span class="p">[</span><span class="s">&quot;fft&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;FFT analysis is required for spectral spread &quot;</span>
+                             <span class="s">&quot;analysis.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating Spectral Flux analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_spcflux_analysis</span><span class="p">,</span>
+            <span class="n">fft</span><span class="o">.</span><span class="n">analysis</span><span class="p">[</span><span class="s">&#39;frames&#39;</span><span class="p">][:],</span>
+            <span class="n">fft</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;win_size&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spcflux_window_count</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="SpectralFluxAnalysis.hdf5_dataset_formatter"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.hdf5_dataset_formatter">[docs]</a>    <span class="k">def</span> <span class="nf">hdf5_dataset_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Formats the output from the analysis method to save to the HDF5 file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">samplerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_spcflux_analysis</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_spcflux_frame_times</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">({</span><span class="s">&#39;frames&#39;</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span> <span class="s">&#39;times&#39;</span><span class="p">:</span> <span class="n">times</span><span class="p">},</span> <span class="p">{})</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SpectralFluxAnalysis.create_spcflux_analysis"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.create_spcflux_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_spcflux_analysis</span><span class="p">(</span><span class="n">fft</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s">&quot;freq&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the spectral flux of the fft frames.</span>
+
+<span class="sd">        length: the length of the window used to calculate the FFT.</span>
+<span class="sd">        samplerate: the samplerate of the audio analysed.</span>
+<span class="sd">        output_format = Choose either &quot;freq&quot; for output in Hz or &quot;ind&quot; for bin</span>
+<span class="sd">        index output</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c"># Get the positive magnitudes of each bin.</span>
+        <span class="n">magnitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fft</span><span class="p">)</span>
+        <span class="c"># Get highest magnitude</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">magnitudes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">y</span>
+        <span class="c"># Roll magnitudes as flux is calculated using the difference between</span>
+        <span class="c"># consecutive magnitudes. Rolling allows for quick access to previous</span>
+        <span class="c"># magnitude.</span>
+        <span class="n">rolled_mags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">sum_of_squares</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">magnitudes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">rolled_mags</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">spectral_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sum_of_squares</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">spectral_flux</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SpectralFluxAnalysis.calc_spcflux_frame_times"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.calc_spcflux_frame_times">[docs]</a>    <span class="k">def</span> <span class="nf">calc_spcflux_frame_times</span><span class="p">(</span><span class="n">spcflux_frames</span><span class="p">,</span> <span class="n">sample_frame_count</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">):</span></div>
+
+        <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
+
+        <span class="c"># Get number of frames for time and frequency</span>
+        <span class="n">timebins</span> <span class="o">=</span> <span class="n">spcflux_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c"># Create array ranging from 0 to number of time frames</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">timebins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># divide the number of samples by the total number of frames, then</span>
+        <span class="c"># multiply by the frame numbers.</span>
+        <span class="n">spcflux_times</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sample_frame_count</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">timebins</span><span class="p">))</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c"># Divide by the samplerate to give times in seconds</span>
+        <span class="n">spcflux_times</span> <span class="o">=</span> <span class="n">spcflux_times</span> <span class="o">/</span> <span class="n">samplerate</span>
+        <span class="k">return</span> <span class="n">spcflux_times</span>
+
+<div class="viewcode-block" id="SpectralFluxAnalysis.mean_formatter"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.mean_formatter">[docs]</a>    <span class="k">def</span> <span class="nf">mean_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the mean value of the analysis data&quot;&quot;&quot;</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="n">mean_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mean_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="SpectralFluxAnalysis.median_formatter"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.median_formatter">[docs]</a>    <span class="k">def</span> <span class="nf">median_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the median value of the analysis data&quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="n">median_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">median_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span>
+        <span class="k">return</span> <span class="n">output</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

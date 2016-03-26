@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#prerequesites">Prerequesites</a><ul>
+<li><a class="reference internal" href="#brew-python">Brew Python</a></li>
+<li><a class="reference internal" href="#pyenv-python">Pyenv Python</a></li>
+<li><a class="reference internal" href="#other-dependencies">Other dependencies</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-library-and-dependencies-installation">Python library and dependencies installation</a></li>
+<li><a class="reference internal" href="#jupyter-notebook-examples">Jupyter Notebook Examples</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="overview.html" title="Previous Chapter: Overview"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Overview</span>
+    </a>
+  </li>
+  <li>
+    <a href="tutorial.html" title="Next Chapter: Tutorial"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Tutorial &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="sources/installation.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequesites">
+<h2>Prerequesites<a class="headerlink" href="#prerequesites" title="Permalink to this headline">¶</a></h2>
+<p>There are a few dependencies required to install concatenator:</p>
+<ol class="arabic simple">
+<li>Python 2.7.11 (It will probably run on earlier versions)</li>
+<li>libsndfile - used for audio file IO</li>
+<li>The HDF5 Library - used for large file storage</li>
+<li>The Sox audio library - used for pitch shifting</li>
+</ol>
+<div class="section" id="brew-python">
+<h3>Brew Python<a class="headerlink" href="#brew-python" title="Permalink to this headline">¶</a></h3>
+<p>There are a number of ways to install python. The simplest is through
+homebrew/linuxbrew using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre>brew install python
+</pre></div>
+</div>
+</div>
+<div class="section" id="pyenv-python">
+<h3>Pyenv Python<a class="headerlink" href="#pyenv-python" title="Permalink to this headline">¶</a></h3>
+<p>An alternative that allows greater flexibility is to use pyenv which allows for
+easy switching between python versions and guarantees the exact version needed:</p>
+<div class="highlight-bash"><div class="highlight"><pre>brew install pyenv
+pyenv install 2.7.11
+pyenv global 2.7.11
+</pre></div>
+</div>
+<p>Note that the following may need to be added to your ~/.bashrc file to add
+pyenv pythons to your path.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="k">if</span> which pyenv &gt; /dev/null<span class="p">;</span> <span class="k">then</span> <span class="nb">eval</span> <span class="s2">&quot;</span><span class="k">$(</span>pyenv init -<span class="k">)</span><span class="s2">&quot;</span><span class="p">;</span> <span class="k">fi</span>
+<span class="nb">export </span><span class="nv">PYENV_ROOT</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.pyenv&quot;</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PYENV_ROOT</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+<span class="nb">eval</span> <span class="s2">&quot;</span><span class="k">$(</span>pyenv init -<span class="k">)</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-dependencies">
+<h3>Other dependencies<a class="headerlink" href="#other-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:</p>
+<div class="highlight-bash"><div class="highlight"><pre>brew install libsndfile
+brew tap homebrew/science
+brew install hdf5
+brew install sox
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="python-library-and-dependencies-installation">
+<h2>Python library and dependencies installation<a class="headerlink" href="#python-library-and-dependencies-installation" title="Permalink to this headline">¶</a></h2>
+<p>The python package and it&#8217;s dependencies can then be easily installed by
+running the ./install.sh script from the root director of the project. Note
+that this will install the project in it&#8217;s project folder. To check that the
+project is working correctly, simply run run_tests.</p>
+<div class="highlight-bash"><div class="highlight"><pre>./install.sh
+./run_tests
+</pre></div>
+</div>
+<p>There is a small chance that the installation may fail when installing
+depndancies such as scipy or numpy. In these cases the packages must be
+installed manually. When this has been done, simply re-run the install.sh
+script.</p>
+</div>
+<div class="section" id="jupyter-notebook-examples">
+<h2>Jupyter Notebook Examples<a class="headerlink" href="#jupyter-notebook-examples" title="Permalink to this headline">¶</a></h2>
+<p>the Jupyter notebook application is required in order to run the interactive
+examples. It is recommended that this is installed as part of the iPython
+library using:</p>
+<div class="highlight-bash"><div class="highlight"><pre>pip install <span class="s2">&quot;ipython[all]&quot;</span>
+</pre></div>
+</div>
+<p>Notebooks can then be viewed from the Examples folder of the project by
+running:</p>
+<div class="highlight-bash"><div class="highlight"><pre>jupyter notebook
+</pre></div>
+</div>
+<p>This will open a notebook session in the browser.</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analysis.FFTAnalysis &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<h1>Source code for analysis.FFTAnalysis</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for creating an FFT analysis of audio.</span>
+
+<span class="sd">Ref: Code adapted from:</span>
+<span class="sd">http://www.frank-zalkow.de/en/code-snippets/create-audio-spectrograms-with-python.html?ckattempt=1</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">fileops</span> <span class="kn">import</span> <span class="n">pathops</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.lib</span> <span class="kn">import</span> <span class="n">stride_tricks</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">AnalysisTools</span> <span class="kn">import</span> <span class="n">ButterFilter</span>
+<span class="kn">from</span> <span class="nn">Analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FFTAnalysis"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis">[docs]</a><span class="k">class</span> <span class="nc">FFTAnalysis</span><span class="p">(</span><span class="n">Analysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FFT analysis descriptor class for generation of FFT spectral analysis.</span>
+
+<span class="sd">    This descriptor calculates the spectral content for overlapping grains</span>
+<span class="sd">    of an AnalysedAudioFile object.  A full definition of FFT analysis can be</span>
+<span class="sd">    found in the documentation.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - analysis_group: the HDF5 file group to use for the storage of the</span>
+<span class="sd">      analysis.</span>
+
+<span class="sd">    - config: The configuration module used to configure the analysis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FFTAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;FFT&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c"># Store reference to the file to be analysed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+            <span class="n">window_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">fft</span><span class="p">[</span><span class="s">&quot;window_size&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">window_size</span> <span class="o">=</span> <span class="mi">2048</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating FFT analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fft_window_count</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+
+<div class="viewcode-block" id="FFTAnalysis.create_fft_analysis"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.create_fft_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_fft_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">window_overlap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                            <span class="n">window_type</span><span class="o">=</span><span class="s">&#39;hanning&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a spectral analysis for overlapping frames of audio.&quot;&quot;&quot;</span>
+        <span class="c"># Calculate the period of the window in hz</span>
+        <span class="n">lowest_freq</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">window_size</span>
+        <span class="c"># Filter frequencies lower than the period of the window</span>
+        <span class="c"># filter = ButterFilter()</span>
+        <span class="c"># filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">read_grain</span><span class="p">()</span>
+        <span class="c"># frames = filter.filter_butter(frames)</span>
+        <span class="n">stft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stft</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">overlapFac</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">window_overlap</span><span class="p">)</span>
+        <span class="n">frame_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_fft_frame_times</span><span class="p">(</span>
+            <span class="n">stft</span><span class="p">,</span>
+            <span class="n">frames</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">stft</span><span class="p">,</span> <span class="n">frame_times</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FFTAnalysis.get_analysis_grains"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.get_analysis_grains">[docs]</a>    <span class="k">def</span> <span class="nf">get_analysis_grains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve analysis frames for period specified in start and end times.</span>
+<span class="sd">        arrays of start and end time pairs will produce an array of equivelant</span>
+<span class="sd">        size containing frames for these times.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span><span class="p">[</span><span class="s">&quot;FFT&quot;</span><span class="p">][</span><span class="s">&quot;times&quot;</span><span class="p">][:]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">vtimes</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">vtimes</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">vtimes</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">))</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="n">grain_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">grain</span> <span class="ow">in</span> <span class="n">selection</span><span class="p">:</span>
+            <span class="n">grain_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span><span class="p">[</span><span class="s">&quot;FFT&quot;</span><span class="p">][</span><span class="s">&quot;frames&quot;</span><span class="p">][</span><span class="n">grain</span><span class="p">,</span> <span class="p">:],</span> <span class="n">times</span><span class="p">[</span><span class="n">grain</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">grain_data</span></div>
+
+<div class="viewcode-block" id="FFTAnalysis.hdf5_dataset_formatter"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.hdf5_dataset_formatter">[docs]</a>    <span class="k">def</span> <span class="nf">hdf5_dataset_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Formats the output from the analysis method to save to the HDF5 file.</span>
+
+<span class="sd">        Places data and attributes in 2 dictionaries to be stored in the HDF5</span>
+<span class="sd">        file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">frames</span><span class="p">,</span> <span class="n">frame_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_fft_analysis</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s">&#39;frames&#39;</span><span class="p">:</span> <span class="n">frames</span><span class="p">,</span>
+                <span class="s">&#39;times&#39;</span><span class="p">:</span> <span class="n">frame_times</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s">&#39;win_size&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;window_size&#39;</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>
+                <span class="s">&#39;overlap&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;overlap&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="s">&#39;window_type&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;window_type&#39;</span><span class="p">,</span> <span class="s">&#39;hanning&#39;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="FFTAnalysis.stft"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.stft">[docs]</a>    <span class="k">def</span> <span class="nf">stft</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frameSize</span><span class="p">,</span> <span class="n">overlapFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Short time fourier transform of audio signal.&quot;&quot;&quot;</span>
+        <span class="n">win</span> <span class="o">=</span> <span class="n">window</span><span class="p">(</span><span class="n">frameSize</span><span class="p">)</span>
+        <span class="n">hopSize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frameSize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">overlapFac</span> <span class="o">*</span> <span class="n">frameSize</span><span class="p">))</span>
+
+        <span class="c"># zeros at beginning (thus center of 1st window should be for sample nr. 0)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">frameSize</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span> <span class="n">sig</span><span class="p">)</span>
+        <span class="c"># cols for windowing</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">frameSize</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">hopSize</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c"># zeros at end (thus samples can be fully covered by frames)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">frameSize</span><span class="p">))</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">stride_tricks</span><span class="o">.</span><span class="n">as_strided</span><span class="p">(</span>
+            <span class="n">samples</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">frameSize</span><span class="p">),</span>
+            <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">hopSize</span><span class="p">,</span> <span class="n">samples</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">frames</span> <span class="o">*=</span> <span class="n">win</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span></div>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    def logscale_spec(self, spec, sr=44100, factor=20.):</span>
+<span class="sd">        &quot;&quot;&quot;Scale frequency axis logarithmically.&quot;&quot;&quot;</span>
+<span class="sd">        # Get a count of times and frequencies from fft frames</span>
+<span class="sd">        timebins, freqbins = np.shape(spec)</span>
+
+<span class="sd">        # Create array from 0 to 1 with values for each frequency bin.</span>
+<span class="sd">        # Scale by a power of the factor provided.</span>
+<span class="sd">        scale = np.linspace(0, 1, freqbins) ** factor</span>
+<span class="sd">        # Scale to the number of frequency bins</span>
+<span class="sd">        scale *= (freqbins-1)/max(scale)</span>
+<span class="sd">        # Round to the nearest whole number and reduce to only unique numbers.</span>
+<span class="sd">        scale = np.unique(np.round(scale))</span>
+
+<span class="sd">        # Create a new complex number array with the number of time frames and</span>
+<span class="sd">        # the new number of frequency bins</span>
+<span class="sd">        newspec = np.complex128(np.zeros([timebins, len(scale)]))</span>
+<span class="sd">        # For each of the frequency bins</span>
+<span class="sd">        for i in range(0, len(scale)):</span>
+<span class="sd">            # If it is the highest frequency bin...</span>
+<span class="sd">            if i == len(scale)-1:</span>
+<span class="sd">                # Sum all frequency bins from the scale index upwards</span>
+<span class="sd">                newspec[:, i] = np.sum(spec[:, scale[i]:], axis=1)</span>
+<span class="sd">            else:</span>
+<span class="sd">                # Sum all frequency bins from the current scale index up to the</span>
+<span class="sd">                # next scale index</span>
+<span class="sd">                newspec[:, i] = np.sum(spec[:, scale[i]:scale[i+1]], axis=1)</span>
+
+<span class="sd">        # List the center frequency of bins</span>
+<span class="sd">        allfreqs = np.abs(np.fft.fftfreq(freqbins*2, 1./sr)[:freqbins+1])</span>
+<span class="sd">        freqs = []</span>
+<span class="sd">        # For each of the frequency bins</span>
+<span class="sd">        for i in range(0, len(scale)):</span>
+<span class="sd">            if i == len(scale)-1:</span>
+<span class="sd">                freqs += [np.mean(allfreqs[scale[i]:])]</span>
+<span class="sd">            else:</span>
+<span class="sd">                freqs += [np.mean(allfreqs[scale[i]:scale[i+1]])]</span>
+
+<span class="sd">        return newspec, freqs</span>
+
+<span class="sd">    def plotstft(self, samples, fs, binsize=2**10, plotpath=None,</span>
+<span class="sd">                 colormap=&quot;jet&quot;):</span>
+<span class="sd">        &quot;&quot;&quot;Plot spectrogram.&quot;&quot;&quot;</span>
+<span class="sd">        # Get all fft frames</span>
+<span class="sd">        s = self.analysis[&#39;data&#39;][:]</span>
+
+<span class="sd">        sshow, freq = self.logscale_spec(s, factor=1.0, sr=fs)</span>
+
+<span class="sd">        # Amplitude to decibel</span>
+<span class="sd">        ims = 20.*np.log10(np.abs(sshow)/10e-6)</span>
+
+<span class="sd">        # Get the dimensions of the fft</span>
+<span class="sd">        timebins, freqbins = np.shape(ims)</span>
+
+<span class="sd">        plt.figure(figsize=(15, 7.5))</span>
+<span class="sd">        plt.imshow(np.transpose(ims), origin=&quot;lower&quot;, aspect=&quot;auto&quot;,</span>
+<span class="sd">                   cmap=colormap)</span>
+<span class="sd">        # Add a colour bar to the side of the spectrogram.</span>
+<span class="sd">        plt.colorbar()</span>
+
+<span class="sd">        # Set spectrogram labels</span>
+<span class="sd">        plt.xlabel(&quot;time (s)&quot;)</span>
+<span class="sd">        plt.ylabel(&quot;frequency (hz)&quot;)</span>
+<span class="sd">        plt.xlim([0, timebins-1])</span>
+<span class="sd">        plt.ylim([0, freqbins])</span>
+
+<span class="sd">        # Create an array of 5 values from 0 to the number of times</span>
+<span class="sd">        xlocs = np.float32(np.linspace(0, timebins-1, 5))</span>
+<span class="sd">        # Display time values at 5 points along the x axis of the graph</span>
+<span class="sd">        plt.xticks(xlocs, [&quot;%.02f&quot; % l for l in ((xlocs*len(samples)/timebins)+(0.5*binsize))/fs])</span>
+<span class="sd">        # Display frequency values at 10 points along the y axis of the graph</span>
+<span class="sd">        ylocs = np.int16(np.round(np.linspace(0, freqbins-1, 10)))</span>
+<span class="sd">        plt.yticks(ylocs, [&quot;%.02f&quot; % freq[i] for i in ylocs])</span>
+
+<span class="sd">        if plotpath:</span>
+<span class="sd">            plt.savefig(plotpath, bbox_inches=&quot;tight&quot;)</span>
+<span class="sd">        else:</span>
+<span class="sd">            plt.show()</span>
+
+<span class="sd">        plt.clf()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="FFTAnalysis.calc_fft_frame_times"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.calc_fft_frame_times">[docs]</a>    <span class="k">def</span> <span class="nf">calc_fft_frame_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fftframes</span><span class="p">,</span> <span class="n">sample_frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
+
+        <span class="c"># Get number of frames for time and frequency</span>
+        <span class="n">timebins</span><span class="p">,</span> <span class="n">freqbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fftframes</span><span class="p">)</span>
+        <span class="c"># Create array ranging from 0 to number of time frames</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">timebins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># divide the number of samples by the total number of frames, then</span>
+        <span class="c"># multiply by the frame numbers.</span>
+        <span class="n">fft_times</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">timebins</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c"># Divide by the samplerate to give times in seconds</span>
+        <span class="n">fft_times</span> <span class="o">=</span> <span class="n">fft_times</span> <span class="o">/</span> <span class="n">samplerate</span>
+        <span class="k">return</span> <span class="n">fft_times</span></div></div>
+
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,226 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Synthesizing output from matches"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from sppysound.database import AudioDatabase, Synthesizer, Matcher\n",
+    "import synthesis_config\n",
+    "import config"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "source_dir = \"./ExampleDatabase\"\n",
+    "target_dir = \"./ExampleTarget\"\n",
+    "output_dir = \"./ExampleOutput\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Load source database.\n",
+    "Also load the F0, RMS and Peak analyses for use with amplitude and pitch enforcement."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "source_database = AudioDatabase(\n",
+    "    source_dir,\n",
+    "    config=synthesis_config,\n",
+    "    analysis_list={\"f0\", \"rms\"}\n",
+    ")\n",
+    "source_database.load_database(reanalyse=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Load database used to generate matches to source database. \n",
+    "This is used when enforcing analyses such as RMS and F0. (Original grains are needed to calculate the ratio to alter the synthesized grain by)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Traceback (most recent call last):\n",
+      "  File \"/Users/samuelperry/PerryPerrySource/pysource/sppysound/src/sppysound/database.py\", line 157, in analyse_database\n",
+      "    config=self.config\n",
+      "  File \"/Users/samuelperry/PerryPerrySource/pysource/sppysound/src/sppysound/audiofile.py\", line 943, in __enter__\n",
+      "    \"empty\".format(self.name))\n",
+      "IOError: File isn't valid: ElectricGuitarSample-out_output.wav\n",
+      "Check that file is mono and isn't empty\n"
+     ]
+    }
+   ],
+   "source": [
+    "target_database = AudioDatabase(\n",
+    "    target_dir,\n",
+    "    config=synthesis_config,\n",
+    "    analysis_list={\"f0\", \"rms\"}\n",
+    ")\n",
+    "target_database.load_database(reanalyse=True)\n",
+    "\n",
+    "output_database = AudioDatabase(\n",
+    "    output_dir,\n",
+    "    config=config\n",
+    ")\n",
+    "output_database.load_database(reanalyse=False)\n",
+    "\n",
+    "matcher = Matcher(\n",
+    "    source_database,\n",
+    "    target_database,\n",
+    "    output_db=output_database,\n",
+    "    config=config,\n",
+    "    rematch=True\n",
+    ")\n",
+    "matcher.match(\n",
+    "    matcher.kdtree_matcher,\n",
+    "    grain_size=config.matcher[\"grain_size\"],\n",
+    "    overlap=config.matcher[\"overlap\"]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Initialise the synthesizer object used for generating the final output."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "synthesizer = Synthesizer(\n",
+    "    source_database, \n",
+    "    output_database, \n",
+    "    target_db=target_database, \n",
+    "    config=config\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Run synthesis. As with the matching, warnings may be generated. These have all been accounted for and will be silenced in a future release. The output audio can now be found in the audio folder of ./ExampleOutput"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "synthesizer.synthesize(\n",
+    "    grain_size=config.synthesizer[\"grain_size\"],\n",
+    "    overlap=config.synthesizer[\"overlap\"]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The synthesis_config.py file for this demo is:\n",
+    "\n",
+    "~~~python\n",
+    "rms = {\n",
+    "    \"window_size\": 100,\n",
+    "    \"overlap\": 2,\n",
+    "}\n",
+    "\n",
+    "analysis_dict = {\n",
+    "    \"f0\": \"log2_median\",\n",
+    "    \"rms\": \"mean\"\n",
+    "}\n",
+    "\n",
+    "analysis = {\n",
+    "    \"reanalyse\": False\n",
+    "}\n",
+    "\n",
+    "output_file = {\n",
+    "    \"samplerate\": 44100,\n",
+    "    \"format\": 131075,\n",
+    "    \"channels\": 1\n",
+    "}\n",
+    "\n",
+    "synthesizer = {\n",
+    "    \"enforce_rms\": True,\n",
+    "    \"enf_rms_ratio_limit\": 5.,\n",
+    "    \"enforce_f0\": True,\n",
+    "    \"enf_f0_ratio_limit\": 10.,\n",
+    "    \"grain_size\": 100,\n",
+    "    \"overlap\": 2,\n",
+    "    \"normalize\" : True,\n",
+    "    # Defines the number of potential grains to choose from matches when\n",
+    "    # synthesizing output.\n",
+    "    \"match_quantity\": 20\n",
+    "}\n",
+    "~~~"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.11"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}

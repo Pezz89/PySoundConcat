@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
+    <link rel="next" title="API Usage Examples" href="examples.html" />
+    <link rel="prev" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#audiofile-class">AudioFile Class</a></li>
+<li><a class="reference internal" href="#analysedaudiofile-class">AnalysedAudioFile Class</a></li>
+<li><a class="reference internal" href="#database-class">Database Class</a></li>
+<li><a class="reference internal" href="#matcher-class">Matcher Class</a></li>
+<li><a class="reference internal" href="#synthesizer-class">Synthesizer Class</a></li>
+<li><a class="reference internal" href="#analysis-classes">Analysis Classes</a><ul>
+<li><a class="reference internal" href="#centroid-analysis-class">Centroid Analysis Class</a></li>
+<li><a class="reference internal" href="#f0-analysis-class">F0 Analysis Class</a></li>
+<li><a class="reference internal" href="#fft-analysis-class">FFT Analysis Class</a></li>
+<li><a class="reference internal" href="#harmonic-ratio-analysis-class">Harmonic Ratio Analysis Class</a></li>
+<li><a class="reference internal" href="#kurtosis-analysis-class">Kurtosis Analysis Class</a></li>
+<li><a class="reference internal" href="#peak-analysis-class">Peak Analysis Class</a></li>
+<li><a class="reference internal" href="#rms-analysis-class">RMS Analysis Class</a></li>
+<li><a class="reference internal" href="#spectral-centroid-analysis-class">Spectral Centroid Analysis Class</a></li>
+<li><a class="reference internal" href="#spectral-crest-factor-analysis-class">Spectral Crest Factor Analysis Class</a></li>
+<li><a class="reference internal" href="#spectral-flatness-analysis-class">Spectral Flatness Analysis Class</a></li>
+<li><a class="reference internal" href="#spectral-flux-analysis-class">Spectral Flux Analysis Class</a></li>
+<li><a class="reference internal" href="#spectral-spread-analysis-class">Spectral Spread Analysis Class</a></li>
+<li><a class="reference internal" href="#variance-analysis-class">Variance Analysis Class</a></li>
+<li><a class="reference internal" href="#zero-crossing-analysis-class">Zero-Crossing Analysis Class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="descriptor_defs.html" title="Previous Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Audio Descrip...</span>
+    </a>
+  </li>
+  <li>
+    <a href="examples.html" title="Next Chapter: API Usage Examples"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">API Usage Exa... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="sources/api.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="audiofile-class">
+<h2>AudioFile Class<a class="headerlink" href="#audiofile-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="audiofile.AudioFile">
+<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AudioFile</code><span class="sig-paren">(</span><em>filepath</em>, <em>mode</em>, <em>format=None</em>, <em>channels=None</em>, <em>samplerate=None</em>, <em>name=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/audiofile.html#AudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AudioFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object for storing and accessing basic information for an audio file.</p>
+<p>This object is a wrapper for the pysndfile audio object. It provides
+additional functionality alongside the ability to open and close audiofiles
+without deleting their containing object.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>filepath: path to the file to be opened/written to</li>
+<li>mode: mode to open file in. either &#8216;r&#8217; (read) or &#8216;w&#8217; (write)</li>
+<li>format: the file format to use when opening a new file for writing. see
+get_sndfile_formats() for more information.</li>
+<li>channels: the number of audio channels to use.</li>
+<li>samplerate: the samplerate in herts to use.</li>
+<li>name: the sound file object name.</li>
+</ul>
+<dl class="method">
+<dt id="audiofile.AudioFile.check_mono">
+<code class="descname">check_mono</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.check_mono" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the audio file is a mono audio file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.check_not_empty">
+<code class="descname">check_not_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.check_not_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the file contains audio</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.check_valid">
+<code class="descname">check_valid</code><span class="sig-paren">(</span><em>force_mono=False</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.check_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to make sure that the audio file is valid for use.
+ie mono, not empty</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for closing the associated audio file outside of a with statement</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.construct_format">
+<code class="descname">construct_format</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.construct_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct a format specification for libsndfile from major format
+string and encoding string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.convert_to_mono">
+<code class="descname">convert_to_mono</code><span class="sig-paren">(</span><em>overwrite_original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.convert_to_mono" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts stereo audiofiles to mono.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>overwrite_original: If True then the current object will be
+reloaded as the mono file. Otherwise, the new mono file will be
+returned as a new AudioFile object.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.encoding_str">
+<code class="descname">encoding_str</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.encoding_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return string representation of encoding (e.g. pcm16).</p>
+<p>See get_sndfile_encodings() for a list of available encoding strings
+that are supported by a given sndfile format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.error">
+<code class="descname">error</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report error numbers related to the current sound file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.fade_audio">
+<code class="descname">fade_audio</code><span class="sig-paren">(</span><em>audio</em>, <em>position</em>, <em>fade_time</em>, <em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.fade_audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fade the audio in or out linearly from the position specified over the
+time specified.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>audio: A numpy array of audio to manipulate</li>
+<li>start_position: The starting position to begin the fade from (ms)</li>
+<li>fade_time: The length of the fade (ms)</li>
+<li>mode: choose to fade the audio in or out (string: &#8220;in&#8221; or &#8220;out&#8221;)</li>
+</ul>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="audiofile.AudioFile.gen_default_wav">
+<em class="property">static </em><code class="descname">gen_default_wav</code><span class="sig-paren">(</span><em>path</em>, <em>overwrite_existing=False</em>, <em>mode='w'</em>, <em>channels=1</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.gen_default_wav" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method that creates a wav file with the following spec at
+the path given:</p>
+<ul class="simple">
+<li>Samplerate: 44.1Khz</li>
+<li>Bit rate: 24Bit</li>
+</ul>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="audiofile.AudioFile.gen_white_noise">
+<em class="property">static </em><code class="descname">gen_white_noise</code><span class="sig-paren">(</span><em>length</em>, <em>gain</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.gen_white_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate mono white noise of the number of samples specified.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>length (samples)</li>
+<li>gain (silence 0.0 - full volume 1.0)</li>
+</ul>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="audiofile.AudioFile.gen_window">
+<em class="property">static </em><code class="descname">gen_window</code><span class="sig-paren">(</span><em>window_type</em>, <em>window_size</em>, <em>sym=True</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.gen_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a window function of given size and type
+Returns a 1D numpy array</p>
+<p>sym: Used in the triangle window generation. When True (default),
+generates a symmetric window, for use in filter design. When False,
+generates a periodic window, for use in spectral analysis</p>
+<p>Available window types:</p>
+<ul class="simple">
+<li>hanning</li>
+<li>hamming</li>
+<li>bartlett</li>
+<li>blackman</li>
+<li>kaiser</li>
+<li>triangle</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.generate_grain_times">
+<code class="descname">generate_grain_times</code><span class="sig-paren">(</span><em>grain_length</em>, <em>overlap</em>, <em>save_times=False</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.generate_grain_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates an array of start and finish pairs based on overlapping
+frames at the grain length specified.</p>
+<p>Note that only full grains within the size of the sample are returned.
+incomplete grains found at the end of files are ignored.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>grain_length: length of each grain in seconds.</li>
+<li>overlap: the factor by which grains overlap (integer)</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_channels">
+<code class="descname">get_channels</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of channels of sndfile.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_format">
+<code class="descname">get_format</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return raw format specification from sndfile.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_frames">
+<code class="descname">get_frames</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of frames in file (number of samples per channel).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_pysndfile_version">
+<code class="descname">get_pysndfile_version</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_pysndfile_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>return tuple describing the version of pysndfile</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_samplerate">
+<code class="descname">get_samplerate</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_samplerate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the samplerate of the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_seek_position">
+<code class="descname">get_seek_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_seek_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current seeker position in the file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_sndfile_encodings">
+<code class="descname">get_sndfile_encodings</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_sndfile_encodings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return lists of available encoding for the given sndfile format.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>major: Major sndfile format for the list of available formats.
+format should be specified as a string, using one of the strings
+returned by get_sndfile_formats()</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_sndfile_formats">
+<code class="descname">get_sndfile_formats</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_sndfile_formats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return lists of available file formats supported by libsndfile and
+pysndfile.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_sndfile_version">
+<code class="descname">get_sndfile_version</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_sndfile_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a tuple of ints representing the version of the libsdnfile that
+is used</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.get_strings">
+<code class="descname">get_strings</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.get_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>get all stringtypes from the sound file.</p>
+<p>see stringtype_name_top_id.keys() for the list of strings that
+are supported by the libsndfile version you use.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.major_format_str">
+<code class="descname">major_format_str</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.major_format_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>return short string representation of major format.</p>
+<p>(e.g. aiff) see get_sndfile_formats() for a complete
+list of file formats</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="audiofile.AudioFile.mono_arrays_to_stereo">
+<em class="property">static </em><code class="descname">mono_arrays_to_stereo</code><span class="sig-paren">(</span><em>array1</em>, <em>array2</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.mono_arrays_to_stereo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts two horizontal numpy arrays to one concatenated verticaly
+stacked array that can be written to a stereo file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.ms_to_samps">
+<code class="descname">ms_to_samps</code><span class="sig-paren">(</span><em>ms</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.ms_to_samps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts milliseconds to samples based on the sample rate of the audio
+file</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="audiofile.AudioFile.normalize_audio">
+<em class="property">static </em><code class="descname">normalize_audio</code><span class="sig-paren">(</span><em>audio</em>, <em>maximum=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.normalize_audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize array of audio so that the maximum sample value is equal to
+the maximum provided</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.normalize_file">
+<code class="descname">normalize_file</code><span class="sig-paren">(</span><em>overwrite_original=False</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.normalize_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes the entire file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.open">
+<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for opening the associated audio file outside of a with statement</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.read_frames">
+<code class="descname">read_frames</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.read_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the given number of frames and fill numpy array.</p>
+<p>Arguments</p>
+<ul class="simple">
+<li>nframes: &lt;int&gt;</li>
+<li>number of frames to read (default = -1 -&gt; read all).</li>
+<li>dtype: &lt;numpy dtype&gt;</li>
+<li>dtype of the returned array containing read data (see note).</li>
+</ul>
+<p>Notes:
+One column per channel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.read_grain">
+<code class="descname">read_grain</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.read_grain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a grain of audio from the file. if grain ends after the end of
+the file, the grain can be padded with zeros using the padding
+argument.</p>
+<p>Audio object seeker is not changed</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>start_index: the index in samples to read from.</li>
+<li>grain_size: The size of the grain (in samples) to read</li>
+<li>padding: if the end of the audio file is reaches, the grain will be
+padded with additional zeros.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.rename_file">
+<code class="descname">rename_file</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.rename_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames the audio file associated with the object to the name
+specified as an argument</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>filename: the new path of the audio file.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.replace_audiofile">
+<code class="descname">replace_audiofile</code><span class="sig-paren">(</span><em>replacement_filename</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.replace_audiofile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the current audiofile and audiofile object with the file
+specified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.rewind">
+<code class="descname">rewind</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.rewind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewind read/write/read and write position given by mode to
+start of file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.samps_to_ms">
+<code class="descname">samps_to_ms</code><span class="sig-paren">(</span><em>samps</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.samps_to_ms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert samples to milliseconds based on the sample rate of the audio
+file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.samps_to_secs">
+<code class="descname">samps_to_secs</code><span class="sig-paren">(</span><em>samps</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.samps_to_secs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts samples to seconds based on the sample rate of the audio
+file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.secs_to_samps">
+<code class="descname">secs_to_samps</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.secs_to_samps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts seconds to samples based on the sample rate of the audio file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek into audio file: similar to python seek function,
+but taking only audio data into account.</p>
+<p>Arguments</p>
+<ul class="simple">
+<li>offset: &lt;int&gt;
+the number of frames (eg two samples for stereo files) to move
+relatively to position set by whence.</li>
+<li>whence: &lt;int&gt;
+only 0 (beginning), 1 (current) and 2 (end of the file) are valid.</li>
+<li>mode: &lt;string&gt;
+If set to &#8216;rw&#8217;, both read and write pointers are updated. If &#8216;r&#8217; is
+given, only read pointer is updated, if &#8216;w&#8217;, only the write one is
+(this may of course make sense only if you open the file in a certain
+mode).</li>
+</ul>
+<p>Returns
+offset: int the number of frames from the beginning of the file</p>
+<p>Notes:
+Offset relative to audio data: meta-data are ignored.
+if an invalid seek is given (beyond or before the file), an IOError
+is raised; note that this is different from the seek method of a
+File object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.seekable">
+<code class="descname">seekable</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.seekable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true for soundfiles that support seeking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.set_auto_clipping">
+<code class="descname">set_auto_clipping</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.set_auto_clipping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable auto clipping when reading/writing samples from/to sndfile.</p>
+<p>auto clipping is enabled by default. auto clipping is required by
+libsndfile to properly handle scaling between sndfiles with pcm
+encoding and float representation of the samples in numpy. When auto
+clipping is set to on reading pcm data into a float vector and writing
+it back with libsndfile will reproduce the original samples. If auto
+clipping is off, samples will be changed slightly as soon as the
+amplitude is close to the sample range because libsndfile applies
+slightly different scaling factors during read and write.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.set_string">
+<code class="descname">set_string</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.set_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set one of the stringtypes to the string given as argument.</p>
+<p>If you try to write a stringtype that is not supported by the library
+a RuntimeError will be raised</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.strError">
+<code class="descname">strError</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.strError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report error strings related to the current sound file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.switch_mode">
+<code class="descname">switch_mode</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.switch_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch audiofile to mode specified.</p>
+<p>This allows for convenient reading and writing of audiofiles without
+direct closing and opening of the underlying pysndfile object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.writeSync">
+<code class="descname">writeSync</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.writeSync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the operating system&#8217;s function to force the writing of all file
+cache buffers to disk.
+No effect if file is open as read</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AudioFile.write_frames">
+<code class="descname">write_frames</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AudioFile.write_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>write 1 or 2 dimensional array into sndfile.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>input: &lt;numpy array&gt;</li>
+</ul>
+<p>containing data to write.</p>
+<p>Notes:</p>
+<p>One column per channel.</p>
+<p>updates the write pointer.</p>
+<p>if the input type is float, and the file encoding is an integer type,
+you should make sure the input data are normalized normalized data
+(that is in the range [-1..1] - which will corresponds to the maximum
+range allowed by the integer bitwidth).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="analysedaudiofile-class">
+<h2>AnalysedAudioFile Class<a class="headerlink" href="#analysedaudiofile-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="audiofile.AnalysedAudioFile">
+<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AnalysedAudioFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/audiofile.html#AnalysedAudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AnalysedAudioFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates and stores analysis information for an audio file.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>(All AudioFile arguments)</li>
+<li>db_dir: if the object is part of a database, this is the path to the root
+of the database.</li>
+<li>config: The config module used for configuration settings. See examples
+for further details.</li>
+<li>data_file: the path to the HDF5 file used to store analyses for this
+audio file.</li>
+<li>reanalyse: bool for whether to overwrite any previously created analyses
+for this audio file.</li>
+<li>available_analyses: a list of strings for each analyses to be generated.
+ie. [&#8216;f0&#8217;, &#8216;rms&#8217;]</li>
+</ul>
+<dl class="method">
+<dt id="audiofile.AnalysedAudioFile.analysis_data_grains">
+<code class="descname">analysis_data_grains</code><span class="sig-paren">(</span><em>times</em>, <em>analysis</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AnalysedAudioFile.analysis_data_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>retrieve data for analysis within start and end time pairs in the format specified.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>times: an array of start and end times to retrieve analysis from (np.array)</li>
+<li>analysis: analysis string specifying analysis to retrieve</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AnalysedAudioFile.create_analysis">
+<code class="descname">create_analysis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AnalysedAudioFile.create_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate all analyses that have been set in the self.available_analyses member.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="audiofile.AnalysedAudioFile.create_analysis_group">
+<code class="descname">create_analysis_group</code><span class="sig-paren">(</span><em>analysis_file</em><span class="sig-paren">)</span><a class="headerlink" href="#audiofile.AnalysedAudioFile.create_analysis_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create HDF5 group for object to store analyses for this audio file.</p>
+<p>Audio file analyses are organized in groups per audio file.
+This function creates a group in the analysis HDF5 file with the name
+of the audio file. Analyses of this file are stored in analysis
+sub-groups.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="database-class">
+<h2>Database Class<a class="headerlink" href="#database-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="database.AudioDatabase">
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">AudioDatabase</code><span class="sig-paren">(</span><em>audio_dir=None</em>, <em>db_dir=None</em>, <em>analysis_list=[]</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#AudioDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.AudioDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for encapsulating a database of AnalysedAudioFile objects.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>audio_dir: directory containing audio files to be used as the database</li>
+<li>db_dir: directory to be used/created for storage of analysis data and
+storage/linking of audio files.</li>
+<li>analysis_list: the list of analysis strings for analyses to be used in
+the database.</li>
+</ul>
+<dl class="method">
+<dt id="database.AudioDatabase.add_file">
+<code class="descname">add_file</code><span class="sig-paren">(</span><em>file_object</em><span class="sig-paren">)</span><a class="headerlink" href="#database.AudioDatabase.add_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an AnalysedAudioFile object to the database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.AudioDatabase.analyse_database">
+<code class="descname">analyse_database</code><span class="sig-paren">(</span><em>subdir_paths</em>, <em>reanalyse</em><span class="sig-paren">)</span><a class="headerlink" href="#database.AudioDatabase.analyse_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>create selected analyses for audio files in the database.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li>subdir_paths: a dictionary containing paths to the &#8216;audio&#8217; directory and &#8216;data&#8217; directory of the database.</li>
+<li>reanalyse: If previous analyses are found this can be set to True to overwrite them.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.AudioDatabase.create_subdirs">
+<code class="descname">create_subdirs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#database.AudioDatabase.create_subdirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate database folder structure at the self.db_dir location</p>
+<p>If the folder structure already exists this will be used, else a new structure will be generated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.AudioDatabase.load_database">
+<code class="descname">load_database</code><span class="sig-paren">(</span><em>reanalyse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#database.AudioDatabase.load_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create/Read from a pre-existing database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.AudioDatabase.organize_audio">
+<code class="descname">organize_audio</code><span class="sig-paren">(</span><em>subdir_paths</em>, <em>symlink=True</em><span class="sig-paren">)</span><a class="headerlink" href="#database.AudioDatabase.organize_audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves/symlinks any audio from the audio directory specified to the database.</p>
+<p>Parameters:</p>
+<ul class="simple">
+<li>subdir_paths: A dictionary of &#8216;audio&#8217; and &#8216;data&#8217; sub directories of the database.</li>
+<li>symlink: If true, symbolic links will be used for audio files
+rather than copying. This allows audio files to stay in there
+original locations.</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="matcher-class">
+<h2>Matcher Class<a class="headerlink" href="#matcher-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="database.Matcher">
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Matcher</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#Matcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Matcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database comparison object.</p>
+<p>Used to compare and match entries in two AnalysedAudioFile databases.</p>
+<dl class="method">
+<dt id="database.Matcher.brute_force_matcher">
+<code class="descname">brute_force_matcher</code><span class="sig-paren">(</span><em>grain_size</em>, <em>overlap</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.brute_force_matcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for matches to each grain by brute force comparison</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Matcher.calculate_db_inds">
+<code class="descname">calculate_db_inds</code><span class="sig-paren">(</span><em>match_indexes</em>, <em>source_sample_indexes</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.calculate_db_inds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the database sample index and grain index for each match based
+on their indexes generated from the concatenated matching</p>
+<p>Output array will be a 3 dimensional array with an axis for each target
+grain, a dimension for each match of said grain and a dimension
+containing database sample index and the sample&#8217;s grain index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Matcher.count_grains">
+<code class="descname">count_grains</code><span class="sig-paren">(</span><em>database</em>, <em>grain_length</em>, <em>overlap</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.count_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the number of grains in the database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Matcher.distance_calc">
+<code class="descname">distance_calc</code><span class="sig-paren">(</span><em>data1</em>, <em>data2</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.distance_calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the euclidean distance between two arrays of data.</p>
+<p>Distance is calculated with special handeling of Nan values, if they exist in the data.
+A Nan value matched to another Nan value is classed as a perfect match.
+a Nan matched to any other value is calculated as the furthest match +
+10%</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Matcher.match">
+<code class="descname">match</code><span class="sig-paren">(</span><em>match_function</em>, <em>grain_size=None</em>, <em>overlap=None</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the closest match to each object in database 1 in database 2 using the matching function specified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Matcher.swap_databases">
+<code class="descname">swap_databases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#database.Matcher.swap_databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method to swap databases, changing the source database into the target and vice-versa</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="synthesizer-class">
+<h2>Synthesizer Class<a class="headerlink" href="#synthesizer-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="database.Synthesizer">
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Synthesizer</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#Synthesizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Synthesizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object used for synthesizing output based on grain matching.</p>
+<dl class="method">
+<dt id="database.Synthesizer.enforce_pitch">
+<code class="descname">enforce_pitch</code><span class="sig-paren">(</span><em>grain</em>, <em>source_sample</em>, <em>source_grain_ind</em>, <em>target_sample</em>, <em>target_grain_ind</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Synthesizer.enforce_pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shifts the pitch of the grain by the difference between it&#8217;s f0 and the f0 of the grain specified.</p>
+<p>This method will fail if either AnalysedAudioFile object does not have an f0 analysis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Synthesizer.enforce_rms">
+<code class="descname">enforce_rms</code><span class="sig-paren">(</span><em>grain</em>, <em>source_sample</em>, <em>source_grain_ind</em>, <em>target_sample</em>, <em>target_grain_ind</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Synthesizer.enforce_rms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the amplitude of the grain by the difference between it&#8217;s rms and the rms of the grain specified.</p>
+<p>This method will fail if either AnalysedAudioFile object does not have an rms analysis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Synthesizer.swap_databases">
+<code class="descname">swap_databases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#database.Synthesizer.swap_databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience method to swap databases, changing the source database into the target and vice-versa</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="database.Synthesizer.synthesize">
+<code class="descname">synthesize</code><span class="sig-paren">(</span><em>grain_size=None</em>, <em>overlap=None</em><span class="sig-paren">)</span><a class="headerlink" href="#database.Synthesizer.synthesize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synthesized output from the match data in the output database to create
+audio in the output database.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="analysis-classes">
+<h2>Analysis Classes<a class="headerlink" href="#analysis-classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="analysis.Analysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>name</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/Analysis.html#Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic descriptor class to build analyses on.</p>
+<p>The Analysis base class works as an interface between child descriptor
+objects and the HDF5 storage file. This is designed to seperate descriptor
+generation from data IO, allowing for quick development of new descriptor
+classes.  The base Analysis class has methods for retreiving analyses from
+file and saving data created by analysis objects to file. It also has basic
+formatting methods used to return data in the required format for processed
+such as descriptor comparisons.</p>
+<p>In order to create a new descriptor, the hdf5_dataset_formatter method will
+need to be overwritten by the child class to generate and store the
+descriptor&#8217;s output in the appropriate manner. Examples of this can be seen
+through the currently implemented descriptors.</p>
+<dl class="method">
+<dt id="analysis.Analysis.analysis_formatter">
+<code class="descname">analysis_formatter</code><span class="sig-paren">(</span><em>frames</em>, <em>selection</em>, <em>format</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.Analysis.analysis_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average analysis value of the grain using the match format specified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.Analysis.create_analysis">
+<code class="descname">create_analysis</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.Analysis.create_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the analysis and save to the HDF5 file.</p>
+<p>analysis_function: The function used to create the analysis. returned
+data will be stored in the HDF5 file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.Analysis.get_analysis_grains">
+<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.Analysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve analysis frames for period specified in start and end times.
+arrays of start and end time pairs will produce an array of equivelant
+size containing frames for these times.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.Analysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.Analysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Note: This is a generic formatter designed as a template to be
+overwritten by a descriptor sub-class.</p>
+<p>Formats the output from the analysis method to save to the HDF5 file.</p>
+<p>Places data and attributes in 2 dictionaries to be stored in the HDF5
+file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="centroid-analysis-class">
+<h3>Centroid Analysis Class<a class="headerlink" href="#centroid-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.CentroidAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">CentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/CentroidAnalysis.html#CentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.CentroidAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temporal centroid descriptor class for generation of temporal centroid
+audio analysis.</p>
+<p>This descriptor calculates the temporal centroid for overlapping grains of
+an AnalysedAudioFile object.  A full definition of temporal centroid
+analysis can be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.CentroidAnalysis.calc_centroid_frame_times">
+<em class="property">static </em><code class="descname">calc_centroid_frame_times</code><span class="sig-paren">(</span><em>centroidframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.CentroidAnalysis.calc_centroid_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.CentroidAnalysis.create_centroid_analysis">
+<em class="property">static </em><code class="descname">create_centroid_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>window_size=512</em>, <em>window=&lt;function triang&gt;</em>, <em>overlapFac=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.CentroidAnalysis.create_centroid_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Centroid values of windowed segments of the audio file and
+save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.CentroidAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.CentroidAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="f0-analysis-class">
+<h3>F0 Analysis Class<a class="headerlink" href="#f0-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.F0Analysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/F0Analysis.html#F0Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>F0 analysis descriptor class for generation of fundamental frequency
+estimation.</p>
+<p>This descriptor calculates the fundamental frequency for overlapping grains
+of an AnalysedAudioFile object.  A full definition of F0 analysis can be
+found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="method">
+<dt id="analysis.F0Analysis.analysis_formatter">
+<code class="descname">analysis_formatter</code><span class="sig-paren">(</span><em>data</em>, <em>selection</em>, <em>format</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0Analysis.analysis_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average analysis value of the grain using the match format specified.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.F0Analysis.calc_f0_frame_times">
+<em class="property">static </em><code class="descname">calc_f0_frame_times</code><span class="sig-paren">(</span><em>f0frames</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0Analysis.calc_f0_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.F0Analysis.create_f0_analysis">
+<em class="property">static </em><code class="descname">create_f0_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>samplerate</em>, <em>window_size=512</em>, <em>overlapFac=0.5</em>, <em>m0=None</em>, <em>M=None</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0Analysis.create_f0_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate F0 contour analysis.</p>
+<p>Calculate the frequency and harmonic ratio values of windowed segments
+of the audio file and save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.F0Analysis.get_analysis_grains">
+<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0Analysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve analysis frames for period specified in start and end times.
+arrays of start and end time pairs will produce an array of equivelant
+size containing frames for these times.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.F0Analysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0Analysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="fft-analysis-class">
+<h3>FFT Analysis Class<a class="headerlink" href="#fft-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.FFTAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">FFTAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>FFT analysis descriptor class for generation of FFT spectral analysis.</p>
+<p>This descriptor calculates the spectral content for overlapping grains
+of an AnalysedAudioFile object.  A full definition of FFT analysis can be
+found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="method">
+<dt id="analysis.FFTAnalysis.calc_fft_frame_times">
+<code class="descname">calc_fft_frame_times</code><span class="sig-paren">(</span><em>fftframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.calc_fft_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.calc_fft_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.FFTAnalysis.create_fft_analysis">
+<code class="descname">create_fft_analysis</code><span class="sig-paren">(</span><em>window_size=512</em>, <em>window_overlap=2</em>, <em>window_type='hanning'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.create_fft_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.create_fft_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a spectral analysis for overlapping frames of audio.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.FFTAnalysis.get_analysis_grains">
+<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.get_analysis_grains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve analysis frames for period specified in start and end times.
+arrays of start and end time pairs will produce an array of equivelant
+size containing frames for these times.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.FFTAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+<p>Places data and attributes in 2 dictionaries to be stored in the HDF5
+file.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.FFTAnalysis.stft">
+<em class="property">static </em><code class="descname">stft</code><span class="sig-paren">(</span><em>sig</em>, <em>frameSize</em>, <em>overlapFac=0.5</em>, <em>window=&lt;function hanning&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.stft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.stft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short time fourier transform of audio signal.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="harmonic-ratio-analysis-class">
+<h3>Harmonic Ratio Analysis Class<a class="headerlink" href="#harmonic-ratio-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.F0HarmRatioAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0HarmRatioAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/F0HarmRatioAnalysis.html#F0HarmRatioAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0HarmRatioAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The F0 HarmRatio analysis object is a placeholder class to allow access to
+the harmonic ratio generated in the f0 analysis.  As a result it does not
+have it&#8217;s own &#8220;create analysis method as other analyses do. it is designed
+to be used for the retreival of the f0 harmonic ratio analysis for
+matching.</p>
+<p>F0 analysis must be generated for the AnalysedAudioFile in order to use
+this object.</p>
+<dl class="method">
+<dt id="analysis.F0HarmRatioAnalysis.analysis_formatter">
+<code class="descname">analysis_formatter</code><span class="sig-paren">(</span><em>data</em>, <em>selection</em>, <em>format</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0HarmRatioAnalysis.analysis_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average analysis value of the grain using the match format specified.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.F0HarmRatioAnalysis.calc_F0HarmRatio_frame_times">
+<em class="property">static </em><code class="descname">calc_F0HarmRatio_frame_times</code><span class="sig-paren">(</span><em>F0HarmRatioframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0HarmRatioAnalysis.calc_F0HarmRatio_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.F0HarmRatioAnalysis.get_analysis_grains">
+<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.F0HarmRatioAnalysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve analysis frames for period specified in start and end times.
+arrays of start and end time pairs will produce an array of equivelant
+size containing frames for these times.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="kurtosis-analysis-class">
+<h3>Kurtosis Analysis Class<a class="headerlink" href="#kurtosis-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.KurtosisAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">KurtosisAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/KurtosisAnalysis.html#KurtosisAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.KurtosisAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kurtosis descriptor class for generation of Kurtosis audio analysis.</p>
+<p>This descriptor calculates the temporal kurtosis for overlapping grains of
+an AnalysedAudioFile object.  A full definition of kurtosis analysis can be found
+in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.KurtosisAnalysis.calc_kurtosis_frame_times">
+<em class="property">static </em><code class="descname">calc_kurtosis_frame_times</code><span class="sig-paren">(</span><em>kurtosisframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.KurtosisAnalysis.calc_kurtosis_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.KurtosisAnalysis.create_kurtosis_analysis">
+<em class="property">static </em><code class="descname">create_kurtosis_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>variance</em>, <em>window_size=512</em>, <em>overlapFac=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.KurtosisAnalysis.create_kurtosis_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Kurtosis values of windowed segments of the audio file and
+save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.KurtosisAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.KurtosisAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="peak-analysis-class">
+<h3>Peak Analysis Class<a class="headerlink" href="#peak-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.PeakAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">PeakAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/PeakAnalysis.html#PeakAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PeakAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Peak descriptor class for generation of per-grain maximum peak audio analysis.</p>
+<p>This descriptor calculates the maximum peak for overlapping grains of an
+AnalysedAudioFile object.  A full definition of peak analysis can be found in
+the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.PeakAnalysis.calc_peak_frame_times">
+<em class="property">static </em><code class="descname">calc_peak_frame_times</code><span class="sig-paren">(</span><em>peakframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PeakAnalysis.calc_peak_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.PeakAnalysis.create_peak_analysis">
+<em class="property">static </em><code class="descname">create_peak_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>window_size=512</em>, <em>window=&lt;function triang&gt;</em>, <em>overlapFac=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PeakAnalysis.create_peak_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Peak values of windowed segments of the audio file and
+save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.PeakAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PeakAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="rms-analysis-class">
+<h3>RMS Analysis Class<a class="headerlink" href="#rms-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.RMSAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">RMSAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/RMSAnalysis.html#RMSAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.RMSAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>RMS descriptor class for generation of RMS audio analysis.</p>
+<p>This descriptor calculates the Root Mean Square analysis for overlapping
+grains of an AnalysedAudioFile object.  A full definition of RMS analysis
+can be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.RMSAnalysis.calc_rms_frame_times">
+<em class="property">static </em><code class="descname">calc_rms_frame_times</code><span class="sig-paren">(</span><em>rmsframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.RMSAnalysis.calc_rms_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.RMSAnalysis.create_rms_analysis">
+<em class="property">static </em><code class="descname">create_rms_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>samplerate</em>, <em>window_size=512</em>, <em>window=&lt;function triang&gt;</em>, <em>overlapFac=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.RMSAnalysis.create_rms_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate RMS contour analysis.</p>
+<p>Calculate the RMS values of windowed segments of the audio file and
+save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.RMSAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.RMSAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-centroid-analysis-class">
+<h3>Spectral Centroid Analysis Class<a class="headerlink" href="#spectral-centroid-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.SpectralCentroidAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectral centroid descriptor class for generation of spectral centroid
+audio analysis.</p>
+<p>This descriptor calculates the spectral centroid for overlapping grains of
+an AnalysedAudioFile object.  A full definition of spectral centroid
+analysis can be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.SpectralCentroidAnalysis.calc_spccntr_frame_times">
+<em class="property">static </em><code class="descname">calc_spccntr_frame_times</code><span class="sig-paren">(</span><em>spccntr_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.calc_spccntr_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.calc_spccntr_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.SpectralCentroidAnalysis.create_spccntr_analysis">
+<em class="property">static </em><code class="descname">create_spccntr_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.create_spccntr_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.create_spccntr_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the spectral centroid of the fft frames.</p>
+<p>length: the length of the window used to calculate the FFT.
+samplerate: the samplerate of the audio analysed.
+output_format = Choose either &#8220;freq&#8221; for output in Hz or &#8220;ind&#8221; for bin
+index output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralCentroidAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-crest-factor-analysis-class">
+<h3>Spectral Crest Factor Analysis Class<a class="headerlink" href="#spectral-crest-factor-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.SpectralCrestFactorAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCrestFactorAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectral crest factor descriptor class for generation of spectral crest
+factor audio analysis.</p>
+<p>This descriptor calculates the spectral crest factor for overlapping grains
+of an AnalysedAudioFile object.  A full definition can be found in the
+documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.SpectralCrestFactorAnalysis.calc_spccf_frame_times">
+<em class="property">static </em><code class="descname">calc_spccf_frame_times</code><span class="sig-paren">(</span><em>spccf_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.calc_spccf_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.calc_spccf_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.SpectralCrestFactorAnalysis.create_spccf_analysis">
+<em class="property">static </em><code class="descname">create_spccf_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.create_spccf_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.create_spccf_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the spectral crest factor of the fft frames.</p>
+<p>length: the length of the window used to calculate the FFT.
+samplerate: the samplerate of the audio analysed.
+output_format = Choose either &#8220;freq&#8221; for output in Hz or &#8220;ind&#8221; for bin
+index output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralCrestFactorAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralCrestFactorAnalysis.mean_formatter">
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean value of the analysis data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralCrestFactorAnalysis.median_formatter">
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the median value of the analysis data</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-flatness-analysis-class">
+<h3>Spectral Flatness Analysis Class<a class="headerlink" href="#spectral-flatness-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.SpectralFlatnessAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFlatnessAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectral flatness descriptor class for generation of spectral flatness
+audio analysis.</p>
+<p>This descriptor calculates the spectral flatness for overlapping grains of
+an AnalysedAudioFile object.  A full definition can be found in the
+documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.SpectralFlatnessAnalysis.calc_spcflatness_frame_times">
+<em class="property">static </em><code class="descname">calc_spcflatness_frame_times</code><span class="sig-paren">(</span><em>spcflatness_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.calc_spcflatness_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.calc_spcflatness_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis">
+<em class="property">static </em><code class="descname">create_spcflatness_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.create_spcflatness_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the spectral flatness of the fft frames.</p>
+<p>length: the length of the window used to calculate the FFT.
+samplerate: the samplerate of the audio analysed.
+output_format = Choose either &#8220;freq&#8221; for output in Hz or &#8220;ind&#8221; for bin
+index output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFlatnessAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFlatnessAnalysis.mean_formatter">
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean value of the analysis data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFlatnessAnalysis.median_formatter">
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the median value of the analysis data</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-flux-analysis-class">
+<h3>Spectral Flux Analysis Class<a class="headerlink" href="#spectral-flux-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.SpectralFluxAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFluxAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectral flux descriptor class for generation of spectral flux audio
+analysis.</p>
+<p>This descriptor calculates the spectral flux for overlapping grains of an
+AnalysedAudioFile object.  A full definition of spectral flux analysis can
+be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.SpectralFluxAnalysis.calc_spcflux_frame_times">
+<em class="property">static </em><code class="descname">calc_spcflux_frame_times</code><span class="sig-paren">(</span><em>spcflux_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.calc_spcflux_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.calc_spcflux_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.SpectralFluxAnalysis.create_spcflux_analysis">
+<em class="property">static </em><code class="descname">create_spcflux_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.create_spcflux_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.create_spcflux_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the spectral flux of the fft frames.</p>
+<p>length: the length of the window used to calculate the FFT.
+samplerate: the samplerate of the audio analysed.
+output_format = Choose either &#8220;freq&#8221; for output in Hz or &#8220;ind&#8221; for bin
+index output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFluxAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFluxAnalysis.mean_formatter">
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean value of the analysis data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralFluxAnalysis.median_formatter">
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the median value of the analysis data</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-spread-analysis-class">
+<h3>Spectral Spread Analysis Class<a class="headerlink" href="#spectral-spread-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.SpectralSpreadAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralSpreadAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectral spread descriptor class for generation of spectral spread audio
+analysis.</p>
+<p>This descriptor calculates the spectral spread for overlapping grains of an
+AnalysedAudioFile object.  A full definition of spectral spread analysis can
+be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.SpectralSpreadAnalysis.calc_spcsprd_frame_times">
+<em class="property">static </em><code class="descname">calc_spcsprd_frame_times</code><span class="sig-paren">(</span><em>spcsprd_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.calc_spcsprd_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.calc_spcsprd_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.SpectralSpreadAnalysis.create_spcsprd_analysis">
+<em class="property">static </em><code class="descname">create_spcsprd_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>spectral_centroid</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.create_spcsprd_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.create_spcsprd_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the spectral spread of the fft frames.</p>
+<p>fft: Real fft frames.
+spectral_centroid: spectral centroid frames (in index format).
+length: the length of the window used to calculate the FFT.
+samplerate: the samplerate of the audio analysed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralSpreadAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralSpreadAnalysis.mean_formatter">
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean value of the analysis data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.SpectralSpreadAnalysis.median_formatter">
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the median value of the analysis data</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="variance-analysis-class">
+<h3>Variance Analysis Class<a class="headerlink" href="#variance-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.VarianceAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">VarianceAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/VarianceAnalysis.html#VarianceAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.VarianceAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variance descriptor class for generation of variance audio analysis.</p>
+<p>This descriptor calculates the Root Mean Square analysis for overlapping
+grains of an AnalysedAudioFile object.  A full definition of variance
+analysis can be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.VarianceAnalysis.calc_variance_frame_times">
+<em class="property">static </em><code class="descname">calc_variance_frame_times</code><span class="sig-paren">(</span><em>varianceframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.VarianceAnalysis.calc_variance_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.VarianceAnalysis.create_variance_analysis">
+<em class="property">static </em><code class="descname">create_variance_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>window_size=512</em>, <em>overlapFac=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.VarianceAnalysis.create_variance_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an energy contour analysis.</p>
+<p>Calculate the Variance values of windowed segments of the audio file and
+save to disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.VarianceAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.VarianceAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="zero-crossing-analysis-class">
+<h3>Zero-Crossing Analysis Class<a class="headerlink" href="#zero-crossing-analysis-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="analysis.ZeroXAnalysis">
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">ZeroXAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/ZeroXAnalysis.html#ZeroXAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.ZeroXAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zero-corssing descriptor class for generation of zero-crossing rate
+analysis.</p>
+<p>This descriptor calculates the zero-crossing rate for overlapping grains of
+an AnalysedAudioFile object.  A full definition of zero-crossing analysis
+can be found in the documentation.</p>
+<p>Arguments:</p>
+<ul class="simple">
+<li>analysis_group: the HDF5 file group to use for the storage of the
+analysis.</li>
+<li>config: The configuration module used to configure the analysis</li>
+</ul>
+<dl class="staticmethod">
+<dt id="analysis.ZeroXAnalysis.calc_zerox_frame_times">
+<em class="property">static </em><code class="descname">calc_zerox_frame_times</code><span class="sig-paren">(</span><em>zerox_frames</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.ZeroXAnalysis.calc_zerox_frame_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate times for frames using sample size and samplerate.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="analysis.ZeroXAnalysis.create_zerox_analysis">
+<em class="property">static </em><code class="descname">create_zerox_analysis</code><span class="sig-paren">(</span><em>frames</em>, <em>window_size=512</em>, <em>overlapFac=0.5</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.ZeroXAnalysis.create_zerox_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate zero crossing value for window of the signal</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.ZeroXAnalysis.hdf5_dataset_formatter">
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.ZeroXAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

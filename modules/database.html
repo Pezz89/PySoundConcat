@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>database &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<h1>Source code for database</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">spatial</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pysndfile</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">pitch_shift</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">Imputer</span>
+
+<span class="kn">from</span> <span class="nn">fileops</span> <span class="kn">import</span> <span class="n">pathops</span>
+<span class="kn">from</span> <span class="nn">audiofile</span> <span class="kn">import</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">AudioFile</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">OrderedSet</span>
+<span class="kn">import</span> <span class="nn">analysis.RMSAnalysis</span> <span class="kn">as</span> <span class="nn">RMSAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.AttackAnalysis</span> <span class="kn">as</span> <span class="nn">AttackAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.ZeroXAnalysis</span> <span class="kn">as</span> <span class="nn">ZeroXAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.FFTAnalysis</span> <span class="kn">as</span> <span class="nn">FFTAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralCentroidAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralCentroidAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.SpectralSpreadAnalysis</span> <span class="kn">as</span> <span class="nn">SpectralSpreadAnalysis</span>
+<span class="kn">import</span> <span class="nn">analysis.F0Analysis</span> <span class="kn">as</span> <span class="nn">F0Analysis</span>
+<span class="kn">import</span> <span class="nn">analysis.CentroidAnalysis</span> <span class="kn">as</span> <span class="nn">CentroidAnalysis</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+<div class="viewcode-block" id="AudioDatabase"><a class="viewcode-back" href="../api.html#database.AudioDatabase">[docs]</a><span class="k">class</span> <span class="nc">AudioDatabase</span><span class="p">:</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for encapsulating a database of AnalysedAudioFile objects.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    - audio_dir: directory containing audio files to be used as the database</span>
+
+<span class="sd">    - db_dir: directory to be used/created for storage of analysis data and</span>
+<span class="sd">      storage/linking of audio files.</span>
+
+<span class="sd">    - analysis_list: the list of analysis strings for analyses to be used in</span>
+<span class="sd">      the database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">audio_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">db_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">analysis_list</span><span class="o">=</span><span class="p">[],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the folder hierachy for the database of files to be stored in.</span>
+
+<span class="sd">        Adds any pre existing audio files and analyses to the object</span>
+<span class="sd">        automatically.</span>
+<span class="sd">        audio_dir:</span>
+<span class="sd">        self.db_dir:</span>
+<span class="sd">        analysis_list:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span> <span class="o">=</span> <span class="n">db_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span> <span class="o">=</span> <span class="n">audio_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_list</span> <span class="o">=</span> <span class="n">analysis_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.AudioDatabase&#39;</span><span class="p">)</span>
+
+        <span class="c"># Check that all analysis list args are valid</span>
+        <span class="n">valid_analyses</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;rms&#39;</span><span class="p">,</span>
+            <span class="s">&#39;zerox&#39;</span><span class="p">,</span>
+            <span class="s">&#39;fft&#39;</span><span class="p">,</span>
+            <span class="s">&#39;spccntr&#39;</span><span class="p">,</span>
+            <span class="s">&#39;spcsprd&#39;</span><span class="p">,</span>
+            <span class="s">&#39;spcflux&#39;</span><span class="p">,</span>
+            <span class="s">&#39;spccf&#39;</span><span class="p">,</span>
+            <span class="s">&#39;spcflatness&#39;</span><span class="p">,</span>
+            <span class="s">&#39;f0&#39;</span><span class="p">,</span>
+            <span class="s">&#39;peak&#39;</span><span class="p">,</span>
+            <span class="s">&#39;centroid&#39;</span><span class="p">,</span>
+            <span class="s">&#39;variance&#39;</span><span class="p">,</span>
+            <span class="s">&#39;kurtosis&#39;</span><span class="p">,</span>
+            <span class="s">&#39;skewness&#39;</span><span class="p">,</span>
+            <span class="s">&#39;harm_ratio&#39;</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="n">analysis_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">analysis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_analyses</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&#39;</span><span class="s">{0}</span><span class="se">\&#39;</span><span class="s"> is not a valid analysis type&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis</span><span class="p">))</span>
+
+        <span class="c"># Filter out repetitions in list if they exist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Initialising Database...&quot;</span><span class="p">)</span>
+
+        <span class="c"># Create empty list to fill with audio file paths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_file_list</span> <span class="o">=</span> <span class="n">OrderedSet</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow for entry retreival via indexing.</span>
+
+<span class="sd">        Returns and AnalysedAudioFile object at the index provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reanalyse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create/Read from a pre-existing database&quot;&quot;&quot;</span>
+
+        <span class="n">subdir_paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_subdirs</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">:</span>
+            <span class="c"># Check that audio directory exists</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;The audio directory provided ({0}) doesn&#39;t &quot;</span>
+                            <span class="s">&quot;exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">organize_audio</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">,</span> <span class="n">symlink</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">[</span><span class="s">&quot;symlink&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyse_database</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">,</span> <span class="n">reanalyse</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">analyse_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdir_paths</span><span class="p">,</span> <span class="n">reanalyse</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create selected analyses for audio files in the database.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - subdir_paths: a dictionary containing paths to the &#39;audio&#39; directory and &#39;data&#39; directory of the database.</span>
+
+<span class="sd">        - reanalyse: If previous analyses are found this can be set to True to overwrite them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Create data file for storing analysis data for the database</span>
+        <span class="n">datapath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">],</span> <span class="s">&#39;analysis_data.hdf5&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Unable to create/append to file: {0}</span><span class="se">\n</span><span class="s">This may be &quot;</span>
+                          <span class="s">&quot;due to another instance of this program running or a &quot;</span>
+                          <span class="s">&quot;corrupted HDF5 file.</span><span class="se">\n</span><span class="s"> Make sure this is the only &quot;</span>
+                          <span class="s">&quot;running instance and regenerate HDF5 if &quot;</span>
+                          <span class="s">&quot;neccesary.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datapath</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysed_audio</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_file_list</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">[</span><span class="s">&#39;audio&#39;</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+            <span class="c"># if there is no wav file then skip</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">AnalysedAudioFile</span><span class="p">(</span>
+                    <span class="n">filepath</span><span class="p">,</span>
+                    <span class="s">&#39;r&#39;</span><span class="p">,</span>
+                    <span class="n">data_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">analyses</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">),</span>
+                    <span class="n">db_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span><span class="p">,</span>
+                    <span class="n">reanalyse</span><span class="o">=</span><span class="n">reanalyse</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">AAF</span><span class="p">:</span>
+                    <span class="n">AAF</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">analysed_audio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AAF</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="c"># Skip any audio file objects that can&#39;t be analysed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;File cannot be analysed: {0}</span><span class="se">\n</span><span class="s">Reason: {1}</span><span class="se">\n</span><span class="s">&quot;</span>
+                      <span class="s">&quot;Skipping...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+                <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">,</span>
+                                          <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="k">continue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Analysis Finished.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_object</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add an AnalysedAudioFile object to the database&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">file_object</span><span class="p">)</span> <span class="ow">is</span> <span class="n">AnalysedAudioFile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analysed_audio</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_object</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">audio_file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_object</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Object {0} of type {1} cannot be added to the database&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_object</span><span class="p">,</span> <span class="n">file_object</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">create_subdirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate database folder structure at the self.db_dir location</span>
+
+<span class="sd">        If the folder structure already exists this will be used, else a new structure will be generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># If the database directory isnt specified then the directory where the</span>
+        <span class="c"># audio files are stored will be used</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;No database location specified. Either a &quot;</span>
+                              <span class="s">&quot;database ocation or audio file location must be&quot;</span>
+                              <span class="s">&quot; specified.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span>
+
+
+        <span class="c"># Check to see if the database directory already exists</span>
+        <span class="c"># Create if not</span>
+        <span class="n">pathops</span><span class="o">.</span><span class="n">dir_must_exist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">initialise_subdir</span><span class="p">(</span><span class="n">dirkey</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Create a subdirectory in the database with the name of the key</span>
+<span class="sd">            provided.</span>
+<span class="sd">            Returns the path to the created subdirectory.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c"># Make sure database subdirectory exists</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_dir</span><span class="p">,</span> <span class="n">dirkey</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c"># If it doesn&#39;t, Create it.</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;Created directory: &quot;</span><span class="p">,</span> <span class="n">directory</span><span class="p">)))</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="c"># If it does exist, add it&#39;s content to the database content</span>
+                <span class="c"># dictionary.</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\&#39;</span><span class="s">{0}</span><span class="se">\&#39;</span><span class="s"> directory already exists:&quot;</span>
+                    <span class="s">&quot; {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirkey</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">directory</span><span class="p">)))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">err</span>
+            <span class="k">return</span> <span class="n">directory</span>
+
+        <span class="c"># Create a sub directory for every key in the analysis list</span>
+        <span class="c"># store reference to this in dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating sub-directories...&quot;</span><span class="p">)</span>
+        <span class="n">directory_set</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;audio&#39;</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">}</span>
+        <span class="n">subdir_paths</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">initialise_subdir</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">directory_set</span>
+        <span class="p">}</span>
+        <span class="c"># Save sub-directory paths for later access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subdirs</span> <span class="o">=</span> <span class="n">subdir_paths</span>
+        <span class="k">return</span> <span class="n">subdir_paths</span>
+
+    <span class="k">def</span> <span class="nf">organize_audio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdir_paths</span><span class="p">,</span> <span class="n">symlink</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Moves/symlinks any audio from the audio directory specified to the database.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        - subdir_paths: A dictionary of &#39;audio&#39; and &#39;data&#39; sub directories of the database.</span>
+
+<span class="sd">        - symlink: If true, symbolic links will be used for audio files</span>
+<span class="sd">          rather than copying. This allows audio files to stay in there</span>
+<span class="sd">          original locations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Moving any audio to sub directory...&quot;</span><span class="p">)</span>
+
+        <span class="n">valid_filetypes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;.wav&#39;</span><span class="p">,</span> <span class="s">&#39;.aif&#39;</span><span class="p">,</span> <span class="s">&#39;.aiff&#39;</span><span class="p">}</span>
+        <span class="c"># Move audio files to database</span>
+        <span class="c"># For all files in the audio dirctory...</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">directories</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+                <span class="c"># If the file is a valid file type...</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">item</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">valid_filetypes</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;File added to database content: &quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)))</span>
+                    <span class="c"># Get the full path for the file</span>
+                    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">)))</span>
+                    <span class="c"># If the file isn&#39;t already in the database...</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+                    <span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filepath</span><span class="p">)))</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
+                        <span class="c"># Copy the file to the database</span>
+                        <span class="k">if</span> <span class="n">symlink</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">]),</span> <span class="n">filename</span><span class="p">))</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;Linked: &quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">To directory: &quot;</span><span class="p">,</span>
+                                <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;Copied: &quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">To directory: &quot;</span><span class="p">,</span>
+                                <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)))</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">symlink</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">linkpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">readlink</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+                                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                                <span class="k">continue</span>
+                            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">linkpath</span><span class="p">,</span> <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;Copied: &quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">To directory: &quot;</span><span class="p">,</span>
+                                <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;File:  &quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">Already exists at: &quot;</span><span class="p">,</span>
+                                <span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">])))</span>
+                    <span class="c"># Add the file&#39;s path to the database content dictionary</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">audio_file_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir_paths</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Matcher"><a class="viewcode-back" href="../api.html#database.Matcher">[docs]</a><span class="k">class</span> <span class="nc">Matcher</span><span class="p">:</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Database comparison object.</span>
+
+<span class="sd">    Used to compare and match entries in two AnalysedAudioFile databases.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database1</span><span class="p">,</span> <span class="n">database2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c"># Get matcher configurations object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;config&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.Matcher&#39;</span><span class="p">)</span>
+
+        <span class="c"># Set the number of best matches for each grain to store for use in synthesis.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher</span><span class="p">[</span><span class="s">&quot;match_quantity&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span> <span class="o">=</span> <span class="n">database1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span> <span class="o">=</span> <span class="n">database2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;output_db&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rematch</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;rematch&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher</span><span class="p">[</span><span class="s">&quot;rematch&quot;</span><span class="p">])</span>
+
+        <span class="c"># Store a dictionary of analyses to perform matching on.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">analysis_dict</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Initialised Matcher&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">match_function</span><span class="p">,</span>
+        <span class="n">grain_size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">overlap</span><span class="o">=</span><span class="bp">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the closest match to each object in database 1 in database 2 using the matching function specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grain_size</span><span class="p">:</span>
+            <span class="n">grain_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher</span><span class="p">[</span><span class="s">&quot;grain_size&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overlap</span><span class="p">:</span>
+            <span class="n">overlap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span>
+
+        <span class="c"># Find all analyses shared by both the source and target entry</span>
+        <span class="n">common_analyses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># Create final list of analyses to perform matching on based on</span>
+        <span class="c"># selected match analyses.</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common_analyses</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Analysis: </span><span class="se">\&quot;</span><span class="s">{0}</span><span class="se">\&quot;</span><span class="s"> not avilable in {1} and/or {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c"># Run matching</span>
+        <span class="n">match_function</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">count_grains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">grain_length</span><span class="p">,</span> <span class="n">overlap</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Calculate the number of grains in the database&#39;&#39;&#39;</span>
+        <span class="n">entry_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">)</span>
+        <span class="n">grain_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">entry_count</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">samps_to_ms</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+            <span class="n">hop_size</span> <span class="o">=</span> <span class="n">grain_length</span> <span class="o">/</span> <span class="n">overlap</span>
+            <span class="n">grain_indexes</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">hop_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">grain_indexes</span>
+
+    <span class="k">def</span> <span class="nf">kdtree_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">):</span>
+        <span class="c"># Count grains of the source database</span>
+        <span class="n">source_sample_indexes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_grains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&quot;match&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Match group already exists in the {0} HDF5 file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rematch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="n">weightings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher_weightings</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weightings</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="mf">1.</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">tind</span><span class="p">,</span> <span class="n">target_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+            <span class="c"># Check if match data already exists and use it rather than</span>
+            <span class="c"># regenerating if it does.</span>
+            <span class="k">if</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Match data already exists for {0}. Using this &quot;</span>
+                                 <span class="s">&quot;data. Run with the </span><span class="se">\&#39;</span><span class="s">--rematch</span><span class="se">\&#39;</span><span class="s"> flag to &quot;</span>
+                                 <span class="s">&quot;overwrite.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="c"># Create an array of grain times for target sample</span>
+            <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">x_size</span> <span class="o">=</span> <span class="n">target_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">match_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
+            <span class="n">match_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
+            <span class="n">match_vals</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+            <span class="c"># Allocate memory for target analyses.</span>
+            <span class="n">all_target_analyses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">),</span> <span class="n">target_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">):</span>
+                <span class="n">analysis_formatting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
+
+                <span class="n">target_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+                <span class="n">all_target_analyses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_data</span>
+
+            <span class="n">imp</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c"># Impute values for Nans</span>
+            <span class="n">all_target_analyses</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">all_target_analyses</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">sind</span><span class="p">,</span> <span class="n">source_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+                <span class="c"># Create an array of grain times for source sample</span>
+                <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="n">all_source_analyses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">),</span> <span class="n">source_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">):</span>
+                    <span class="n">analysis_formatting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
+
+                    <span class="n">source_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+                    <span class="n">all_source_analyses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_data</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;K-d Tree Matching: {0} to {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+                <span class="c"># Impute values for Nans</span>
+                <span class="n">all_source_analyses</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">all_source_analyses</span><span class="p">)</span>
+
+                <span class="n">source_tree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">all_source_analyses</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">leafsize</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+                <span class="n">results_vals</span><span class="p">,</span> <span class="n">results_inds</span> <span class="o">=</span> <span class="n">source_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">all_target_analyses</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">results_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">results_vals</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+                    <span class="n">results_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">results_inds</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+                <span class="n">vals_append</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_vals</span><span class="p">,</span> <span class="n">results_vals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">vals_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">vals_append</span><span class="p">)</span>
+                <span class="n">inds_append</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_indexes</span><span class="p">,</span> <span class="n">results_inds</span><span class="o">+</span><span class="n">source_sample_indexes</span><span class="p">[</span><span class="n">sind</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals_append</span><span class="p">))[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="n">best_match_inds</span> <span class="o">=</span> <span class="n">inds_append</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">vals_sort</span><span class="p">]</span>
+                <span class="n">match_indexes</span> <span class="o">=</span> <span class="n">best_match_inds</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">]</span>
+                <span class="n">best_match_vals</span> <span class="o">=</span> <span class="n">vals_append</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">vals_sort</span><span class="p">]</span>
+                <span class="n">match_vals</span> <span class="o">=</span> <span class="n">best_match_vals</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">]</span>
+
+            <span class="n">match_grain_inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_db_inds</span><span class="p">(</span><span class="n">match_indexes</span><span class="p">,</span> <span class="n">source_sample_indexes</span><span class="p">)</span>
+
+            <span class="n">datafile_path</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;match/&quot;</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">match_grain_inds</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;grain_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grain_size</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overlap</span>
+
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Match data couldn&#39;t be written to HDF5 &quot;</span>
+                                   <span class="s">&quot;file.</span><span class="se">\n</span><span class="s"> Match data may already exist in the &quot;</span>
+                                   <span class="s">&quot;file.</span><span class="se">\n</span><span class="s"> Try running with the &#39;--rematch&#39; flag &quot;</span>
+                                   <span class="s">&quot;to overwrite this data.</span><span class="se">\n</span><span class="s"> Original error: &quot;</span>
+                                   <span class="s">&quot;{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+
+
+    <span class="k">def</span> <span class="nf">brute_force_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Searches for matches to each grain by brute force comparison&#39;&#39;&#39;</span>
+
+        <span class="c"># Count grains of the source database</span>
+        <span class="n">source_sample_indexes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_grains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s">&quot;match&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Match group already exists in the {0} HDF5 file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rematch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="n">weightings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">matcher_weightings</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weightings</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="mf">1.</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">tind</span><span class="p">,</span> <span class="n">target_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+            <span class="c"># Check if match data already exists and use it rather than</span>
+            <span class="c"># regenerating if it does.</span>
+            <span class="k">if</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Match data already exists for {0}. Using this &quot;</span>
+                                 <span class="s">&quot;data. Run with the </span><span class="se">\&#39;</span><span class="s">--rematch</span><span class="se">\&#39;</span><span class="s"> flag to &quot;</span>
+                                 <span class="s">&quot;overwrite.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="c"># Create an array of grain times for target sample</span>
+            <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="c"># Allocate memory for storing accumulated distances between</span>
+            <span class="c"># source and target grains</span>
+            <span class="n">x_size</span> <span class="o">=</span> <span class="n">target_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_sample_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">8192</span>
+
+
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;data_distance&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&quot;data_distance&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x_size</span><span class="p">,</span> <span class="n">y_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;distance_accum&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&quot;distance_accum&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x_size</span><span class="p">,</span> <span class="n">y_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Current analysis: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis</span><span class="p">))</span>
+                <span class="n">analysis_formatting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
+
+                <span class="c"># Get data for all target grains for each analysis</span>
+                <span class="n">target_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+
+                <span class="n">data_max</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="k">for</span> <span class="n">sind</span><span class="p">,</span> <span class="n">source_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+
+                    <span class="c"># Get the start and end array indexes allocated for the</span>
+                    <span class="c"># current entry&#39;s grains.</span>
+                    <span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span> <span class="o">=</span> <span class="n">source_sample_indexes</span><span class="p">[</span><span class="n">sind</span><span class="p">]</span>
+
+                    <span class="c"># Create an array of grain times for source sample</span>
+                    <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Matching </span><span class="se">\&quot;</span><span class="s">{0}</span><span class="se">\&quot;</span><span class="s"> for: {1} to {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+                    <span class="c"># Get data for all source grains for each analysis</span>
+                    <span class="n">source_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+                    <span class="n">source_entry</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                    <span class="c"># Calculate the euclidean distance between the source and</span>
+                    <span class="c"># source values of each grain and add to array</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_calc</span><span class="p">(</span><span class="n">target_data</span><span class="p">,</span> <span class="n">source_data</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;data_distance&quot;</span><span class="p">][:,</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_index</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">end_index</span><span class="p">)]</span> <span class="o">=</span> <span class="n">a</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                    <span class="n">a_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">a_max</span> <span class="o">&gt;</span> <span class="n">data_max</span><span class="p">:</span>
+                        <span class="n">data_max</span> <span class="o">=</span> <span class="n">a_max</span>
+
+                <span class="c"># Normalize and weight the distances. A higher weighting gives</span>
+                <span class="c"># an analysis presedence over others.</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">membuff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">))</span>
+                <span class="n">membuff2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">))</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">x_size</span><span class="p">:</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">chunk_size</span>
+                    <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">x_size</span><span class="p">:</span>
+                        <span class="n">j</span> <span class="o">=</span> <span class="n">x_size</span> <span class="o">-</span> <span class="n">i</span>
+
+                    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">while</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">y_size</span><span class="p">:</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="n">chunk_size</span>
+                        <span class="k">if</span> <span class="n">k</span><span class="o">+</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">y_size</span><span class="p">:</span>
+                            <span class="n">l</span> <span class="o">=</span> <span class="n">y_size</span> <span class="o">-</span> <span class="n">k</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Calculating weighted &quot;</span>
+                                         <span class="s">&quot;distances:</span><span class="se">\n</span><span class="s">Source chunk {0} - {1} of &quot;</span>
+                                         <span class="s">&quot;{2}</span><span class="se">\n</span><span class="s">Target chunk {3} - {4} of &quot;</span>
+                                         <span class="s">&quot;{5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                             <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">x_size</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">,</span> <span class="n">y_size</span>
+                                         <span class="p">))</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;data_distance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_direct</span><span class="p">(</span><span class="n">membuff</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">l</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;distance_accum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_direct</span><span class="p">(</span><span class="n">membuff2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">l</span><span class="p">])</span>
+
+                        <span class="n">weighted_mem</span> <span class="o">=</span> <span class="n">membuff</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">l</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">data_max</span><span class="p">)</span> <span class="o">*</span> <span class="n">weightings</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;data_distance&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_mem</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;distance_accum&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">membuff2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="n">weighted_mem</span>
+
+                        <span class="n">k</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+
+                    <span class="n">i</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Calculating the closest {0} overall matches...&quot;</span><span class="o">.</span> <span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c"># Allocate memory for storing chunks.</span>
+            <span class="n">chunk_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">))</span>
+            <span class="n">chunk_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">),</span> <span class="p">(</span><span class="n">chunk_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="c"># Allocate memory for storing the best matches for each target</span>
+            <span class="c"># grain</span>
+            <span class="n">match_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
+            <span class="n">match_indexes</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="c"># Allocate memory for storing the match distance of these grains.</span>
+            <span class="n">match_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
+            <span class="n">match_vals</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">x_size</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">chunk_size</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">x_size</span><span class="p">:</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">x_size</span> <span class="o">-</span> <span class="n">i</span>
+
+                <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">y_size</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">chunk_size</span>
+                    <span class="k">if</span> <span class="n">k</span><span class="o">+</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">y_size</span><span class="p">:</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="n">y_size</span> <span class="o">-</span> <span class="n">k</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Calculating best overall &quot;</span>
+                                        <span class="s">&quot;matches:</span><span class="se">\n</span><span class="s">Source chunk {0} - {1} of &quot;</span>
+                                        <span class="s">&quot;{2}</span><span class="se">\n</span><span class="s">Target chunk {3} - {4} of &quot;</span>
+                                        <span class="s">&quot;{5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                            <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">x_size</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">,</span> <span class="n">y_size</span>
+                                        <span class="p">))</span>
+
+                    <span class="c"># Read the current chunk to memory</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;distance_accum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_direct</span><span class="p">(</span><span class="n">chunk_vals</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">l</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">s_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">l</span><span class="p">])</span>
+
+                    <span class="c"># Append the chunk distances to the best matches so far.</span>
+                    <span class="n">vals_append</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_vals</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">],</span> <span class="n">chunk_vals</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">c_inds</span> <span class="o">=</span> <span class="n">chunk_inds</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span>
+
+                    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals_append</span><span class="p">))[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                    <span class="c"># Sort all values to intergrate new chunk distances with</span>
+                    <span class="c"># previous best matches.</span>
+                    <span class="n">vals_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">vals_append</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">inds_append</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_indexes</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">],</span> <span class="n">c_inds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">best_match_inds</span> <span class="o">=</span> <span class="n">inds_append</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">vals_sort</span><span class="p">]</span>
+                    <span class="n">match_indexes</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_match_inds</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">]</span>
+                    <span class="n">best_match_vals</span> <span class="o">=</span> <span class="n">vals_append</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">vals_sort</span><span class="p">]</span>
+                    <span class="n">match_vals</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_match_vals</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">]</span>
+                    <span class="n">k</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="n">chunk_size</span>
+
+            <span class="n">match_grain_inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_db_inds</span><span class="p">(</span><span class="n">match_indexes</span><span class="p">,</span> <span class="n">source_sample_indexes</span><span class="p">)</span>
+
+            <span class="c"># Generate the path to the data group that will store the match</span>
+            <span class="c"># data in the HDF5 file.</span>
+            <span class="n">datafile_path</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&quot;match/&quot;</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">match_grain_inds</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;grain_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grain_size</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">datafile_path</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overlap</span>
+
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Match data couldn&#39;t be written to HDF5 &quot;</span>
+                                   <span class="s">&quot;file.</span><span class="se">\n</span><span class="s"> Match data may already exist in the &quot;</span>
+                                   <span class="s">&quot;file.</span><span class="se">\n</span><span class="s"> Try running with the &#39;--rematch&#39; flag &quot;</span>
+                                   <span class="s">&quot;to overwrite this data.</span><span class="se">\n</span><span class="s"> Original error: &quot;</span>
+                                   <span class="s">&quot;{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">distance_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the euclidean distance between two arrays of data.</span>
+
+<span class="sd">        Distance is calculated with special handeling of Nan values, if they exist in the data.</span>
+<span class="sd">        A Nan value matched to another Nan value is classed as a perfect match.</span>
+<span class="sd">        a Nan matched to any other value is calculated as the furthest match +</span>
+<span class="sd">        10%</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Find all numbers that aren&#39;t Nan, inf, None etc...</span>
+        <span class="n">data1_finite_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+        <span class="n">data2_finite_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
+        <span class="c"># Find all special numbers</span>
+        <span class="n">data1_other_inds</span> <span class="o">=</span> <span class="n">data1_finite_inds</span> <span class="o">==</span> <span class="bp">False</span>
+        <span class="n">data2_other_inds</span> <span class="o">=</span> <span class="n">data2_finite_inds</span> <span class="o">==</span> <span class="bp">False</span>
+
+        <span class="c"># Calculate euclidean distances between the two data arrays.</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span><span class="o">-</span><span class="n">data2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="c"># Find the largest non-Nan distance</span>
+        <span class="c"># If all values ar nan then skip this.</span>
+        <span class="k">if</span> <span class="n">distances</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">distances</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">largest_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">distances</span><span class="p">)])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">largest_distance</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="c"># Find grains where both the source and target values are Nan.</span>
+        <span class="n">nan_intersects</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">data1_other_inds</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">data2_other_inds</span>
+
+        <span class="c"># Set these grain&#39;s distances to 0 as they match.</span>
+        <span class="n">distances</span><span class="p">[</span><span class="n">nan_intersects</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="n">distances</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">distances</span><span class="p">)]</span> <span class="o">=</span> <span class="n">largest_distance</span> <span class="o">+</span> <span class="p">(</span><span class="n">largest_distance</span><span class="o">*</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">distances</span>
+
+    <span class="k">def</span> <span class="nf">calculate_db_inds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match_indexes</span><span class="p">,</span> <span class="n">source_sample_indexes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the database sample index and grain index for each match based</span>
+<span class="sd">        on their indexes generated from the concatenated matching</span>
+
+<span class="sd">        Output array will be a 3 dimensional array with an axis for each target</span>
+<span class="sd">        grain, a dimension for each match of said grain and a dimension</span>
+<span class="sd">        containing database sample index and the sample&#39;s grain index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mi_shape</span> <span class="o">=</span> <span class="n">match_indexes</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">match_indexes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">source_sample_indexes</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">source_sample_indexes</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mi_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mi_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c"># Calculate sample index in database</span>
+        <span class="n">match_start_inds</span> <span class="o">=</span> <span class="n">source_sample_indexes</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mi_shape</span><span class="p">)</span>
+        <span class="c"># Calculate grain index offset from the start of the sample</span>
+        <span class="n">match_grain_inds</span> <span class="o">=</span> <span class="n">match_indexes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mi_shape</span><span class="p">)</span> <span class="o">-</span> <span class="n">match_start_inds</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">match_grain_inds</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">swap_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convenience method to swap databases, changing the source database into the target and vice-versa&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span>
+
+
+<div class="viewcode-block" id="Synthesizer"><a class="viewcode-back" href="../api.html#database.Synthesizer">[docs]</a><span class="k">class</span> <span class="nc">Synthesizer</span><span class="p">:</span></div>
+
+    <span class="sd">&quot;&quot;&quot;An object used for synthesizing output based on grain matching.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database1</span><span class="p">,</span> <span class="n">database2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize synthesizer instance&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.Matcher&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span> <span class="o">=</span> <span class="n">database1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span> <span class="o">=</span> <span class="n">database2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;target_db&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enforce_rms&quot;</span><span class="p">]</span>
+        <span class="c"># Key word arguments overwrite config file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;enforce_rms&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="ow">or</span> <span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;BLARGHHH&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enforce_f0&quot;</span><span class="p">]</span>
+        <span class="c"># Key word arguments overwrite config file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;enforce_f0&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;f0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="ow">or</span> <span class="s">&quot;f0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;F0 enforcement cannot be enabled if both databases do not have F0 analyses.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Target database must be provided if rms or F0 enforcement is enabled.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">synthesize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain_size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synthesized output from the match data in the output database to create</span>
+<span class="sd">        audio in the output database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grain_size</span><span class="p">:</span>
+            <span class="n">grain_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;grain_size&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overlap</span><span class="p">:</span>
+            <span class="n">overlap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">]]</span>
+        <span class="c"># TODO: insert error here if there are no jobs.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;There is no match data to synthesize. The match program may need to be run first.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">job_ind</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">job</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jobs</span><span class="p">):</span>
+            <span class="c"># Generate output file name/path</span>
+            <span class="n">filename</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;_output&#39;</span><span class="p">,</span> <span class="n">extension</span><span class="p">))</span>
+            <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">subdirs</span><span class="p">[</span><span class="s">&quot;audio&quot;</span><span class="p">],</span> <span class="n">output_name</span><span class="p">)</span>
+            <span class="c"># Create audio file to save output to.</span>
+            <span class="n">output_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">output_file</span>
+            <span class="n">grain_matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;match&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+            <span class="c"># Get the grain size and overlap used for analysis.</span>
+            <span class="n">match_grain_size</span> <span class="o">=</span> <span class="n">grain_matches</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;grain_size&quot;</span><span class="p">]</span>
+            <span class="n">match_overlap</span> <span class="o">=</span> <span class="n">grain_matches</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span>
+
+            <span class="n">_grain_size</span> <span class="o">=</span> <span class="n">grain_size</span>
+            <span class="k">with</span> <span class="n">AudioFile</span><span class="p">(</span>
+                <span class="n">output_path</span><span class="p">,</span>
+                <span class="s">&quot;w&quot;</span><span class="p">,</span>
+                <span class="n">samplerate</span><span class="o">=</span><span class="n">output_config</span><span class="p">[</span><span class="s">&quot;samplerate&quot;</span><span class="p">],</span>
+                <span class="n">format</span><span class="o">=</span><span class="n">output_config</span><span class="p">[</span><span class="s">&quot;format&quot;</span><span class="p">],</span>
+                <span class="n">channels</span><span class="o">=</span><span class="n">output_config</span><span class="p">[</span><span class="s">&quot;channels&quot;</span><span class="p">]</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">hop_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">grain_size</span> <span class="o">/</span> <span class="n">overlap</span><span class="p">)</span> <span class="o">*</span> <span class="n">output</span><span class="o">.</span><span class="n">samplerate</span><span class="o">/</span><span class="mi">1000</span>
+                <span class="n">_grain_size</span> <span class="o">*=</span> <span class="n">output</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mi">1000</span>
+                <span class="n">output_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">_grain_size</span> <span class="o">+</span> <span class="p">(</span><span class="n">hop_size</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">target_grain_ind</span><span class="p">,</span> <span class="n">matches</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">):</span>
+                    <span class="c"># If there are multiple matches, choose a match at random</span>
+                    <span class="c"># from available matches.</span>
+                    <span class="n">match_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">match_db_ind</span><span class="p">,</span> <span class="n">match_grain_ind</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="n">match_index</span><span class="p">]</span>
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">[</span><span class="n">match_db_ind</span><span class="p">]</span> <span class="k">as</span> <span class="n">match_sample</span><span class="p">:</span>
+                        <span class="n">match_sample</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">match_grain_size</span><span class="p">,</span> <span class="n">match_overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                        <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
+                        <span class="n">match_grain</span> <span class="o">=</span> <span class="n">match_sample</span><span class="p">[</span><span class="n">match_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span><span class="p">:</span>
+                            <span class="c"># Get the target sample from the database</span>
+                            <span class="n">target_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">[</span><span class="n">job_ind</span><span class="p">]</span>
+
+                            <span class="c"># Calculate garin times for sample to allow for</span>
+                            <span class="c"># indexing.</span>
+                            <span class="n">target_sample</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">match_grain_size</span><span class="p">,</span> <span class="n">match_overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                            <span class="n">match_grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms</span><span class="p">(</span><span class="n">match_grain</span><span class="p">,</span> <span class="n">match_sample</span><span class="p">,</span> <span class="n">match_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span><span class="p">:</span>
+                            <span class="c"># Get the target sample from the database</span>
+                            <span class="n">target_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">[</span><span class="n">job_ind</span><span class="p">]</span>
+
+                            <span class="c"># Calculate grain times for sample to allow for</span>
+                            <span class="c"># indexing.</span>
+                            <span class="n">target_sample</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">match_grain_size</span><span class="p">,</span> <span class="n">match_overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                            <span class="n">match_grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_pitch</span><span class="p">(</span><span class="n">match_grain</span><span class="p">,</span> <span class="n">match_sample</span><span class="p">,</span> <span class="n">match_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">)</span>
+
+                        <span class="n">match_grain</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">match_grain</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+                        <span class="n">output_frames</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">match_grain</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">+=</span> <span class="n">match_grain</span>
+                    <span class="n">offset</span> <span class="o">+=</span> <span class="n">hop_size</span>
+                <span class="c"># If output normalization is active, normalize output.</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;normalize&quot;</span><span class="p">]:</span>
+                    <span class="n">output_frames</span> <span class="o">=</span> <span class="p">(</span><span class="n">output_frames</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">output_frames</span><span class="p">)))</span> <span class="o">*</span> <span class="mf">0.9</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">write_frames</span><span class="p">(</span><span class="n">output_frames</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">enforce_pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">,</span> <span class="n">source_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shifts the pitch of the grain by the difference between it&#39;s f0 and the f0 of the grain specified.</span>
+
+<span class="sd">        This method will fail if either AnalysedAudioFile object does not have an f0 analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
+        <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
+        <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">target_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Get mean of f0 frames in time range specified.</span>
+        <span class="n">target_f0</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;f0&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;median&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
+        <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
+        <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">source_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Get mean of f0 frames in time range specified.</span>
+        <span class="n">source_f0</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;f0&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;median&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">target_f0</span> <span class="o">/</span> <span class="n">source_f0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio_difference</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">grain</span>
+
+        <span class="c"># If the ratio difference is within the limits</span>
+        <span class="n">ratio_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enf_f0_ratio_limit&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ratio_difference</span> <span class="o">&gt;</span> <span class="n">ratio_limit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large({0}), enforcing f0 at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">ratio_difference</span><span class="p">,</span>
+                                    <span class="n">ratio_limit</span><span class="p">,</span>
+                                    <span class="n">source_sample</span><span class="p">,</span>
+                                    <span class="n">source_grain_ind</span><span class="p">,</span>
+                                    <span class="n">target_sample</span><span class="p">,</span>
+                                    <span class="n">target_grain_ind</span>
+                                <span class="p">))</span>
+            <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">ratio_limit</span>
+        <span class="k">elif</span> <span class="n">ratio_difference</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">ratio_difference</span><span class="p">,</span>
+                                    <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span><span class="p">,</span>
+                                    <span class="n">source_sample</span><span class="p">,</span>
+                                    <span class="n">source_grain_ind</span><span class="p">,</span>
+                                    <span class="n">target_sample</span><span class="p">,</span>
+                                    <span class="n">target_grain_ind</span>
+                                <span class="p">))</span>
+            <span class="n">ratio_difference</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span>
+
+        <span class="n">grain</span> <span class="o">=</span> <span class="n">pitch_shift</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">grain</span><span class="p">,</span> <span class="n">ratio_difference</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">grain</span>
+
+    <span class="k">def</span> <span class="nf">enforce_rms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">,</span> <span class="n">source_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scales the amplitude of the grain by the difference between it&#39;s rms and the rms of the grain specified.</span>
+
+<span class="sd">        This method will fail if either AnalysedAudioFile object does not have an rms analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
+        <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
+        <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">target_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Get mean of RMS frames in time range specified.</span>
+        <span class="n">target_rms</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;rms&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
+        <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
+        <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">source_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Get mean of RMS frames in time range specified.</span>
+        <span class="n">source_rms</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;rms&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">target_rms</span> <span class="o">/</span> <span class="n">source_rms</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio_difference</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">grain</span>
+        <span class="c"># If the ratio difference is within the limits</span>
+        <span class="n">ratio_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enf_rms_ratio_limit&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ratio_difference</span> <span class="o">&gt;</span> <span class="n">ratio_limit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain RMS ratio too large({0}), enforcing RMS at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
+                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">ratio_difference</span><span class="p">,</span>
+                                    <span class="n">ratio_limit</span><span class="p">,</span>
+                                    <span class="n">source_sample</span><span class="p">,</span>
+                                    <span class="n">source_grain_ind</span><span class="p">,</span>
+                                    <span class="n">target_sample</span><span class="p">,</span>
+                                    <span class="n">target_grain_ind</span>
+                                <span class="p">))</span>
+            <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">ratio_limit</span>
+
+        <span class="n">grain</span> <span class="o">*=</span> <span class="n">ratio_difference</span>
+
+        <span class="k">return</span> <span class="n">grain</span>
+
+    <span class="k">def</span> <span class="nf">swap_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convenience method to swap databases, changing the source database into the target and vice-versa&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span>
+
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

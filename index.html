@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to Concatenator’s documentation! &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="#" />
+    <link rel="next" title="Overview" href="overview.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Welcome to Concatenator&#8217;s documentation!</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="overview.html" title="Next Chapter: Overview"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Overview &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="sources/index.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<div class="section" id="welcome-to-concatenator-s-documentation">
+<h1>Welcome to Concatenator&#8217;s documentation!<a class="headerlink" href="#welcome-to-concatenator-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#analysis">Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#matching">Matching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#synthesis">Synthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequesites">Prerequesites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#brew-python">Brew Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#pyenv-python">Pyenv Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#other-dependencies">Other dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#python-library-and-dependencies-installation">Python library and dependencies installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#jupyter-notebook-examples">Jupyter Notebook Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configuration-flags">Configuration Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#config-py">config.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#concatenate-py-script-flags">concatenate.py Script Flags</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#centroid">Centroid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#f0-pitch-detection">F0 (Pitch detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#fft">FFT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#harmonic-ratio">Harmonic Ratio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#kurtosis">Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#peak-amplitude">Peak Amplitude</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#rms">RMS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#spectral-centroid">Spectral Centroid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#spectral-crest-factor">Spectral Crest Factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#spectral-flatness">Spectral Flatness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#spectral-flux">Spectral Flux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#spectral-spread">Spectral Spread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#variance">Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptor_defs.html#zero-crossing">Zero-Crossing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="descriptor_defs.html#list-of-symbols">List of Symbols</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#audiofile-class">AudioFile Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#analysedaudiofile-class">AnalysedAudioFile Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#database-class">Database Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#matcher-class">Matcher Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#synthesizer-class">Synthesizer Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#analysis-classes">Analysis Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#centroid-analysis-class">Centroid Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#f0-analysis-class">F0 Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#fft-analysis-class">FFT Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#harmonic-ratio-analysis-class">Harmonic Ratio Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#kurtosis-analysis-class">Kurtosis Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#peak-analysis-class">Peak Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#rms-analysis-class">RMS Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#spectral-centroid-analysis-class">Spectral Centroid Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#spectral-crest-factor-analysis-class">Spectral Crest Factor Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#spectral-flatness-analysis-class">Spectral Flatness Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#spectral-flux-analysis-class">Spectral Flux Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#spectral-spread-analysis-class">Spectral Spread Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#variance-analysis-class">Variance Analysis Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zero-crossing-analysis-class">Zero-Crossing Analysis Class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DatabaseAnalysisExample.html">Creating a database of analysed audio files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DatabaseMatchingExample.html">Matching a target sample to a database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MatchSynthesisExample.html">Synthesizing output from matches</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

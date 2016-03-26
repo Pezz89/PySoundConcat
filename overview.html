@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview &mdash; Concatenator 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Welcome to Concatenator’s documentation!" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Concatenator</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#analysis">Analysis</a></li>
+<li><a class="reference internal" href="#matching">Matching</a></li>
+<li><a class="reference internal" href="#synthesis">Synthesis</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: Welcome to Concatenator’s documentation!"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Welcome to Co...</span>
+    </a>
+  </li>
+  <li>
+    <a href="installation.html" title="Next Chapter: Installation"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Installation &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="sources/overview.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput > div,
+div.nbinput div[class^=highlight],
+div.nbinput div[class^=highlight] pre,
+div.nboutput,
+div.nboutput > div,
+div.nboutput div[class^=highlight],
+div.nboutput div[class^=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput > :first-child pre {
+    color: navy;
+}
+
+/* output prompt */
+div.nboutput > :first-child pre {
+    color: darkred;
+}
+
+/* all prompts */
+div.nbinput > :first-child[class^=highlight],
+div.nboutput > :first-child[class^=highlight],
+div.nboutput > :first-child {
+    min-width: 11ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+
+/* input/output area */
+div.nbinput > :nth-child(2)[class^=highlight],
+div.nboutput > :nth-child(2),
+div.nboutput > :nth-child(2)[class^=highlight] {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+/* input area */
+div.nbinput > :nth-child(2)[class^=highlight] {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput  > :nth-child(2).stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansiblack { color: black; }
+.ansired { color: darkred; }
+.ansigreen { color: darkgreen; }
+.ansiyellow { color: #c4a000; }
+.ansiblue { color: darkblue; }
+.ansipurple { color: darkviolet; }
+.ansicyan { color: steelblue; }
+/* See https://github.com/jupyter/nbconvert/issues/174 */
+.ansigray { color: gray; }  /* nbconvert CSS */
+.ansigrey { color: gray; }  /* nbconvert HTML output */
+
+.ansibgblack { background-color: black; }
+.ansibgred { background-color: red; }
+.ansibggreen { background-color: green; }
+.ansibgyellow { background-color: yellow; }
+.ansibgblue { background-color: blue; }
+.ansibgpurple { background-color: magenta; }
+.ansibgcyan { background-color: cyan; }
+.ansibggray { background-color: gray; }
+
+.ansibold { font-weight: bold; }
+</style>
+<div class="section" id="overview">
+<span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>Concatenator is a tool for synthesizing interpretations of a sound, through the
+analysis and synthesis of audio grains from a corpus database.
+The program works by analysing overlapping segments of audio (known as grains)
+from both the target sound and the source database, then searching for the
+closest matching grain in the source database to the target sound. Finally, the
+output is generated by overlap-adding the best matches.</p>
+<p>To create the final output, there are three main operations to perform:</p>
+<p class="graphviz">
+<img src="images/graphviz-db3d6babdc0e7624b959330acaf621869bd11d4f.png" alt="digraph a {
+   &quot;Database Analysis&quot; -&gt; &quot;Grain Matching&quot; -&gt; &quot;Output Synthesis&quot;;
+}" />
+</p>
+<div class="section" id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
+<p>First, the descriptor analyses are generated for each audio file in both the
+source and target database. Full details on the types of descriptor available
+and their function can be found in the <a class="reference internal" href="descriptor_defs.html#descriptor-defs"><span>Audio Descriptor Definitions</span></a> section of
+this documentation. Analyses are then stored to a HDF5 file, ready for
+matching.</p>
+<p class="graphviz">
+<img src="images/graphviz-6b757eb3efdae327054aa33b47551890084e9389.png" alt="digraph b {
+   subgraph cluster0 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node0 [label = &quot;&lt;f0&gt; | &lt;f1&gt; | &lt;f2&gt; | &lt;f3&gt; | &lt;f4&gt; | &lt;f5&gt; | &lt;f6&gt; &quot;,width=2.5]
+     label = &quot;Audio\nFiles&quot;;
+     labeljust=&quot;l&quot;;
+   }
+
+   subgraph cluster2 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node2 [label = &quot;RMS | F0 | Centroid | Kurtosis | etc...&quot;]
+     label = &quot;Analyses&quot;;
+     labeljust=&quot;l&quot;;
+   }
+ database[shape=rectangle, label=&quot;Audio Directory&quot;];
+ HDF[shape=rectangle, label=&quot;HDF5 File&quot;];
+ database -&gt; node0;
+ node0 -&gt; node2;
+ node2 -&gt; HDF
+}" />
+</p>
+</div>
+<div class="section" id="matching">
+<h2>Matching<a class="headerlink" href="#matching" title="Permalink to this headline">¶</a></h2>
+<p>Both the source and target HDF5 files are loaded to compare the values of their
+analyses. Each audio file&#8217;s analyses are split into equally sized overlapping
+grains and averaged in the appropriate way to be compared to grains from the
+other database.
+The matching algorithm then calculates the grains that have the smallest
+overall difference, based on user defined weightings for each of the analysis
+types. This weighting of analyses allows for certain analyses to gain
+precedence over others based on user preference.
+The best match indexes are then saved to the output database ready for
+synthesis.</p>
+<p>There are currently two implementations for the matching algorithm:</p>
+<ul class="simple">
+<li>Brute Force</li>
+<li>K-d Tree Search</li>
+</ul>
+<p>Both will return similar results, however the K-d tree search algorithm is
+far more efficient when analysing large datasets so is the preferred method.</p>
+<p class="graphviz">
+<img src="images/graphviz-ac651d15446e984509a91990fc36ae419dd5d056.png" alt="digraph b {
+   subgraph cluster0 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node0 [label = &quot;&lt;f0&gt; | &lt;f1&gt; | &lt;f2&gt;Source | &lt;f3&gt;Audio | &lt;f4&gt;Analysis | &lt;f5&gt; | &lt;f6&gt; &quot;,width=2.5]
+
+     labeljust=&quot;l&quot;;
+   }
+
+   subgraph cluster1 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node1 [label = &quot;&lt;f0&gt; | &lt;f1&gt; | &lt;f2&gt; | &lt;f3&gt; | &lt;f4&gt; | &lt;f5&gt; | &lt;f6&gt; | &lt;f7&gt; | &lt;f8&gt; | &lt;f9&gt;Source | &lt;f10&gt;Analysis | &lt;f11&gt;Grains | &lt;f12&gt; | &lt;f13&gt; |  &lt;f14&gt; | &lt;f15&gt; | &lt;f16&gt; | &lt;f17&gt; | &lt;f18&gt; | &lt;f19&gt; | &lt;f20&gt; &quot;,width=2.5]
+     label=&quot;\n\n\n\n&quot;;
+     labeljust=&quot;l&quot;;
+   }
+
+   subgraph cluster2 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node2 [label = &quot;&lt;f0&gt;Target Audio Analysis&quot;]
+     labeljust=&quot;l&quot;;
+   }
+   subgraph cluster3 {
+     style=filled;
+     color=lightgrey;
+     node [shape=record,width=.1,height=.1];
+     node3 [label = &quot;&lt;f0&gt; | &lt;f1&gt; | &lt;f2&gt;Target | &lt;f3&gt;Analysis | &lt;f4&gt;Grains | &lt;f5&gt; | &lt;f6&gt;&quot;,width=2.5]
+     label=&quot;\n\n\n\n&quot;;
+     labeljust=&quot;l&quot;;
+   }
+ database1[shape=rectangle, label=&quot;Source HDF5 File&quot;];
+ database2[shape=rectangle, label=&quot;Target HDF5 File&quot;];
+ database3[shape=rectangle, label=&quot;Output HDF5 File&quot;];
+ matcher[shape=rectangle, label=&quot;Matching Algorithm&quot;];
+
+ node0:f0 -&gt; node1:f0
+ node0:f0 -&gt; node1:f1
+ node0:f0 -&gt; node1:f2
+ node0:f1 -&gt; node1:f3
+ node0:f1 -&gt; node1:f4
+ node0:f1 -&gt; node1:f5
+ node0:f2 -&gt; node1:f6
+ node0:f2 -&gt; node1:f7
+ node0:f2 -&gt; node1:f8
+ node0:f3 -&gt; node1:f9
+ node0:f3 -&gt; node1:f10
+ node0:f3 -&gt; node1:f11
+ node0:f4 -&gt; node1:f12
+ node0:f4 -&gt; node1:f13
+ node0:f4 -&gt; node1:f14
+ node0:f5 -&gt; node1:f15
+ node0:f5 -&gt; node1:f16
+ node0:f5 -&gt; node1:f17
+ node0:f6 -&gt; node1:f18
+ node0:f6 -&gt; node1:f19
+ node0:f6 -&gt; node1:f20
+ node2:f0 -&gt; node3:f0
+ node2:f0 -&gt; node3:f1
+ node2:f0 -&gt; node3:f2
+ node2:f0 -&gt; node3:f3
+ node2:f0 -&gt; node3:f4
+ node2:f0 -&gt; node3:f5
+ node2:f0 -&gt; node3:f6
+ database1 -&gt; node0;
+ database2 -&gt; node2;
+ node1 -&gt; matcher
+ node3 -&gt; matcher
+ matcher -&gt; database3
+
+}" />
+</p>
+</div>
+<div class="section" id="synthesis">
+<h2>Synthesis<a class="headerlink" href="#synthesis" title="Permalink to this headline">¶</a></h2>
+<p>The synthesis process involves loading the best match grains from the source
+database, performing any post-processing (such as pitch shifting and amplitude
+scaling) to improve the similarity of the match, then windowed overlap adding
+the grains to create the final output. The post-processing phase involves using
+the ratio difference between the source and target grain to artificially alter
+the source grain so that it better resembles the target. This is particularly
+useful when using small source databases as it improves the similarity of any
+match (important when best matches aren&#8217;t very close to the target.) The final
+output is saved to the output database&#8217;s audio directory.</p>
+<p class="graphviz">
+<img src="images/graphviz-8903101d320f72b4e39b7fefb35faba2baa85dbc.png" alt="digraph b {
+        subgraph cluster3 {
+        style=filled;
+        color=lightgrey;
+        node [shape=record,width=.1,height=.1];
+        node3 [label = &quot;&lt;f0&gt; | &lt;f1&gt; | &lt;f2&gt;Matched | &lt;f3&gt;Audio | &lt;f4&gt;Grains | &lt;f5&gt; &quot;,width=2.5]
+        }
+    database1[shape=rectangle, label=&quot;Source Audio&quot;];
+    database3[shape=rectangle, label=&quot;Output HDF5 File&quot;];
+    synthesizer[shape=rectangle, label=&quot;Windowed Overlap/Add&quot;];
+    output[shape=rectangle, label=&quot;Output Audio File&quot;];
+
+    database3 -&gt; database1[label=&quot;Get match grains&quot;];
+    database1 -&gt; node3:f0;
+    database1 -&gt; node3:f1;
+    database1 -&gt; node3:f2;
+    database1 -&gt; node3:f3;
+    database1 -&gt; node3:f4;
+    database1 -&gt; node3:f5;
+    node3:f0 -&gt; synthesizer;
+    node3:f1 -&gt; synthesizer;
+    node3:f2 -&gt; synthesizer;
+    node3:f3 -&gt; synthesizer;
+    node3:f4 -&gt; synthesizer;
+    node3:f5 -&gt; synthesizer;
+    synthesizer -&gt; output;
+
+}" />
+</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016, Sam Perry.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
