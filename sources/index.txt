@@ -12,6 +12,6 @@ Welcome to Concatenator's documentation!
    overview
    installation
    tutorial
-   descriptor_defs
    api
+   descriptor_defs
    examples

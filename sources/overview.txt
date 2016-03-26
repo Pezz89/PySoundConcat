@@ -16,6 +16,7 @@ To create the final output, there are three main operations to perform:
    digraph a {
       "Database Analysis" -> "Grain Matching" -> "Output Synthesis";
    }
+
 .. raw:: latex
 
     \newpage
