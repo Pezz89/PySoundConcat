@@ -6,8 +6,11 @@
 Welcome to Concatenator's documentation!
 ========================================
 
-A python script for generating representations of audio files based on audio
-database analysis.
+A python script for generating granular synthesis driven representations of
+audio files based on audio database analysis.
+
+.. image:: Concatenator_diagram_scaled_small.jpg
+    :align: center
 
 .. toctree::
    :maxdepth: 3
