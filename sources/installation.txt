@@ -62,7 +62,7 @@ pyenv pythons to your path.
 Other dependencies
 ++++++++++++++++++
 
-libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
+libsndfile, sox and the HDF5 libraries can also be installed via homebrew/linuxbrew:
 
 .. code:: bash
 
