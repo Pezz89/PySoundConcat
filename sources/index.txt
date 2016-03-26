@@ -6,6 +6,9 @@
 Welcome to Concatenator's documentation!
 ========================================
 
+A python script for generating representations of audio files based on audio
+database analysis.
+
 .. toctree::
    :maxdepth: 3
 
