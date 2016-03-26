@@ -21,6 +21,17 @@ There are a few dependencies required to install concatenator:
 3. The HDF5 Library - used for large file storage
 4. The Sox audio library - used for pitch shifting
 
+Getting this package
+++++++++++++++++++++
+
+This package can be downloaded with git using the following command:
+
+.. code:: bash
+    
+    git clone https://github.com/Pezz89/pysound
+
+This will clone the project folder into the current directory.
+
 Brew Python
 +++++++++++
 There are a number of ways to install python. The simplest is through homebrew
