@@ -96,10 +96,11 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        '--src-db',
+        '--src_db',
         help="Specifies the directory to create the source database and store analyses "
         "in. If not specified then the source directory will be used directly.",
-        type=str
+        type=str,
+        metavar=''
     )
 
     parser.add_argument(
@@ -107,7 +108,8 @@ def parse_arguments():
         help="Specifies the directory to create the target database and store analyses "
         "in. If not specified then the target directory will be used directly.",
         type=str,
-        default=''
+        default='',
+        metavar=''
     )
 
     analyses = [
@@ -202,7 +204,13 @@ def parse_arguments():
         "'kdtree'",
     )
 
-    parser.add_argument('--verbose', '-v', action='count')
+    parser.add_argument(
+        '--verbose',
+        '-v',
+        action='count',
+        help='Specifies level of verbosity in output. For example: \'-vvvvv\' '
+        'will output all information. \'-v\' will output minimal information. '
+    )
 
     args = parser.parse_args()
     for item in config_items:
@@ -256,6 +264,7 @@ def main():
         log_filename=modpath,
         logger_filelevel=args.verbose
     )
+    pdb.set_trace()
 
     # Create/load a pre-existing source database
     source_db = AudioDatabase(

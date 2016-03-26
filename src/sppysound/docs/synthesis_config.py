@@ -30,3 +30,7 @@ synthesizer = {
     # synthesizing output.
     "match_quantity": 20
 }
+
+database = {
+    "symlink": True
+}

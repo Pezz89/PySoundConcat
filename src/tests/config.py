@@ -88,3 +88,7 @@ output_file = {
     "format": 131075,
     "channels": 1
 }
+
+database = {
+    "symlink": True
+}

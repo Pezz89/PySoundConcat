@@ -1,3 +1,5 @@
+.. _overview:
+
 Overview
 ========
 Concatenator is a tool for synthesizing interpretations of a sound, through the
@@ -72,6 +74,15 @@ types. This weighting of analyses allows for certain analyses to gain
 precedence over others based on user preference.
 The best match indexes are then saved to the output database ready for
 synthesis.
+
+There are currently two implementations for the matching algorithm:
+
+- Brute Force
+
+- K-d Tree Search
+
+Both will return similar results, however the K-d tree search algorithm is
+far more efficient when analysing large datasets so is the preferred method.
 
 .. graphviz::
 
@@ -162,7 +173,7 @@ database, performing any post-processing (such as pitch shifting and amplitude
 scaling) to improve the similarity of the match, then windowed overlap adding
 the grains to create the final output. The post-processing phase involves using
 the ratio difference between the source and target grain to artificially alter
-the source grain so that it better ressembles the target. This is particularly
+the source grain so that it better resembles the target. This is particularly
 useful when using small source databases as it improves the similarity of any
 match (important when best matches aren't very close to the target.) The final
 output is saved to the output database's audio directory.

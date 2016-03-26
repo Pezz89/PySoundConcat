@@ -493,12 +493,8 @@ class Matcher:
             # Create an array of grain times for target sample
             target_times = target_entry.generate_grain_times(grain_size, overlap, save_times=True)
 
-            # Stores an accumulated distance between source and target grains,
-            # added to by each analysis.
-            distance_accum = np.zeros((target_times.shape[0], source_sample_indexes[-1][-1]))
             # Allocate memory for storing accumulated distances between
             # source and target grains
-
             x_size = target_times.shape[0]
             y_size = int(source_sample_indexes[-1][-1])
             chunk_size = 8192
@@ -507,15 +503,17 @@ class Matcher:
 
             try:
                 del self.output_db.data["data_distance"]
-                self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
-            except RuntimeError:
-                self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
+            except KeyError:
+                pass
+
+            self.output_db.data.create_dataset("data_distance", (x_size, y_size), dtype=np.float, chunks=True)
 
             try:
                 del self.output_db.data["distance_accum"]
-                self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
-            except RuntimeError:
-                self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
+            except KeyError:
+                pass
+
+            self.output_db.data.create_dataset("distance_accum", (x_size, y_size), dtype=np.float, chunks=True, fillvalue=0)
 
             for analysis in self.matcher_analyses:
                 self.logger.info("Current analysis: {0}".format(analysis))

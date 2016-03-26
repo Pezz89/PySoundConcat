@@ -87,15 +87,20 @@ concatenate.py Script Usage
 --enforcerms          This flag enables scaling of matched grains to better
                       match the target's volume.
 
+--copy                This flag enables the copying of audio files from
+                      their location to the database, rather than creating
+                      symbolic links. This is useful for creating portable
+                      databases.
+
 --match_method        Choose the algorithm to use when matching analyses. Available algorithms are:
 
                          Brute force: 'bruteforce'
 
                          K-d Tree Search: 'kdtree'
 
---verbose, -v         Specify the verbosity of the script's output. Additional
-                      v will produce greater levels of detail ie. -vvvvv will 
-                      produce all messages.
+--verbose, -v         Specifies level of verbosity in output. For example:
+                      '-vvvvv' will output all information. '-v' will output
+                      minimal information.
 
 -------------------
 AudioFile Class

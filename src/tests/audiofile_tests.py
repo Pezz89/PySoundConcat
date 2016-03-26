@@ -695,7 +695,8 @@ class DatabaseTests(globalTests):
         # Create database object
         database = AudioDatabase(
             "./.test_db",
-            analysis_list=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"]
+            analysis_list=["rms", "zerox", "fft", "spccntr", "spcsprd", "f0"],
+            config=config
         )
         # Create/load a pre-existing database
         database.load_database(reanalyse=True)
@@ -736,6 +737,7 @@ class MatcherTests(globalTests):
         # Create database object
         self.database1 = AudioDatabase(
             "./.test_db1",
+            config=config
         )
         # Create/load a pre-existing database
         self.database1.load_database(reanalyse=True)
@@ -762,6 +764,7 @@ class MatcherTests(globalTests):
         # Create database object
         self.database2 = AudioDatabase(
             "./.test_db2",
+            config=config
         )
         # Create/load a pre-existing database
         self.database2.load_database(reanalyse=True)
