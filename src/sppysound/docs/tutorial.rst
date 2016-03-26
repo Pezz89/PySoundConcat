@@ -36,15 +36,14 @@ A list of all commands available is then presented:
 For this demonstration, the following file structure will be used:
 
 ::
+
     /Users/samuelperry/concatenator_test/
     |-- source_db
     |   |-- Trumpet.novib.ff.A3.stereo.aif
     |   |-- Trumpet.novib.ff.A4.stereo.aif
-    |   |-- Trumpet.novib.ff.A5.stereo.aif
 
     ...
 
-    |   |-- Trumpet.novib.ff.F5.stereo.aif
     |   |-- Trumpet.novib.ff.G3.stereo.aif
     |   `-- Trumpet.novib.ff.G4.stereo.aif
     `-- target_db
@@ -115,16 +114,16 @@ This produces this directory structure:
         |-- target.03.wav
         `-- target.04.wav
 
-By using the --src_db and --tar_db flags, alternative locations are specified
+By using the ``--src_db`` and ``--tar_db`` flags, alternative locations are specified
 for generating the databases and storing analysis data. Symbolic links are
 created, referencing the original audio files without moving them.  This allows
 large databases to be used in place without copying or moving it's content.
 
-Alternatively, databases can be generated in place by ommiting the --src_db and
---tar_db flags. this will create the database directory structure directly in
+Alternatively, databases can be generated in place by ommiting the ``--src_db`` and
+``--tar_db`` flags. this will create the database directory structure directly in
 the directories provided as source and target.
 
-The --copy flag can be used in conjunction with these flags in order to create
+The ``--copy`` flag can be used in conjunction with these flags in order to create
 actual copies of the audio files at the destinations. This allows for the
 creation of partable databases that can moved to other machines without
 breaking links to the original files. (Any pre-existing symbolic links will be
@@ -147,7 +146,7 @@ value provided.
 When databases have already been created, previous data is used when re-running
 the script over them. This allows for different databases to be used without
 continuous reanalysis. However, if analysis or matching parameters are changed,
-the "--reanalyse" and "--rematch" flags can be used to force the overwriting of
+the ``--reanalyse`` and ``--rematch`` flags can be used to force the overwriting of
 old data, using the new parameters.
 
 
