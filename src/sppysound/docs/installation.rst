@@ -4,6 +4,16 @@ Installation
 Prerequesites
 -------------
 
+Tested working on:
+
+- System: MacBook Air (11-inch, Mid 2011)
+
+- Operating System: OSX 10.11.4 or Ubuntu 14.04
+
+- Processor: 1.6 GHz Intel Core i5
+
+- Memory: 4 GB 1333 MHz DDR3
+
 There are a few dependencies required to install concatenator:
 
 1. Python 2.7.11 (tested)
