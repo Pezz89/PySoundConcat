@@ -227,7 +227,7 @@ than period signals. It is calculated as:
 Ref: :cite:`itaa2014`
 
 List of Symbols
-+++++++++++++++
+~~~~~~~~~~~~~~~
 
 ====================  ================================================
 Symbol                  Meaning
