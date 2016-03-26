@@ -7,11 +7,11 @@
     
     <title>Tutorial &mdash; Concatenator 1.0 documentation</title>
     
-    <link rel="stylesheet" href="static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -22,16 +22,16 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="static/jquery.js"></script>
-    <script type="text/javascript" src="static/underscore.js"></script>
-    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
-    <link rel="next" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
+    <link rel="next" title="API" href="api.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -71,8 +71,8 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
 </ul>
 </ul>
@@ -89,9 +89,8 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Tutorial</a><ul>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
-<li><a class="reference internal" href="#configuration-flags">Configuration Flags</a></li>
 <li><a class="reference internal" href="#config-py">config.py</a></li>
-<li><a class="reference internal" href="#concatenate-py-script-flags">concatenate.py Script Flags</a></li>
+<li><a class="reference internal" href="#configuration-flags">Configuration Flags</a></li>
 </ul>
 </li>
 </ul>
@@ -107,7 +106,7 @@
     </a>
   </li>
   <li>
-    <a href="descriptor_defs.html" title="Next Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Audio Descrip... &raquo;</span>
+    <a href="api.html" title="Next Chapter: API"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">API &raquo;</span>
     </a>
   </li>
               
@@ -117,7 +116,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="sources/tutorial.txt"
+  <a href="_sources/tutorial.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -268,44 +267,63 @@ folder root.</p>
 </pre></div>
 </div>
 <p>A list of all commands available is then presented:</p>
-<div class="highlight-python"><div class="highlight"><pre>usage: concatenator [-h] [--src-db] [--tar_db]
-                [--analyse [ANALYSE [ANALYSE ...]]] [--analysis_dict]
-                [--fft] [--kurtosis] [--matcher] [--matcher_weightings]
-                [--rms] [--skewness] [--synthesizer] [--variance]
-                [--reanalyse] [--rematch] [--enforcef0] [--enforcerms]
-                [--copy] [--match_method] [--verbose]
-                source target output
+<div class="highlight-bash"><div class="highlight"><pre>usage: concatenator <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--src-db<span class="o">]</span> <span class="o">[</span>--tar_db<span class="o">]</span>
+                <span class="o">[</span>--analyse <span class="o">[</span>ANALYSE <span class="o">[</span>ANALYSE ...<span class="o">]]]</span> <span class="o">[</span>--analysis_dict<span class="o">]</span>
+                <span class="o">[</span>--fft<span class="o">]</span> <span class="o">[</span>--kurtosis<span class="o">]</span> <span class="o">[</span>--matcher<span class="o">]</span> <span class="o">[</span>--matcher_weightings<span class="o">]</span>
+                <span class="o">[</span>--rms<span class="o">]</span> <span class="o">[</span>--skewness<span class="o">]</span> <span class="o">[</span>--synthesizer<span class="o">]</span> <span class="o">[</span>--variance<span class="o">]</span>
+                <span class="o">[</span>--reanalyse<span class="o">]</span> <span class="o">[</span>--rematch<span class="o">]</span> <span class="o">[</span>--enforcef0<span class="o">]</span> <span class="o">[</span>--enforcerms<span class="o">]</span>
+                <span class="o">[</span>--copy<span class="o">]</span> <span class="o">[</span>--match_method<span class="o">]</span> <span class="o">[</span>--verbose<span class="o">]</span>
+                <span class="nb">source </span>target output
 
-Concatenator is a tool for synthesizing interpretations of a sound, through
+Concatenator is a tool <span class="k">for</span> synthesizing interpretations of a sound, through
 the analysis and synthesis of audio grains from a corpus database. The program
-works by analysing overlapping segments of audio (known as grains) from both
+works by analysing overlapping segments of audio <span class="o">(</span>known as grains<span class="o">)</span> from both
+the target sound and the <span class="nb">source </span>database, <span class="k">then</span> searching <span class="k">for</span> the closest
+matching grain in the <span class="nb">source </span>database to the target sound. Finally, the output
+is generated by overlap-adding the best matches.
+
+positional arguments:
+  <span class="nb">source                </span>Directory of <span class="nb">source </span>files/database to take grains from
+                        when synthesizing output
+  target                Directory of target files/database to match <span class="nb">source</span>
+<span class="nb">                        </span>grains to.
+  output                Directory to use as database <span class="k">for</span> outputing results and
+                        match information. Output audio will be stored in the
+                        /audio sub-directory and match data will be stored in
+                        the /data directory.
+
+optional arguments:
+  -h, --help            show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  --src-db              Specifies the directory to create the <span class="nb">source </span>database
+                        and store analyses in. If not specified <span class="k">then</span> the
 
 ...
 </pre></div>
 </div>
-<p>(A complete list of all available flags can also be found in the <a class="reference internal" href="#flags"><span>concatenate.py Script Flags</span></a>
-section of the documentation)</p>
 <p>For this demonstration, the following file structure will be used:</p>
-<div class="highlight-python"><div class="highlight"><pre>/Users/samuelperry/concatenator_test/
-|-- source_db
-|   |-- Trumpet.novib.ff.A3.stereo.aif
+<div class="highlight-bash"><div class="highlight"><pre>/Users/samuelperry/concatenator_test/
+<span class="p">|</span>-- source_db
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A3.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A4.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A5.stereo.aif
 
 ...
 
-|   |-- Trumpet.novib.ff.G3.stereo.aif
-|   `-- Trumpet.novib.ff.G4.stereo.aif
-`-- target_db
-    |-- target.01.wav
-    |-- target.02.wav
-    |-- target.03.wav
-    `-- target.04.wav
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.F5.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.G3.stereo.aif
+<span class="p">|</span>   <span class="sb">`</span>-- Trumpet.novib.ff.G4.stereo.aif
+<span class="sb">`</span>-- target_db
+    <span class="p">|</span>-- target.01.wav
+    <span class="p">|</span>-- target.02.wav
+    <span class="p">|</span>-- target.03.wav
+    <span class="sb">`</span>-- target.04.wav
 </pre></div>
 </div>
-<p>A source database containing a small selection of trumpet samples (acquired from
-<a class="reference external" href="http://theremin.music.uiowa.edu/MIS.html">http://theremin.music.uiowa.edu/MIS.html</a>) will be used to match grains with 4
+<p>A source database containing a small selection of trumpet samples (aquired from</p>
+<p><a class="reference external" href="http://theremin.music.uiowa.edu/MIS.html">http://theremin.music.uiowa.edu/MIS.html</a>) will be used to match grains with 4
 target sounds. This will produce 4 output files, one for each target sound.</p>
 <p>The following command is used to to generate the output:</p>
-<div class="highlight-bash"><div class="highlight"><pre>/path/to/concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
+<div class="highlight-bash"><div class="highlight"><pre>concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
 ./analysed_source_db --tar_db ./analysed_tar_db
 </pre></div>
 </div>
@@ -314,85 +332,65 @@ used as items in the database. These item are then matched and synthesized as
 explained in the <a class="reference internal" href="overview.html#overview"><span>Overview</span></a> section. Output is stored in the audio
 directory of the output database that has been created.
 This produces this directory structure:</p>
-<div class="highlight-python"><div class="highlight"><pre>/Users/samuelperry/concatenator_test/
-|-- analysed_source_db
-|   |-- audio
-|   |   |-- Trumpet.novib.ff.A3.stereo.aif -&gt; (Symlink)
+<div class="highlight-bash"><div class="highlight"><pre>/Users/samuelperry/concatenator_test/
+<span class="p">|</span>-- analysed_source_db
+<span class="p">|</span>   <span class="p">|</span>-- audio
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A3.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A4.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A5.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
 
 ...
 
-|   |   |-- Trumpet.novib.ff.G3.stereo.aif -&gt; (Symlink)
-|   |   `-- Trumpet.novib.ff.G4.stereo.aif -&gt; (Symlink)
-|   `-- data
-|       `-- analysis_data.hdf5
-|-- analysed_tar_db
-|   |-- audio
-|   |   |-- target.01.wav -&gt; (Symlink)
-|   |   |-- target.02.wav -&gt; (Symlink)
-|   |   |-- target.03.wav -&gt; (Symlink)
-|   |   `-- target.04.wav -&gt; (Symlink)
-|   `-- data
-|       `-- analysis_data.hdf5
-|-- output_db
-|   |-- audio
-|   |   |-- target.01_output.wav
-|   |   |-- target.02_output.wav
-|   |   |-- target.03_output.wav
-|   |   `-- target.04_output.wav
-|   `-- data
-|       `-- analysis_data.hdf5
-|-- source_db
-|   |-- Trumpet.novib.ff.A3.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.F5.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.G3.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="sb">`</span>-- Trumpet.novib.ff.G4.stereo.aif -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="sb">`</span>-- data
+<span class="p">|</span>       <span class="sb">`</span>-- analysis_data.hdf5
+<span class="p">|</span>-- analysed_tar_db
+<span class="p">|</span>   <span class="p">|</span>-- audio
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.01.wav -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.02.wav -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.03.wav -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="p">|</span>   <span class="sb">`</span>-- target.04.wav -&gt; <span class="o">(</span>Symlink<span class="o">)</span>
+<span class="p">|</span>   <span class="sb">`</span>-- data
+<span class="p">|</span>       <span class="sb">`</span>-- analysis_data.hdf5
+<span class="p">|</span>-- output_db
+<span class="p">|</span>   <span class="p">|</span>-- audio
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.01_output.wav
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.02_output.wav
+<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- target.03_output.wav
+<span class="p">|</span>   <span class="p">|</span>   <span class="sb">`</span>-- target.04_output.wav
+<span class="p">|</span>   <span class="sb">`</span>-- data
+<span class="p">|</span>       <span class="sb">`</span>-- analysis_data.hdf5
+<span class="p">|</span>-- source_db
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A3.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A4.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.A5.stereo.aif
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.F5.stereo.aif
 
 ...
 
-|   |-- Trumpet.novib.ff.G3.stereo.aif
-|   `-- Trumpet.novib.ff.G4.stereo.aif
-`-- target_db
-    |-- target.01.wav
-    |-- target.02.wav
-    |-- target.03.wav
-    `-- target.04.wav
+<span class="p">|</span>   <span class="p">|</span>-- Trumpet.novib.ff.G3.stereo.aif
+<span class="p">|</span>   <span class="sb">`</span>-- Trumpet.novib.ff.G4.stereo.aif
+<span class="sb">`</span>-- target_db
+    <span class="p">|</span>-- target.01.wav
+    <span class="p">|</span>-- target.02.wav
+    <span class="p">|</span>-- target.03.wav
+    <span class="sb">`</span>-- target.04.wav
 </pre></div>
 </div>
-<p>By using the <code class="docutils literal"><span class="pre">--src_db</span></code> and <code class="docutils literal"><span class="pre">--tar_db</span></code> flags, alternative locations are specified
+<p>By using the &#8211;src_db and &#8211;tar_db flags, alternative locations are specified
 for generating the databases and storing analysis data. Symbolic links are
 created, referencing the original audio files without moving them.  This allows
 large databases to be used in place without copying or moving it&#8217;s content.</p>
-<p>Alternatively, databases can be generated in place by omitting the <code class="docutils literal"><span class="pre">--src_db</span></code> and
-<code class="docutils literal"><span class="pre">--tar_db</span></code> flags. this will create the database directory structure directly in
+<p>Alternatively, databases can be generated in place by ommiting the &#8211;src_db and
+&#8211;tar_db flags. this will create the database directory structure directly in
 the directories provided as source and target.</p>
-<p>The <code class="docutils literal"><span class="pre">--copy</span></code> flag can be used in conjunction with these flags in order to create
+<p>The &#8211;copy flag can be used in conjunction with these flags in order to create
 actual copies of the audio files at the destinations. This allows for the
-creation of portable databases that can moved to other machines without
+creation of partable databases that can moved to other machines without
 breaking links to the original files. (Any pre-existing symbolic links will be
 overwritten with hard copies when using this option.)</p>
-</div>
-<div class="section" id="configuration-flags">
-<h2>Configuration Flags<a class="headerlink" href="#configuration-flags" title="Permalink to this headline">¶</a></h2>
-<p>For quick modification of analysis parameters, parameter flags can be specified
-directly when calling the script. For example:</p>
-<div class="highlight-bash"><div class="highlight"><pre>/path/to/concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
-./analysed_source_db --tar_db ./analysed_tar_db --reanalyse --fft <span class="se">\</span>
-<span class="s1">&#39;--window_size 2048&#39;</span>
-</pre></div>
-</div>
-<p>This overwrites the value specified for window_size in the config file with the
-value provided.</p>
-<p>When databases have already been created, previous data is used when
-re-processing them. This allows for different databases to be used without
-multiple reanalysis of the same data. However, if analysis or matching parameters are changed,
-the <code class="docutils literal"><span class="pre">--reanalyse</span></code> and <code class="docutils literal"><span class="pre">--rematch</span></code> flags can be used to force the overwriting of
-old data, using the new parameters.</p>
-<p>It is also possible to omit analyses entirely. This can be achieved using the
-<code class="docutils literal"><span class="pre">--analyse</span></code> flag. Providing this flag with the strings for each analysis that is
-required runs the program using just these analyses. For example:</p>
-<div class="highlight-bash"><div class="highlight"><pre>/path/to/concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
-./analysed_source_db --tar_db ./analysed_tar_db --reanalyse --analyse f0 <span class="se">\</span>
-rms
-</pre></div>
-</div>
-<p>This will only match the f0 and RMS analyses. All others will be disregarded.</p>
 </div>
 <div class="section" id="config-py">
 <h2>config.py<a class="headerlink" href="#config-py" title="Permalink to this headline">¶</a></h2>
@@ -430,12 +428,12 @@ each parameter. The default config.py file looks like this:</p>
 
 <span class="n">database</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c"># Enables creation of symbolic links to files not in the database rather</span>
-    <span class="c"># than making physical copies.</span>
+    <span class="c"># than making pysical copies.</span>
     <span class="s">&quot;symlink&quot;</span><span class="p">:</span> <span class="bp">True</span>
 <span class="p">}</span>
 
-<span class="c"># Sets the weighting for each analysis. A higher weighting gives an analysis</span>
-<span class="c"># higher precedence when finding the best matches.</span>
+<span class="c"># Sets the weighting for each analysis. a higher weighting gives an analysis</span>
+<span class="c"># higher presendence when finding the best matches.</span>
 <span class="n">matcher_weightings</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&quot;f0&quot;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
     <span class="s">&quot;spccntr&quot;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
@@ -522,122 +520,22 @@ each parameter. The default config.py file looks like this:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="concatenate-py-script-flags">
-<span id="flags"></span><h2>concatenate.py Script Flags<a class="headerlink" href="#concatenate-py-script-flags" title="Permalink to this headline">¶</a></h2>
-<p>Below is the complete list of flags that can be used with the concatenator
-script and a short description of their function:</p>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show help message and exit</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--analyse</span>, <span class="option">-a</span></kbd></td>
-<td><p class="first">[ANALYSES, ...] Specify analyses to be created. Valid analyses are:</p>
-<ul class="last simple">
-<li>&#8220;rms&#8221;</li>
-<li>&#8220;zerox&#8221;</li>
-<li>&#8220;fft&#8221;</li>
-<li>&#8220;spccntr&#8221;</li>
-<li>&#8220;spcsprd&#8221;</li>
-<li>&#8220;spcflux&#8221;</li>
-<li>&#8220;spccf&#8221;</li>
-<li>&#8220;spcflatness&#8221;</li>
-<li>&#8220;f0&#8221;</li>
-<li>&#8220;peak&#8221;</li>
-<li>&#8220;centroid&#8221;</li>
-<li>&#8220;variance&#8221;</li>
-<li>&#8220;kurtosis&#8221;</li>
-<li>&#8220;skewness&#8221;</li>
-<li>&#8220;harm_ratio&#8221;</li>
-</ul>
-</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--analysis_dict</span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td><p class="first">Set the formatting of each analysis for grain matching.</p>
-<p class="last">Example: &#8216;&#8211;f0 median &#8211;rms mean&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--fft</span></kbd></td>
-<td><p class="first">Overwrite default config setting for fft analysis.</p>
-<p class="last">Example: &#8216;&#8211;window_size 2048&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--kurtosis</span></kbd></td>
-<td><p class="first">Overwrite default config setting for kurtosis
-analysis.</p>
-<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--matcher</span></kbd></td>
-<td><p class="first">Set matcher settings.</p>
-<p class="last">Example: &#8216;match_quantity&#8217;</p>
-</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--matcher_weightings</span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td><p class="first">Set weighting for analysis to set their presedence when matching.</p>
-<p class="last">Example: &#8216;&#8211;f0 2 &#8211;rms 1.5&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--rms</span></kbd></td>
-<td><p class="first">Overwrite default config setting for rms analysis.</p>
-<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--skewness</span></kbd></td>
-<td><p class="first">Overwrite default config setting for skewness
-analysis.</p>
-<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--synthesizer</span></kbd></td>
-<td><p class="first">Set synthesis settings.</p>
-<p class="last">Example: &#8216;&#8211;enf_rms_ratio_limit 2&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--variance</span></kbd></td>
-<td><p class="first">Overwrite default config setting for variance
-analysis.</p>
-<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--reanalyse</span></kbd></td>
-<td>Force re-analysis of all analyses, overwriting any
-existing analyses</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--rematch</span></kbd></td>
-<td>Force re-matching, overwriting any existing match data</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--enforcef0</span></kbd></td>
-<td>This flag enables pitch shifting of matched grainsto
-better match the target.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--enforcerms</span></kbd></td>
-<td>This flag enables scaling of matched grains to better
-match the target&#8217;s volume.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--copy</span></kbd></td>
-<td>This flag enables the copying of audio files from
-their location to the database, rather than creating
-symbolic links. This is useful for creating portable
-databases.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--match_method</span></kbd></td>
-<td><p class="first">Choose the algorithm to use when matching analyses. Available algorithms are:</p>
-<p>Brute force: &#8216;bruteforce&#8217;</p>
-<p class="last">K-d Tree Search: &#8216;kdtree&#8217;</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--verbose</span>, <span class="option">-v</span></kbd></td>
-<td>Specifies level of verbosity in output. For example:
-&#8216;-vvvvv&#8217; will output all information. &#8216;-v&#8217; will output
-minimal information.</td></tr>
-</tbody>
-</table>
+<div class="section" id="configuration-flags">
+<h2>Configuration Flags<a class="headerlink" href="#configuration-flags" title="Permalink to this headline">¶</a></h2>
+<p>For quick modification of analysis parameters, parameter flags can be specified
+directly when calling the script. For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre>concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
+./analysed_source_db --tar_db ./analysed_tar_db --reanalyse --fft <span class="se">\</span>
+<span class="s1">&#39;--window_size 2048&#39;</span>
+</pre></div>
+</div>
+<p>This overwrites the value specified for window_size in the config file with the
+value provided.</p>
+<p>When databases have already been created, previous data is used when re-running
+the script over them. This allows for different databases to be used without
+continuous reanalysis. However, if analysis or matching parameters are changed,
+the &#8220;&#8211;reanalyse&#8221; and &#8220;&#8211;rematch&#8221; flags can be used to force the overwriting of
+old data, using the new parameters.</p>
 </div>
 </div>
 

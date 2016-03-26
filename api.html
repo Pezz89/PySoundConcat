@@ -7,11 +7,11 @@
     
     <title>API &mdash; Concatenator 1.0 documentation</title>
     
-    <link rel="stylesheet" href="static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
-    <link rel="stylesheet" href="static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.3.4/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-3.3.4/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -22,17 +22,17 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="static/jquery.js"></script>
-    <script type="text/javascript" src="static/underscore.js"></script>
-    <script type="text/javascript" src="static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
-    <link rel="next" title="API Usage Examples" href="examples.html" />
-    <link rel="prev" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
+    <link rel="next" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -71,8 +71,8 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
 </ul>
 </ul>
@@ -88,6 +88,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#concatenate-py-script-usage">concatenate.py Script Usage</a></li>
 <li><a class="reference internal" href="#audiofile-class">AudioFile Class</a></li>
 <li><a class="reference internal" href="#analysedaudiofile-class">AnalysedAudioFile Class</a></li>
 <li><a class="reference internal" href="#database-class">Database Class</a></li>
@@ -121,11 +122,11 @@
               
                 
   <li>
-    <a href="descriptor_defs.html" title="Previous Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Audio Descrip...</span>
+    <a href="tutorial.html" title="Previous Chapter: Tutorial"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Tutorial</span>
     </a>
   </li>
   <li>
-    <a href="examples.html" title="Next Chapter: API Usage Examples"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">API Usage Exa... &raquo;</span>
+    <a href="descriptor_defs.html" title="Next Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Audio Descrip... &raquo;</span>
     </a>
   </li>
               
@@ -135,7 +136,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="sources/api.txt"
+  <a href="_sources/api.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -275,11 +276,126 @@ div.nboutput  > :nth-child(2).stderr {
 </style>
 <div class="section" id="api">
 <h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="concatenate-py-script-usage">
+<h2>concatenate.py Script Usage<a class="headerlink" href="#concatenate-py-script-usage" title="Permalink to this headline">¶</a></h2>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--analyse</span>, <span class="option">-a</span></kbd></td>
+<td><p class="first">[ANALYSES, ...] Specify analyses to be created. Valid analyses are:</p>
+<ul class="last simple">
+<li>&#8220;rms&#8221;</li>
+<li>&#8220;zerox&#8221;</li>
+<li>&#8220;fft&#8221;</li>
+<li>&#8220;spccntr&#8221;</li>
+<li>&#8220;spcsprd&#8221;</li>
+<li>&#8220;spcflux&#8221;</li>
+<li>&#8220;spccf&#8221;</li>
+<li>&#8220;spcflatness&#8221;</li>
+<li>&#8220;f0&#8221;</li>
+<li>&#8220;peak&#8221;</li>
+<li>&#8220;centroid&#8221;</li>
+<li>&#8220;variance&#8221;</li>
+<li>&#8220;kurtosis&#8221;</li>
+<li>&#8220;skewness&#8221;</li>
+<li>&#8220;harm_ratio&#8221;</li>
+</ul>
+</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--analysis_dict</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td><p class="first">Set the formatting of each analysis for grain matching.</p>
+<p class="last">Example: &#8216;&#8211;f0 median &#8211;rms mean&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fft</span></kbd></td>
+<td><p class="first">Overwrite default config setting for fft analysis.</p>
+<p class="last">Example: &#8216;&#8211;window_size 2048&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--kurtosis</span></kbd></td>
+<td><p class="first">Overwrite default config setting for kurtosis
+analysis.</p>
+<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--matcher</span></kbd></td>
+<td><p class="first">Set matcher settings.</p>
+<p class="last">Example: &#8216;match_quantity&#8217;</p>
+</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--matcher_weightings</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td><p class="first">Set weighting for analysis to set their presedence when matching.</p>
+<p class="last">Example: &#8216;&#8211;f0 2 &#8211;rms 1.5&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--rms</span></kbd></td>
+<td><p class="first">Overwrite default config setting for rms analysis.</p>
+<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--skewness</span></kbd></td>
+<td><p class="first">Overwrite default config setting for skewness
+analysis.</p>
+<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--synthesizer</span></kbd></td>
+<td><p class="first">Set synthesis settings.</p>
+<p class="last">Example: &#8216;&#8211;enf_rms_ratio_limit 2&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--variance</span></kbd></td>
+<td><p class="first">Overwrite default config setting for variance
+analysis.</p>
+<p class="last">Example: &#8216;&#8211;window_size 100 &#8211;overlap 2&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--reanalyse</span></kbd></td>
+<td>Force re-analysis of all analyses, overwriting any
+existing analyses</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--rematch</span></kbd></td>
+<td>Force re-matching, overwriting any existing match data</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--enforcef0</span></kbd></td>
+<td>This flag enables pitch shifting of matched grainsto
+better match the target.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--enforcerms</span></kbd></td>
+<td>This flag enables scaling of matched grains to better
+match the target&#8217;s volume.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--copy</span></kbd></td>
+<td>This flag enables the copying of audio files from
+their location to the database, rather than creating
+symbolic links. This is useful for creating portable
+databases.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--match_method</span></kbd></td>
+<td><p class="first">Choose the algorithm to use when matching analyses. Available algorithms are:</p>
+<p>Brute force: &#8216;bruteforce&#8217;</p>
+<p class="last">K-d Tree Search: &#8216;kdtree&#8217;</p>
+</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--verbose</span>, <span class="option">-v</span></kbd></td>
+<td>Specifies level of verbosity in output. For example:
+&#8216;-vvvvv&#8217; will output all information. &#8216;-v&#8217; will output
+minimal information.</td></tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="audiofile-class">
 <h2>AudioFile Class<a class="headerlink" href="#audiofile-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="audiofile.AudioFile">
-<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AudioFile</code><span class="sig-paren">(</span><em>filepath</em>, <em>mode</em>, <em>format=None</em>, <em>channels=None</em>, <em>samplerate=None</em>, <em>name=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/audiofile.html#AudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AudioFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AudioFile</code><span class="sig-paren">(</span><em>filepath</em>, <em>mode</em>, <em>format=None</em>, <em>channels=None</em>, <em>samplerate=None</em>, <em>name=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile.html#AudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AudioFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object for storing and accessing basic information for an audio file.</p>
 <p>This object is a wrapper for the pysndfile audio object. It provides
 additional functionality alongside the ability to open and close audiofiles
@@ -710,7 +826,7 @@ range allowed by the integer bitwidth).</p>
 <h2>AnalysedAudioFile Class<a class="headerlink" href="#analysedaudiofile-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="audiofile.AnalysedAudioFile">
-<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AnalysedAudioFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/audiofile.html#AnalysedAudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AnalysedAudioFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">audiofile.</code><code class="descname">AnalysedAudioFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile.html#AnalysedAudioFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.AnalysedAudioFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates and stores analysis information for an audio file.</p>
 <p>Arguments:</p>
 <ul class="simple">
@@ -760,7 +876,7 @@ sub-groups.</p>
 <h2>Database Class<a class="headerlink" href="#database-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="database.AudioDatabase">
-<em class="property">class </em><code class="descclassname">database.</code><code class="descname">AudioDatabase</code><span class="sig-paren">(</span><em>audio_dir=None</em>, <em>db_dir=None</em>, <em>analysis_list=[]</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#AudioDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.AudioDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">AudioDatabase</code><span class="sig-paren">(</span><em>audio_dir=None</em>, <em>db_dir=None</em>, <em>analysis_list=[]</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#AudioDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.AudioDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for encapsulating a database of AnalysedAudioFile objects.</p>
 <p>Arguments:</p>
 <ul class="simple">
@@ -820,7 +936,7 @@ original locations.</li>
 <h2>Matcher Class<a class="headerlink" href="#matcher-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="database.Matcher">
-<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Matcher</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#Matcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Matcher" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Matcher</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#Matcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Matcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Database comparison object.</p>
 <p>Used to compare and match entries in two AnalysedAudioFile databases.</p>
 <dl class="method">
@@ -874,7 +990,7 @@ a Nan matched to any other value is calculated as the furthest match +
 <h2>Synthesizer Class<a class="headerlink" href="#synthesizer-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="database.Synthesizer">
-<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Synthesizer</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/database.html#Synthesizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Synthesizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">database.</code><code class="descname">Synthesizer</code><span class="sig-paren">(</span><em>database1</em>, <em>database2</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#Synthesizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Synthesizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object used for synthesizing output based on grain matching.</p>
 <dl class="method">
 <dt id="database.Synthesizer.enforce_pitch">
@@ -910,7 +1026,7 @@ audio in the output database.</p>
 <h2>Analysis Classes<a class="headerlink" href="#analysis-classes" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="analysis.Analysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>name</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/Analysis.html#Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.Analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>name</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/Analysis.html#Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.Analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Basic descriptor class to build analyses on.</p>
 <p>The Analysis base class works as an interface between child descriptor
 objects and the HDF5 storage file. This is designed to seperate descriptor
@@ -961,7 +1077,7 @@ file.</p>
 <h3>Centroid Analysis Class<a class="headerlink" href="#centroid-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.CentroidAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">CentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/CentroidAnalysis.html#CentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.CentroidAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">CentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/CentroidAnalysis.html#CentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.CentroidAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Temporal centroid descriptor class for generation of temporal centroid
 audio analysis.</p>
 <p>This descriptor calculates the temporal centroid for overlapping grains of
@@ -999,7 +1115,7 @@ save to disk.</p>
 <h3>F0 Analysis Class<a class="headerlink" href="#f0-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.F0Analysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/F0Analysis.html#F0Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0Analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0Analysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/F0Analysis.html#F0Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0Analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>F0 analysis descriptor class for generation of fundamental frequency
 estimation.</p>
 <p>This descriptor calculates the fundamental frequency for overlapping grains
@@ -1052,7 +1168,7 @@ size containing frames for these times.</p>
 <h3>FFT Analysis Class<a class="headerlink" href="#fft-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.FFTAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">FFTAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">FFTAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>FFT analysis descriptor class for generation of FFT spectral analysis.</p>
 <p>This descriptor calculates the spectral content for overlapping grains
 of an AnalysedAudioFile object.  A full definition of FFT analysis can be
@@ -1065,19 +1181,19 @@ analysis.</li>
 </ul>
 <dl class="method">
 <dt id="analysis.FFTAnalysis.calc_fft_frame_times">
-<code class="descname">calc_fft_frame_times</code><span class="sig-paren">(</span><em>fftframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.calc_fft_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.calc_fft_frame_times" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calc_fft_frame_times</code><span class="sig-paren">(</span><em>fftframes</em>, <em>sample_frames</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis.calc_fft_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.calc_fft_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.FFTAnalysis.create_fft_analysis">
-<code class="descname">create_fft_analysis</code><span class="sig-paren">(</span><em>window_size=512</em>, <em>window_overlap=2</em>, <em>window_type='hanning'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.create_fft_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.create_fft_analysis" title="Permalink to this definition">¶</a></dt>
+<code class="descname">create_fft_analysis</code><span class="sig-paren">(</span><em>window_size=512</em>, <em>window_overlap=2</em>, <em>window_type='hanning'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis.create_fft_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.create_fft_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a spectral analysis for overlapping frames of audio.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.FFTAnalysis.get_analysis_grains">
-<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.get_analysis_grains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_analysis_grains</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis.get_analysis_grains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.get_analysis_grains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve analysis frames for period specified in start and end times.
 arrays of start and end time pairs will produce an array of equivelant
 size containing frames for these times.</p>
@@ -1085,7 +1201,7 @@ size containing frames for these times.</p>
 
 <dl class="method">
 <dt id="analysis.FFTAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 <p>Places data and attributes in 2 dictionaries to be stored in the HDF5
 file.</p>
@@ -1093,7 +1209,7 @@ file.</p>
 
 <dl class="staticmethod">
 <dt id="analysis.FFTAnalysis.stft">
-<em class="property">static </em><code class="descname">stft</code><span class="sig-paren">(</span><em>sig</em>, <em>frameSize</em>, <em>overlapFac=0.5</em>, <em>window=&lt;function hanning&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/FFTAnalysis.html#FFTAnalysis.stft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.stft" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">stft</code><span class="sig-paren">(</span><em>sig</em>, <em>frameSize</em>, <em>overlapFac=0.5</em>, <em>window=&lt;function hanning&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/FFTAnalysis.html#FFTAnalysis.stft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.FFTAnalysis.stft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Short time fourier transform of audio signal.</p>
 </dd></dl>
 
@@ -1104,7 +1220,7 @@ file.</p>
 <h3>Harmonic Ratio Analysis Class<a class="headerlink" href="#harmonic-ratio-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.F0HarmRatioAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0HarmRatioAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/F0HarmRatioAnalysis.html#F0HarmRatioAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0HarmRatioAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">F0HarmRatioAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/F0HarmRatioAnalysis.html#F0HarmRatioAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.F0HarmRatioAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>The F0 HarmRatio analysis object is a placeholder class to allow access to
 the harmonic ratio generated in the f0 analysis.  As a result it does not
 have it&#8217;s own &#8220;create analysis method as other analyses do. it is designed
@@ -1139,7 +1255,7 @@ size containing frames for these times.</p>
 <h3>Kurtosis Analysis Class<a class="headerlink" href="#kurtosis-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.KurtosisAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">KurtosisAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/KurtosisAnalysis.html#KurtosisAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.KurtosisAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">KurtosisAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/KurtosisAnalysis.html#KurtosisAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.KurtosisAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kurtosis descriptor class for generation of Kurtosis audio analysis.</p>
 <p>This descriptor calculates the temporal kurtosis for overlapping grains of
 an AnalysedAudioFile object.  A full definition of kurtosis analysis can be found
@@ -1176,7 +1292,7 @@ save to disk.</p>
 <h3>Peak Analysis Class<a class="headerlink" href="#peak-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.PeakAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">PeakAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/PeakAnalysis.html#PeakAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PeakAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">PeakAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/PeakAnalysis.html#PeakAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PeakAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Peak descriptor class for generation of per-grain maximum peak audio analysis.</p>
 <p>This descriptor calculates the maximum peak for overlapping grains of an
 AnalysedAudioFile object.  A full definition of peak analysis can be found in
@@ -1213,7 +1329,7 @@ save to disk.</p>
 <h3>RMS Analysis Class<a class="headerlink" href="#rms-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.RMSAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">RMSAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/RMSAnalysis.html#RMSAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.RMSAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">RMSAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/RMSAnalysis.html#RMSAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.RMSAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>RMS descriptor class for generation of RMS audio analysis.</p>
 <p>This descriptor calculates the Root Mean Square analysis for overlapping
 grains of an AnalysedAudioFile object.  A full definition of RMS analysis
@@ -1251,7 +1367,7 @@ save to disk.</p>
 <h3>Spectral Centroid Analysis Class<a class="headerlink" href="#spectral-centroid-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.SpectralCentroidAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCentroidAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spectral centroid descriptor class for generation of spectral centroid
 audio analysis.</p>
 <p>This descriptor calculates the spectral centroid for overlapping grains of
@@ -1265,13 +1381,13 @@ analysis.</li>
 </ul>
 <dl class="staticmethod">
 <dt id="analysis.SpectralCentroidAnalysis.calc_spccntr_frame_times">
-<em class="property">static </em><code class="descname">calc_spccntr_frame_times</code><span class="sig-paren">(</span><em>spccntr_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.calc_spccntr_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.calc_spccntr_frame_times" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_spccntr_frame_times</code><span class="sig-paren">(</span><em>spccntr_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.calc_spccntr_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.calc_spccntr_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="analysis.SpectralCentroidAnalysis.create_spccntr_analysis">
-<em class="property">static </em><code class="descname">create_spccntr_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.create_spccntr_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.create_spccntr_analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_spccntr_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.create_spccntr_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.create_spccntr_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the spectral centroid of the fft frames.</p>
 <p>length: the length of the window used to calculate the FFT.
 samplerate: the samplerate of the audio analysed.
@@ -1281,7 +1397,7 @@ index output</p>
 
 <dl class="method">
 <dt id="analysis.SpectralCentroidAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCentroidAnalysis.html#SpectralCentroidAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCentroidAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 </dd></dl>
 
@@ -1292,7 +1408,7 @@ index output</p>
 <h3>Spectral Crest Factor Analysis Class<a class="headerlink" href="#spectral-crest-factor-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.SpectralCrestFactorAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCrestFactorAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralCrestFactorAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spectral crest factor descriptor class for generation of spectral crest
 factor audio analysis.</p>
 <p>This descriptor calculates the spectral crest factor for overlapping grains
@@ -1306,13 +1422,13 @@ analysis.</li>
 </ul>
 <dl class="staticmethod">
 <dt id="analysis.SpectralCrestFactorAnalysis.calc_spccf_frame_times">
-<em class="property">static </em><code class="descname">calc_spccf_frame_times</code><span class="sig-paren">(</span><em>spccf_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.calc_spccf_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.calc_spccf_frame_times" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_spccf_frame_times</code><span class="sig-paren">(</span><em>spccf_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.calc_spccf_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.calc_spccf_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="analysis.SpectralCrestFactorAnalysis.create_spccf_analysis">
-<em class="property">static </em><code class="descname">create_spccf_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.create_spccf_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.create_spccf_analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_spccf_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.create_spccf_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.create_spccf_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the spectral crest factor of the fft frames.</p>
 <p>length: the length of the window used to calculate the FFT.
 samplerate: the samplerate of the audio analysed.
@@ -1322,19 +1438,19 @@ index output</p>
 
 <dl class="method">
 <dt id="analysis.SpectralCrestFactorAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralCrestFactorAnalysis.mean_formatter">
-<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of the analysis data</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralCrestFactorAnalysis.median_formatter">
-<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralCrestFactorAnalysis.html#SpectralCrestFactorAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralCrestFactorAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the median value of the analysis data</p>
 </dd></dl>
 
@@ -1345,7 +1461,7 @@ index output</p>
 <h3>Spectral Flatness Analysis Class<a class="headerlink" href="#spectral-flatness-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.SpectralFlatnessAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFlatnessAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFlatnessAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spectral flatness descriptor class for generation of spectral flatness
 audio analysis.</p>
 <p>This descriptor calculates the spectral flatness for overlapping grains of
@@ -1359,13 +1475,13 @@ analysis.</li>
 </ul>
 <dl class="staticmethod">
 <dt id="analysis.SpectralFlatnessAnalysis.calc_spcflatness_frame_times">
-<em class="property">static </em><code class="descname">calc_spcflatness_frame_times</code><span class="sig-paren">(</span><em>spcflatness_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.calc_spcflatness_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.calc_spcflatness_frame_times" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_spcflatness_frame_times</code><span class="sig-paren">(</span><em>spcflatness_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.calc_spcflatness_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.calc_spcflatness_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis">
-<em class="property">static </em><code class="descname">create_spcflatness_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.create_spcflatness_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_spcflatness_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.create_spcflatness_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the spectral flatness of the fft frames.</p>
 <p>length: the length of the window used to calculate the FFT.
 samplerate: the samplerate of the audio analysed.
@@ -1375,19 +1491,19 @@ index output</p>
 
 <dl class="method">
 <dt id="analysis.SpectralFlatnessAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralFlatnessAnalysis.mean_formatter">
-<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of the analysis data</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralFlatnessAnalysis.median_formatter">
-<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFlatnessAnalysis.html#SpectralFlatnessAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFlatnessAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the median value of the analysis data</p>
 </dd></dl>
 
@@ -1398,7 +1514,7 @@ index output</p>
 <h3>Spectral Flux Analysis Class<a class="headerlink" href="#spectral-flux-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.SpectralFluxAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFluxAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralFluxAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spectral flux descriptor class for generation of spectral flux audio
 analysis.</p>
 <p>This descriptor calculates the spectral flux for overlapping grains of an
@@ -1412,13 +1528,13 @@ analysis.</li>
 </ul>
 <dl class="staticmethod">
 <dt id="analysis.SpectralFluxAnalysis.calc_spcflux_frame_times">
-<em class="property">static </em><code class="descname">calc_spcflux_frame_times</code><span class="sig-paren">(</span><em>spcflux_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.calc_spcflux_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.calc_spcflux_frame_times" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_spcflux_frame_times</code><span class="sig-paren">(</span><em>spcflux_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.calc_spcflux_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.calc_spcflux_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="analysis.SpectralFluxAnalysis.create_spcflux_analysis">
-<em class="property">static </em><code class="descname">create_spcflux_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.create_spcflux_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.create_spcflux_analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_spcflux_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.create_spcflux_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.create_spcflux_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the spectral flux of the fft frames.</p>
 <p>length: the length of the window used to calculate the FFT.
 samplerate: the samplerate of the audio analysed.
@@ -1428,19 +1544,19 @@ index output</p>
 
 <dl class="method">
 <dt id="analysis.SpectralFluxAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>analysis_method</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralFluxAnalysis.mean_formatter">
-<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of the analysis data</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralFluxAnalysis.median_formatter">
-<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralFluxAnalysis.html#SpectralFluxAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralFluxAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the median value of the analysis data</p>
 </dd></dl>
 
@@ -1451,7 +1567,7 @@ index output</p>
 <h3>Spectral Spread Analysis Class<a class="headerlink" href="#spectral-spread-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.SpectralSpreadAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralSpreadAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">SpectralSpreadAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spectral spread descriptor class for generation of spectral spread audio
 analysis.</p>
 <p>This descriptor calculates the spectral spread for overlapping grains of an
@@ -1465,13 +1581,13 @@ analysis.</li>
 </ul>
 <dl class="staticmethod">
 <dt id="analysis.SpectralSpreadAnalysis.calc_spcsprd_frame_times">
-<em class="property">static </em><code class="descname">calc_spcsprd_frame_times</code><span class="sig-paren">(</span><em>spcsprd_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.calc_spcsprd_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.calc_spcsprd_frame_times" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_spcsprd_frame_times</code><span class="sig-paren">(</span><em>spcsprd_frames</em>, <em>sample_frame_count</em>, <em>samplerate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.calc_spcsprd_frame_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.calc_spcsprd_frame_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate times for frames using sample size and samplerate.</p>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="analysis.SpectralSpreadAnalysis.create_spcsprd_analysis">
-<em class="property">static </em><code class="descname">create_spcsprd_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>spectral_centroid</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.create_spcsprd_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.create_spcsprd_analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">create_spcsprd_analysis</code><span class="sig-paren">(</span><em>fft</em>, <em>spectral_centroid</em>, <em>length</em>, <em>samplerate</em>, <em>output_format='freq'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.create_spcsprd_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.create_spcsprd_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the spectral spread of the fft frames.</p>
 <p>fft: Real fft frames.
 spectral_centroid: spectral centroid frames (in index format).
@@ -1481,19 +1597,19 @@ samplerate: the samplerate of the audio analysed.</p>
 
 <dl class="method">
 <dt id="analysis.SpectralSpreadAnalysis.hdf5_dataset_formatter">
-<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hdf5_dataset_formatter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.hdf5_dataset_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.hdf5_dataset_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the output from the analysis method to save to the HDF5 file.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralSpreadAnalysis.mean_formatter">
-<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mean_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.mean_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.mean_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of the analysis data</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.SpectralSpreadAnalysis.median_formatter">
-<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">median_formatter</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/SpectralSpreadAnalysis.html#SpectralSpreadAnalysis.median_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.SpectralSpreadAnalysis.median_formatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the median value of the analysis data</p>
 </dd></dl>
 
@@ -1504,7 +1620,7 @@ samplerate: the samplerate of the audio analysed.</p>
 <h3>Variance Analysis Class<a class="headerlink" href="#variance-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.VarianceAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">VarianceAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/VarianceAnalysis.html#VarianceAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.VarianceAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">VarianceAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/VarianceAnalysis.html#VarianceAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.VarianceAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Variance descriptor class for generation of variance audio analysis.</p>
 <p>This descriptor calculates the Root Mean Square analysis for overlapping
 grains of an AnalysedAudioFile object.  A full definition of variance
@@ -1542,7 +1658,7 @@ save to disk.</p>
 <h3>Zero-Crossing Analysis Class<a class="headerlink" href="#zero-crossing-analysis-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="analysis.ZeroXAnalysis">
-<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">ZeroXAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="modules/analysis/ZeroXAnalysis.html#ZeroXAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.ZeroXAnalysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.</code><code class="descname">ZeroXAnalysis</code><span class="sig-paren">(</span><em>AnalysedAudioFile</em>, <em>analysis_group</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/analysis/ZeroXAnalysis.html#ZeroXAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.ZeroXAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Zero-corssing descriptor class for generation of zero-crossing rate
 analysis.</p>
 <p>This descriptor calculates the zero-crossing rate for overlapping grains of
