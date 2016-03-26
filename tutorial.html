@@ -31,7 +31,7 @@
     <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
     <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
-    <link rel="next" title="API" href="api.html" />
+    <link rel="next" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -71,8 +71,8 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
 </ul>
 </ul>
@@ -107,7 +107,7 @@
     </a>
   </li>
   <li>
-    <a href="api.html" title="Next Chapter: API"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">API &raquo;</span>
+    <a href="descriptor_defs.html" title="Next Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Audio Descrip... &raquo;</span>
     </a>
   </li>
               
@@ -386,6 +386,14 @@ the script over them. This allows for different databases to be used without
 continuous reanalysis. However, if analysis or matching parameters are changed,
 the <code class="docutils literal"><span class="pre">--reanalyse</span></code> and <code class="docutils literal"><span class="pre">--rematch</span></code> flags can be used to force the overwriting of
 old data, using the new parameters.</p>
+<p>Analyses can also be selected manually using the <code class="docutils literal"><span class="pre">--analyse</span></code> flag. This
+allow matching and synthesis to be made based on a specific subset of analyses.
+For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre>concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
+./analysed_source_db --tar_db ./analysed_tar_db --analyse f0 rms
+</pre></div>
+</div>
+<p>This will run the matching using only the RMS and F0 analyses.</p>
 </div>
 <div class="section" id="config-py">
 <h2>config.py<a class="headerlink" href="#config-py" title="Permalink to this headline">¶</a></h2>
