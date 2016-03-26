@@ -26,6 +26,6 @@ of source sounds from the database.
    overview
    installation
    tutorial
-   api
    descriptor_defs
+   api
    examples
