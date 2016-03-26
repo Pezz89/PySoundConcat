@@ -9,6 +9,7 @@ There are a few dependencies required to install concatenator:
 1. Python 2.7.11 (It will probably run on earlier versions)
 2. libsndfile - used for audio file IO
 3. The HDF5 Library - used for large file storage
+4. The Sox audio library - used for pitch shifting
 
 Brew Python
 +++++++++++

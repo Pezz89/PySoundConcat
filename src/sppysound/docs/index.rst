@@ -15,12 +15,3 @@ Welcome to Concatenator's documentation!
    api
    descriptor_defs
    examples
-
-
-
-
-Indices
-==================
-
-* :ref:`genindex`
-
