@@ -23,12 +23,20 @@ There are a few dependencies required to install concatenator:
 
 Brew Python
 +++++++++++
-There are a number of ways to install python. The simplest is through
-homebrew/linuxbrew using the following command:
+There are a number of ways to install python. The simplest is through homebrew
+(OSX) / Linuxbrew (most Linux distributions) using the following command:
 
 .. code:: bash
 
     brew install python
+
+Homebrew can be installed by following installation instructions from here:
+
+http://brew.sh/
+
+Linuxbrew can be installed by following installation instructions from here:
+
+https://github.com/Linuxbrew/linuxbrew
 
 Pyenv Python
 ++++++++++++
@@ -54,7 +62,7 @@ pyenv pythons to your path.
 Other dependencies
 ++++++++++++++++++
 
-libsndfile and HDF5 libraries can also be installed via homebrew/linuxbrew:
+libsndfile, sox and the HDF5 libraries can also be installed via homebrew/linuxbrew:
 
 .. code:: bash
 
