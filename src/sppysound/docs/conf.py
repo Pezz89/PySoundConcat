@@ -37,7 +37,8 @@ extensions = [
     'nbsphinx',
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
-    'sphinx.ext.graphviz'
+    'sphinx.ext.graphviz',
+    'sphinxtogithub'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
