@@ -85,14 +85,14 @@ project is working correctly, simply run run_tests.
     ./run_tests
 
 There is a small chance that the installation may fail when installing
-depndancies such as scipy or numpy. In these cases the packages must be
+dependencies such as scipy or numpy. In these cases the packages must be
 installed manually. When this has been done, simply re-run the install.sh
 script.
 
 Jupyter Notebook Examples
 ---------------------------------------
 
-the Jupyter notebook application is required in order to run the interactive
+The Jupyter notebook application is required in order to run the interactive
 examples. It is recommended that this is installed as part of the iPython
 library using:
 
