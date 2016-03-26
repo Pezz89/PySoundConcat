@@ -151,6 +151,17 @@ continuous reanalysis. However, if analysis or matching parameters are changed,
 the ``--reanalyse`` and ``--rematch`` flags can be used to force the overwriting of
 old data, using the new parameters.
 
+Analyses can also be selected manually using the ``--analyse`` flag. This
+allow matching and synthesis to be made based on a specific subset of analyses.
+For example:
+
+.. code:: bash
+
+    concatenator ./source_db ./target_db ./output_db --src_db \
+    ./analysed_source_db --tar_db ./analysed_tar_db --analyse f0 rms
+
+This will run the matching using only the RMS and F0 analyses. 
+
 
 config.py
 ---------
