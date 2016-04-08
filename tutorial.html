@@ -89,9 +89,10 @@
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Tutorial</a><ul>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
-<li><a class="reference internal" href="#configuration-flags">Configuration Flags</a></li>
+<li><a class="reference internal" href="#detailed-usage">Detailed Usage</a></li>
+<li><a class="reference internal" href="#parameter-configuration-flags">Parameter Configuration Flags</a></li>
 <li><a class="reference internal" href="#config-py">config.py</a></li>
-<li><a class="reference internal" href="#concatenate-py-script-usage">concatenate.py Script Usage</a></li>
+<li><a class="reference internal" href="#concatenate-py-script-flags">concatenate.py Script Flags</a></li>
 </ul>
 </li>
 </ul>
@@ -263,6 +264,30 @@ can be accessed by running the &#8216;concatenator&#8217; symbolic link from the
 folder root.</p>
 <div class="section" id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>All operations are performed through use of the ./concatenator script. It is
+designed to intuitively search the locations provided as arguments, create any
+analyses that are needed (and do not already exist) automatically, and
+match/synthesize results all through one interface.</p>
+<p>This allows the user to simply supply three arguments:</p>
+<ul class="simple">
+<li>A source directory</li>
+<li>A target directory</li>
+<li>An output directory</li>
+</ul>
+<p>The script will then search these for any analyses that have been created
+previously, create any new analyses that haven&#8217;t and generate results using the
+default settings.</p>
+<p>An example command call might look something like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre>./concatenator /path/to/source_db /path/to/target_db /path/to/output_db
+</pre></div>
+</div>
+<p>This will recursively search these folder and organize audio found so that it
+can be used as part of the database.</p>
+<p>Note: If further audio need to be added after having run the script, simply add
+it anywhere in the folder and it will be added to the database on the next run.</p>
+</div>
+<div class="section" id="detailed-usage">
+<h2>Detailed Usage<a class="headerlink" href="#detailed-usage" title="Permalink to this headline">¶</a></h2>
 <p>To view all available options simply run:</p>
 <div class="highlight-bash"><div class="highlight"><pre>./concatenator -h
 </pre></div>
@@ -283,7 +308,7 @@ works by analysing overlapping segments of audio (known as grains) from both
 ...
 </pre></div>
 </div>
-<p>(Details on all available commands are available in the <a class="reference internal" href="#usage"><span>concatenate.py Script Usage</span></a>)</p>
+<p>(Details on all available commands are available in the <a class="reference internal" href="#usage"><span>concatenate.py Script Flags</span></a>)</p>
 <p>For this demonstration, the following file structure will be used:</p>
 <div class="highlight-python"><div class="highlight"><pre>/Users/samuelperry/concatenator_test/
 |-- source_db
@@ -361,17 +386,17 @@ This produces this directory structure:</p>
 for generating the databases and storing analysis data. Symbolic links are
 created, referencing the original audio files without moving them.  This allows
 large databases to be used in place without copying or moving it&#8217;s content.</p>
-<p>Alternatively, databases can be generated in place by ommiting the <code class="docutils literal"><span class="pre">--src_db</span></code> and
-<code class="docutils literal"><span class="pre">--tar_db</span></code> flags. this will create the database directory structure directly in
+<p>Alternatively, databases can be generated in place by omitting the <code class="docutils literal"><span class="pre">--src_db</span></code> and
+<code class="docutils literal"><span class="pre">--tar_db</span></code> flags. This will create the database directory structure directly in
 the directories provided as source and target.</p>
 <p>The <code class="docutils literal"><span class="pre">--copy</span></code> flag can be used in conjunction with these flags in order to create
 actual copies of the audio files at the destinations. This allows for the
-creation of partable databases that can moved to other machines without
+creation of portable databases that can moved to other machines without
 breaking links to the original files. (Any pre-existing symbolic links will be
 overwritten with hard copies when using this option.)</p>
 </div>
-<div class="section" id="configuration-flags">
-<h2>Configuration Flags<a class="headerlink" href="#configuration-flags" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parameter-configuration-flags">
+<h2>Parameter Configuration Flags<a class="headerlink" href="#parameter-configuration-flags" title="Permalink to this headline">¶</a></h2>
 <p>For quick modification of analysis parameters, parameter flags can be specified
 directly when calling the script. For example:</p>
 <div class="highlight-bash"><div class="highlight"><pre>concatenator ./source_db ./target_db ./output_db --src_db <span class="se">\</span>
@@ -431,12 +456,12 @@ each parameter. The default config.py file looks like this:</p>
 
 <span class="n">database</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c"># Enables creation of symbolic links to files not in the database rather</span>
-    <span class="c"># than making pysical copies.</span>
+    <span class="c"># than making physical copies.</span>
     <span class="s">&quot;symlink&quot;</span><span class="p">:</span> <span class="bp">True</span>
 <span class="p">}</span>
 
-<span class="c"># Sets the weighting for each analysis. a higher weighting gives an analysis</span>
-<span class="c"># higher presendence when finding the best matches.</span>
+<span class="c"># Sets the weighting for each analysis. A higher weighting gives an analysis</span>
+<span class="c"># higher precedence when finding the best matches.</span>
 <span class="n">matcher_weightings</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&quot;f0&quot;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
     <span class="s">&quot;spccntr&quot;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
@@ -523,8 +548,8 @@ each parameter. The default config.py file looks like this:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="concatenate-py-script-usage">
-<span id="usage"></span><h2>concatenate.py Script Usage<a class="headerlink" href="#concatenate-py-script-usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="concatenate-py-script-flags">
+<span id="usage"></span><h2>concatenate.py Script Flags<a class="headerlink" href="#concatenate-py-script-flags" title="Permalink to this headline">¶</a></h2>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
 <col class="description" />
@@ -612,7 +637,7 @@ existing analyses</td></tr>
 <td>Force re-matching, overwriting any existing match data</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">--enforcef0</span></kbd></td>
-<td>This flag enables pitch shifting of matched grainsto
+<td>This flag enables pitch shifting of matched grains to
 better match the target.</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">--enforcerms</span></kbd></td>

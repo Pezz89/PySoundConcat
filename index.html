@@ -255,6 +255,16 @@ related representations of target audio files. Through use of analysed
 databases of varying sizes, an output can be generated that represents a mix of
 the spectral and temporal features of the original target sound and the corpus
 of source sounds.</p>
+<p>To achieve this, a technique known as &#8220;concatenative synthesis&#8221; is used. This
+form of synthesis combines the ability to window and join small segments of
+sound to create a new sound (a process known as granular synthesis), with audio
+analysis techniques capable of describing a sound in order to differentiate it
+from others. By analysing small segments in a target sound for their perceptual
+characteristics (such as pitch, timbre and loudness), it is then possible to
+compare these segments to a collection of source sounds to find perceptually
+similar segments. From this, the most perceptually similar matches can be taken
+and joined using granular synthesis techniques in order to achieve the final
+result.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a><ul>
@@ -277,9 +287,10 @@ of source sounds.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configuration-flags">Configuration Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#detailed-usage">Detailed Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#parameter-configuration-flags">Parameter Configuration Flags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#config-py">config.py</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#concatenate-py-script-usage">concatenate.py Script Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#concatenate-py-script-flags">concatenate.py Script Flags</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a><ul>

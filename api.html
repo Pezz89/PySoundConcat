@@ -31,8 +31,8 @@
     <script type="text/javascript" src="static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/bootstrap-sphinx.js"></script>
     <link rel="top" title="Concatenator 1.0 documentation" href="index.html" />
-    <link rel="next" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
-    <link rel="prev" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="API Usage Examples" href="examples.html" />
+    <link rel="prev" title="Audio Descriptor Definitions" href="descriptor_defs.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -71,8 +71,8 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="descriptor_defs.html">Audio Descriptor Definitions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">API Usage Examples</a></li>
 </ul>
 </ul>
@@ -121,11 +121,11 @@
               
                 
   <li>
-    <a href="tutorial.html" title="Previous Chapter: Tutorial"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Tutorial</span>
+    <a href="descriptor_defs.html" title="Previous Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Audio Descrip...</span>
     </a>
   </li>
   <li>
-    <a href="descriptor_defs.html" title="Next Chapter: Audio Descriptor Definitions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Audio Descrip... &raquo;</span>
+    <a href="examples.html" title="Next Chapter: API Usage Examples"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">API Usage Exa... &raquo;</span>
     </a>
   </li>
               
@@ -275,6 +275,10 @@ div.nboutput  > :nth-child(2).stderr {
 </style>
 <div class="section" id="api">
 <h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>This section contains the details of the underlying code used to create the
+concatenator script. This is included so that developer may use the library for
+further work in this area and aims to provide a complete description of
+functions and class structures in an easy to use format.</p>
 <div class="section" id="audiofile-class">
 <h2>AudioFile Class<a class="headerlink" href="#audiofile-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
