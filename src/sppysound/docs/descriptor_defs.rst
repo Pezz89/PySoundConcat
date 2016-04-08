@@ -2,6 +2,11 @@
 
 Audio Descriptor Definitions
 ============================
+This section describes the audio descriptors used for analysing chacteristics
+of the audio files. Each descriptor is used for measuring a specific
+characteristic and multiple descriptors are combined to match grains based on
+the amalgamation of these measurements. For example, Using the F0 and RMS
+descriptors would match audio based on it's pitch and energy.
 
 Centroid
 ~~~~~~~~~~~~~~~~~

@@ -9,6 +9,36 @@ folder root.
 Getting Started
 ---------------
 
+All operations are performed through use of the ./concatenator script. It is
+designed to intuitively search the locations provided as arguments, create any
+analyses that are needed (and do not already exist) automatically, and
+match/synthesize results all through one interface.
+
+This allows the user to simply supply three arguments:
+
+- A source directory
+- A target directory
+- An output directory
+
+The script will then search these for any analyses that have been created
+previously, create any new analyses that haven't and generate results using the
+default settings. 
+
+An example command call might look something like this:
+
+.. code:: bash
+
+    ./concatenator /path/to/source_db /path/to/target_db /path/to/output_db
+
+This will recursively search these folder and organize audio found so that it
+can be used as part of the database. 
+
+Note: If further audio need to be added after having run the script, simply add
+it anywhere in the folder and it will be added to the database on the next run.
+
+Detailed Usage
+--------------
+
 To view all available options simply run:
 
 .. code:: bash
@@ -121,18 +151,18 @@ for generating the databases and storing analysis data. Symbolic links are
 created, referencing the original audio files without moving them.  This allows
 large databases to be used in place without copying or moving it's content.
 
-Alternatively, databases can be generated in place by ommiting the ``--src_db`` and
-``--tar_db`` flags. this will create the database directory structure directly in
+Alternatively, databases can be generated in place by omitting the ``--src_db`` and
+``--tar_db`` flags. This will create the database directory structure directly in
 the directories provided as source and target.
 
 The ``--copy`` flag can be used in conjunction with these flags in order to create
 actual copies of the audio files at the destinations. This allows for the
-creation of partable databases that can moved to other machines without
+creation of portable databases that can moved to other machines without
 breaking links to the original files. (Any pre-existing symbolic links will be
 overwritten with hard copies when using this option.)
 
-Configuration Flags
--------------------
+Parameter Configuration Flags
+-----------------------------
 For quick modification of analysis parameters, parameter flags can be specified
 directly when calling the script. For example:
 
@@ -202,12 +232,12 @@ each parameter. The default config.py file looks like this:
 
     database = {
         # Enables creation of symbolic links to files not in the database rather
-        # than making pysical copies.
+        # than making physical copies.
         "symlink": True
     }
 
-    # Sets the weighting for each analysis. a higher weighting gives an analysis
-    # higher presendence when finding the best matches.
+    # Sets the weighting for each analysis. A higher weighting gives an analysis
+    # higher precedence when finding the best matches.
     matcher_weightings = {
         "f0" : 1.,
         "spccntr" : 1.,
@@ -294,7 +324,7 @@ each parameter. The default config.py file looks like this:
 
 .. _usage:
 
-concatenate.py Script Usage
+concatenate.py Script Flags
 ---------------------------
 -h, --help            show help message and exit
 
@@ -374,7 +404,7 @@ concatenate.py Script Usage
 
 --rematch             Force re-matching, overwriting any existing match data
 
---enforcef0           This flag enables pitch shifting of matched grainsto
+--enforcef0           This flag enables pitch shifting of matched grains to
                       better match the target.
                       
 --enforcerms          This flag enables scaling of matched grains to better

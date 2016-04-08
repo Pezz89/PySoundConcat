@@ -1,5 +1,9 @@
 API
 ===
+This section contains the details of the underlying code used to create the
+concatenator script. This is included so that developer may use the library for
+further work in this area and aims to provide a complete description of
+functions and class structures in an easy to use format.
 
 -------------------
 AudioFile Class

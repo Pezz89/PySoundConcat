@@ -1,6 +1,12 @@
 Installation
 ============
 
+This section provides installation instructions for installing the concatenator
+project on your system. There are alternative methods that will most likely
+work for installing both the project and many of it's dependencies,  however
+the method shown below has been tested and is therefore the most reliable
+method for installing this project.
+
 Prerequesites
 -------------
 
