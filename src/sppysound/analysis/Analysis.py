@@ -75,7 +75,7 @@ class Analysis(object):
                 # be saved in the HDF5 file
                 data_dict, attrs_dict = self.hdf5_dataset_formatter(*args, **kwargs)
                 for key, value in data_dict.iteritems():
-                    self.analysis.create_dataset(key, data=value, dtype=np.float, chunks=True)
+                    self.analysis.create_dataset(key, data=value, chunks=True)
                 for key, value in attrs_dict.iteritems():
                     self.analysis.attrs[key] = value
 

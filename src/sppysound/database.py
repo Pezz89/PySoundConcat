@@ -457,7 +457,6 @@ class Matcher:
                 match_vals = best_match_vals[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
-            pdb.set_trace()
 
             datafile_path = ''.join(("match/", target_entry.name))
             try:
@@ -703,11 +702,15 @@ class Matcher:
         grain, a dimension for each match of said grain and a dimension
         containing database sample index and the sample's grain index.
         """
+
+        # source_sample_indexes = source_sample_indexes[source_sample_indexes[:, 1] != 0.]
+
         mi_shape = match_indexes.shape
         x = match_indexes.flatten()
+        # Find indexes within the range of each source sample index.
         x = np.logical_and(
             np.vstack(x)>=source_sample_indexes[:,0],
-            np.vstack(x)<=source_sample_indexes[:,1]
+            np.vstack(x)<source_sample_indexes[:,1]
         )
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
@@ -797,7 +800,6 @@ class Synthesizer:
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
                     match_db_ind, match_grain_ind = matches[match_index]
-                    pdb.set_trace()
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
