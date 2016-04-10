@@ -410,14 +410,22 @@ class Matcher:
                 target_data, s = target_entry.analysis_data_grains(target_times, analysis, format=analysis_formatting)
                 all_target_analyses[i] = target_data
 
+
             imp = Imputer(axis=1)
+            nan_columns = np.all(np.isnan(all_target_analyses), axis=1)
+            all_target_analyses[nan_columns, :] = 0.
             # Impute values for Nans
             all_target_analyses = imp.fit_transform(all_target_analyses)
 
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
+                self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
                 # Create an array of grain times for source sample
                 source_times = source_entry.generate_grain_times(grain_size, overlap, save_times=True)
+                if not source_times.size:
+                    continue
+
                 all_source_analyses = np.empty((len(self.matcher_analyses), source_times.shape[0]))
+
 
                 for i, analysis in enumerate(self.matcher_analyses):
                     analysis_formatting = self.analysis_dict[analysis]
@@ -425,9 +433,10 @@ class Matcher:
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
                     all_source_analyses[i] = source_data
 
-                self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
 
                 # Impute values for Nans
+                nan_columns = np.all(np.isnan(all_source_analyses), axis=1)
+                all_source_analyses[nan_columns, :] = 0.
                 all_source_analyses = imp.fit_transform(all_source_analyses)
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
@@ -448,6 +457,7 @@ class Matcher:
                 match_vals = best_match_vals[:, :self.match_quantity]
 
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
+            pdb.set_trace()
 
             datafile_path = ''.join(("match/", target_entry.name))
             try:
@@ -787,6 +797,7 @@ class Synthesizer:
                     # from available matches.
                     match_index = np.random.randint(matches.shape[0])
                     match_db_ind, match_grain_ind = matches[match_index]
+                    pdb.set_trace()
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 

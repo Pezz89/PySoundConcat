@@ -264,7 +264,6 @@ def main():
         log_filename=modpath,
         logger_filelevel=args.verbose
     )
-    pdb.set_trace()
 
     # Create/load a pre-existing source database
     source_db = AudioDatabase(

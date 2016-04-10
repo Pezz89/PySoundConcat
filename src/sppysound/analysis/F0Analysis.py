@@ -251,17 +251,24 @@ class F0Analysis(Analysis):
         }
 
         # For debugging apply along axis:
+        if not selection.size:
+            # TODO: Add warning here
+            return np.nan
+
         #for ind, i in enumerate(selection):
         #    output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])
 
-        output = np.apply_along_axis(
-            self.formatter_func,
-            1,
-            selection,
-            frames,
-            valid_inds,
-            formatter=format_style_dict[format]
-        )/self.nyquist_rate
+        try:
+            output = np.apply_along_axis(
+                self.formatter_func,
+                1,
+                selection,
+                frames,
+                valid_inds,
+                formatter=format_style_dict[format]
+            )/self.nyquist_rate
+        except IndexError:
+            pdb.set_trace()
 
         return output
 

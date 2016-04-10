@@ -75,7 +75,7 @@ class Analysis(object):
                 # be saved in the HDF5 file
                 data_dict, attrs_dict = self.hdf5_dataset_formatter(*args, **kwargs)
                 for key, value in data_dict.iteritems():
-                    self.analysis.create_dataset(key, data=value)
+                    self.analysis.create_dataset(key, data=value, dtype=np.float, chunks=True)
                 for key, value in attrs_dict.iteritems():
                     self.analysis.attrs[key] = value
 
@@ -145,6 +145,9 @@ class Analysis(object):
         }
         output = np.empty(len(selection))
 
+        if not selection.size:
+            # TODO: Add warning here
+            return np.nan
         # For debugging apply_along_axis:
         #for ind, i in enumerate(selection):
         #    output[ind] = self.formatter_func(i, frames, valid_inds, formatter=format_style_dict[format])
