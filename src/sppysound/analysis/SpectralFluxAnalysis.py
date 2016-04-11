@@ -40,8 +40,6 @@ class SpectralFluxAnalysis(Analysis):
         self.create_analysis(
             self.create_spcflux_analysis,
             fft.analysis['frames'][:],
-            fft.analysis.attrs['win_size'],
-            self.AnalysedAudioFile.samplerate
         )
         self.spcflux_window_count = None
 
@@ -55,7 +53,7 @@ class SpectralFluxAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spcflux_analysis(fft, length, samplerate, output_format="freq"):
+    def create_spcflux_analysis(fft, samplerate):
         '''
         Calculate the spectral flux of the fft frames.
 
@@ -67,7 +65,7 @@ class SpectralFluxAnalysis(Analysis):
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get highest magnitude
-        if not np.nonzero(magnitudes)[0].any():
+        if not np.nonzero(magnitudes)[0].size:
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
@@ -76,7 +74,7 @@ class SpectralFluxAnalysis(Analysis):
         # magnitude.
         rolled_mags = np.roll(magnitudes, 1, axis=0)[1:]
         sum_of_squares = np.sum((magnitudes[1:]-rolled_mags)**2., axis=1)
-        spectral_flux = np.sqrt(sum_of_squares) / (length/2)
+        spectral_flux = np.sqrt(sum_of_squares) / (np.size(fft, axis=1)/2)
 
         return spectral_flux
 

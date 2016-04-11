@@ -41,8 +41,6 @@ class SpectralCrestFactorAnalysis(Analysis):
         self.create_analysis(
             self.create_spccf_analysis,
             fft.analysis['frames'][:],
-            fft.analysis.attrs['win_size'],
-            self.AnalysedAudioFile.samplerate
         )
         self.spccf_window_count = None
 
@@ -56,19 +54,14 @@ class SpectralCrestFactorAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spccf_analysis(fft, length, samplerate, output_format="freq"):
+    def create_spccf_analysis(fft):
         '''
         Calculate the spectral crest factor of the fft frames.
-
-        length: the length of the window used to calculate the FFT.
-        samplerate: the samplerate of the audio analysed.
-        output_format = Choose either "freq" for output in Hz or "ind" for bin
-        index output
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get highest magnitude
-        if not np.nonzero(magnitudes)[0].any():
+        if not np.nonzero(magnitudes)[0].size:
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y

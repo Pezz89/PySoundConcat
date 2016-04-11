@@ -365,11 +365,25 @@ class Matcher:
             length = entry.samps_to_ms(entry.frames)
             hop_size = grain_length / overlap
             grain_indexes[ind][0] = int(length / hop_size) - 1
-        grain_indexes[:, 1] = np.cumsum(grain_indexes[:, 0])
+        grain_indexes[:, 1] = np.cumsum(grain_indexes[:, 0]).astype(int)
         grain_indexes[:, 0] = grain_indexes[:, 1] - grain_indexes[:, 0]
         return grain_indexes
 
     def kdtree_matcher(self, grain_size, overlap):
+        invalid_inds = []
+        for i, entry in enumerate(self.target_db.analysed_audio):
+            entry.generate_grain_times(grain_size, overlap, save_times=True)
+            if not entry.times.size:
+                invalid_inds.append(i)
+        for i in sorted(invalid_inds, reverse=True):
+            del self.target_db.analysed_audio[i]
+        invalid_inds = []
+        for i, entry in enumerate(self.source_db.analysed_audio):
+            entry.generate_grain_times(grain_size, overlap, save_times=True)
+            if not entry.times.size:
+                invalid_inds.append(i)
+        for i in sorted(invalid_inds, reverse=True):
+            del self.source_db.analysed_audio[i]
         # Count grains of the source database
         source_sample_indexes = self.count_grains(self.source_db, grain_size, overlap)
         try:
@@ -385,6 +399,7 @@ class Matcher:
         else:
             weightings = {x: 1. for x in self.matcher_analyses}
 
+
         for tind, target_entry in enumerate(self.target_db.analysed_audio):
             # Check if match data already exists and use it rather than
             # regenerating if it does.
@@ -395,7 +410,7 @@ class Matcher:
                 continue
 
             # Create an array of grain times for target sample
-            target_times = target_entry.generate_grain_times(grain_size, overlap, save_times=True)
+            target_times = target_entry.times
             x_size = target_times.shape[0]
             match_indexes = np.empty((x_size, self.match_quantity))
             match_vals = np.empty((x_size, self.match_quantity))
@@ -420,7 +435,7 @@ class Matcher:
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
                 self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
                 # Create an array of grain times for source sample
-                source_times = source_entry.generate_grain_times(grain_size, overlap, save_times=True)
+                source_times = source_entry.times
                 if not source_times.size:
                     continue
 
@@ -804,7 +819,10 @@ class Synthesizer:
                         match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                         # TODO: Make proper fix for grain index offset of 1
-                        match_grain = match_sample[match_grain_ind-1]
+                        try:
+                            match_grain = match_sample[match_grain_ind-1]
+                        except:
+                            pdb.set_trace()
 
                         if self.enforce_rms_bool:
                             # Get the target sample from the database

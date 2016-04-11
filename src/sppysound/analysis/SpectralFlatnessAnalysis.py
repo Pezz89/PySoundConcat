@@ -42,8 +42,6 @@ class SpectralFlatnessAnalysis(Analysis):
         self.create_analysis(
             self.create_spcflatness_analysis,
             fft.analysis['frames'][:],
-            fft.analysis.attrs['win_size'],
-            self.AnalysedAudioFile.samplerate
         )
         self.spcflatness_window_count = None
 
@@ -57,18 +55,13 @@ class SpectralFlatnessAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spcflatness_analysis(fft, length, samplerate, output_format="freq"):
+    def create_spcflatness_analysis(fft):
         '''
         Calculate the spectral flatness of the fft frames.
-
-        length: the length of the window used to calculate the FFT.
-        samplerate: the samplerate of the audio analysed.
-        output_format = Choose either "freq" for output in Hz or "ind" for bin
-        index output
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
-        if not np.nonzero(magnitudes)[0].any():
+        if not np.nonzero(magnitudes)[0].size:
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)
             return y
@@ -77,7 +70,7 @@ class SpectralFlatnessAnalysis(Analysis):
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore')
             # Calculate the geometric mean of magnitudes
-            geo_mean = stats.gmean(magnitudes, axis=1)
+            geo_mean = np.e**np.mean(np.log(magnitudes), axis=1)
             # Calculate the arithmetic mean of magnitudes
             arith_mean = np.mean(magnitudes, axis=1)
             spectral_flatness = geo_mean / arith_mean

@@ -1,24 +1,24 @@
 # Specify analysis parameters for root mean square analysis.
 rms = {
-    "window_size": 70,
+    "window_size": 120,
     "overlap": 2,
 }
 
 # Specify analysis parameters for variance analysis.
 variance = {
-    "window_size": 70,
+    "window_size": 120,
     "overlap": 2
 }
 
 # Specify analysis parameters for temporal kurtosis analysis.
 kurtosis = {
-    "window_size": 70,
+    "window_size": 120,
     "overlap": 2
 }
 
 # Specify analysis parameters for temporal skewness analysis.
 skewness = {
-    "window_size": 70,
+    "window_size": 120,
     "overlap": 2
 }
 
@@ -49,7 +49,7 @@ matcher_weightings = {
     "kurtosis": 1.,
     "skewness": 1.,
     "variance": 3.,
-    "harm_ratio": 1.
+    "harm_ratio": 3.
 }
 
 # Specifies the method for averaging analysis frames to create a single value
@@ -59,11 +59,11 @@ analysis_dict = {
     "f0": "log2_median",
     "rms": "mean",
     "zerox": "mean",
-    "spccntr": "mean",
-    "spcsprd": "mean",
-    "spcflux": "mean",
-    "spccf": "mean",
-    "spcflatness": "mean",
+    "spccntr": "median",
+    "spcsprd": "median",
+    "spcflux": "median",
+    "spccf": "median",
+    "spcflatness": "median",
     "peak": "mean",
     "centroid": "mean",
     "kurtosis": "mean",
@@ -82,11 +82,11 @@ analysis = {
 matcher = {
     # Force the re-matching of analyses
     "rematch": True,
-    "grain_size": 70,
+    "grain_size": 120,
     "overlap": 2,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 1,
+    "match_quantity": 20,
     # Choose the algorithm used to perform matching. kdtree is recommended for
     # larger datasets.
     "method": 'kdtree'
@@ -103,7 +103,7 @@ synthesizer = {
     "enforce_f0": True,
     # Specify the ratio limit that is the grain can be modified by.
     "enf_f0_ratio_limit": 10.,
-    "grain_size": 70,
+    "grain_size": 120,
     "overlap": 2,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.

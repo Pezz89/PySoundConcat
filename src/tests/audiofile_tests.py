@@ -10,7 +10,39 @@ from fileops import pathops
 import pdb
 import os
 import config
+import math
 
+
+class NumericAssertions:
+    """
+    This class is following the UnitTest naming conventions.
+    It is meant to be used along with unittest.TestCase like so :
+    class MyTest(unittest.TestCase, NumericAssertions):
+        ...
+    It needs python >= 2.6
+    """
+
+    def assertIsNaN(self, value, msg=None):
+        """
+        Fail if provided value is not NaN
+        """
+        standardMsg = "%s is not NaN" % str(value)
+        try:
+            if not math.isnan(value):
+                self.fail(self._formatMessage(msg, standardMsg))
+        except:
+            self.fail(self._formatMessage(msg, standardMsg))
+
+    def assertIsNotNaN(self, value, msg=None):
+        """
+        Fail if provided value is NaN
+        """
+        standardMsg = "Provided value is NaN"
+        try:
+            if math.isnan(value):
+                self.fail(self._formatMessage(msg, standardMsg))
+        except:
+            pass
 
 class globalTests(unittest.TestCase):
 
@@ -478,141 +510,111 @@ class PeakAnalysisTests(globalTests):
     """Tests Peak analysis generation"""
 
     def setUp(self):
-        # TODO: Write this test...
-        """Create functions and variables before each test is run."""
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(88200)
-        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        self.silence = np.zeros(512)
+        self.positive_max = np.ones(512)
+        self.negative_max = np.ones(512)-2
 
     def test_GeneratePeak(self):
         """Check that RMS values generated are the expected values"""
-        output = analysis.PeakAnalysis.create_peak_analysis(self.sine_wave)
-        self.assertTrue(np.all(output > 0.8))
+        output = analysis.PeakAnalysis.create_peak_analysis(self.silence)
+        output1 = analysis.PeakAnalysis.create_peak_analysis(self.positive_max)
+        output2 = analysis.PeakAnalysis.create_peak_analysis(self.negative_max)
 
-class SpectralCentroidAnalysisTests(globalTests):
+        np.testing.assert_array_equal(output, 0)
+        np.testing.assert_array_equal(output1, 1)
+        np.testing.assert_array_equal(output2, 1)
+
+class SpectralCentroidAnalysisTests(globalTests, NumericAssertions):
     """Tests Spectral Centroid analysis generation."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = self.create_test_audio()
-        # Specify frequency of the sine wave
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(88200)
-        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
+        self.silence = np.zeros(512)
+        self.equal_mag = np.ones(512)
+        self.peak = self.silence.copy()
+        self.peak[256] = 1
 
     def test_GenerateSpectralCentroid(self):
-        fft = analysis.FFTAnalysis.stft(self.sine_wave, 512)
-        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr)
-        average_output = np.median(output)
-        self.assertTrue(self.f-2 <= average_output <= self.f+2)
+        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.silence], 44100)
+        output1 = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.peak], 44100)
+        output2 = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.equal_mag], 44100)
+        self.assertIsNaN(output)
+        self.assertEqual(output1, 256)
+        self.assertEqual(output2, 255.5)
 
-    def tearDown(self):
-        """
-        Delete anything that is left over once tests are complete.
-
-        For example, remove all temporary test audio files generated during the
-        tests.
-        """
-        del self.TestAudio
-        pathops.delete_if_exists("./.TestAudio.wav")
-
-
-class SpectralSpreadAnalysisTests(globalTests):
+class SpectralSpreadAnalysisTests(globalTests, NumericAssertions):
     """Tests Spectral Spread analysis generation."""
 
     def setUp(self):
         """Create functions and variables before each test is run."""
-        self.TestAudio = self.create_test_audio()
-        # Specify frequency of the sine wave
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(88200)
-        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
-        self.white_noise = np.random.random(88200)
+        self.silence = np.zeros(512)
+        self.equal_mag = np.ones(512)
+        self.peak = self.silence.copy()
+        self.peak[256] = 1
 
     def test_GenerateSpectralSpread(self):
-        fft = analysis.FFTAnalysis.stft(self.sine_wave, 512)
-        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr, output_format = 'freq')
-        average_output = np.median(output)
-        output = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis(fft, output, 512, self.sr, output_format='freq')
-        output = output / (44100/2.0)
-        average_output = np.median(output)
-
-        self.assertTrue(0 <= average_output <= 2)
-        fft = analysis.FFTAnalysis.stft(self.white_noise, 512)
-        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis(fft, 512, self.sr, output_format = 'ind')
-        output = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis(fft, output, 512, self.sr, output_format='freq')
-        average_output = np.median(output)
-        output = output / (44100/2.0)
-        average_output = np.median(output)
-        # self.assertTrue(8000 <= average_output)
-
-    def tearDown(self):
-        """
-        Delete anything that is left over once tests are complete.
-
-        For example, remove all temporary test audio files generated during the
-        tests.
-        """
-        del self.TestAudio
-        pathops.delete_if_exists("./.TestAudio.wav")
+        output = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.silence], 44100)
+        output = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis([self.silence], output, 44100)
+        output1 = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.equal_mag], 44100)
+        output1 = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis([self.equal_mag], output1, 44100)
+        output2 = analysis.SpectralCentroidAnalysis.create_spccntr_analysis([self.peak], 44100)
+        output2 = analysis.SpectralSpreadAnalysis.create_spcsprd_analysis([self.peak], output2, 44100)
+        self.assertIsNaN(output)
+        np.testing.assert_almost_equal(output1, 147.801387)
+        self.assertEquals(output2, 0)
 
 class SpectralFluxAnalysisTests(globalTests):
     """Tests Spectral Flux analysis generation."""
 
     def setUp(self):
-        # Specify frequency of the sine wave
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(44100)
-        self.sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
-        self.white_noise = np.random.random(44100)
-        self.input = np.concatenate((self.sine_wave, self.white_noise))
+        self.silence = np.zeros(512)
+        self.equal_mag = np.ones(512)
+        self.peak = self.silence.copy()
+        self.peak[256] = 1
 
     def test_GenerateSpectralFlux(self):
-        fft = analysis.FFTAnalysis.stft(self.input, 512)
-        output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(fft, 512, self.sr)
+        x = np.vstack((self.equal_mag, self.peak))
+        output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x, 512)
+        x = np.vstack((self.peak, self.peak))
+        output1 = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x, 512)
+        self.assertTrue(output[0] > output1[0])
 
-        output_max_index = np.argmax(output)
-        self.assertTrue(output_max_index == output.size/2)
 
-class SpectralCrestFactorAnalysisTests(globalTests):
+class SpectralCrestFactorAnalysisTests(globalTests, NumericAssertions):
     """Tests Spectral Crest Factor analysis generation."""
 
     def setUp(self):
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(44100)
-        sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
-        white_noise = np.random.random(44100)
-        silence = np.zeros(44100)
-        self.input = np.concatenate((sine_wave, white_noise, silence))
+        self.silence = np.zeros(512)
+        self.equal_mag = np.ones(512)
+        self.peak = self.silence.copy()
+        self.peak[256] = 1
 
     def test_GenerateSpectralCrestFactor(self):
-        fft = analysis.FFTAnalysis.stft(self.input, 512)
-        output = analysis.SpectralCrestFactorAnalysis.create_spccf_analysis(fft, 512, self.sr)
-        # TODO: Write assertions for results. This isn't testing anything
-        # otherwise...
+        output = analysis.SpectralCrestFactorAnalysis.create_spccf_analysis([self.silence])
+        output1 = analysis.SpectralCrestFactorAnalysis.create_spccf_analysis([self.equal_mag])
+        output2 = analysis.SpectralCrestFactorAnalysis.create_spccf_analysis([self.peak])
 
-class SpectralFlatnessAnalysisTests(globalTests):
+        self.assertIsNaN(output)
+        self.assertEquals(output1, 2./1024.)
+        self.assertEquals(output2, 1.)
+
+class SpectralFlatnessAnalysisTests(globalTests, NumericAssertions):
     """Tests Spectral Crest Factor analysis generation."""
 
     def setUp(self):
-        self.sr = 44100
-        self.f = 440
-        x = np.arange(44100)
-        sine_wave = np.sin(2*np.pi*self.f/self.sr*x)
-        white_noise = np.random.random(44100)
-        silence = np.zeros(44100)
-        self.input = np.concatenate((sine_wave, white_noise, silence))
+        self.silence = np.zeros(512)
+        self.equal_mag = np.ones(512)
+        self.peak = self.silence.copy()
+        self.peak[256] = 1
 
     def test_GenerateSpectralFlatness(self):
-        fft = analysis.FFTAnalysis.stft(self.input, 512)
-        output = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis(fft, 512, self.sr)
-        # TODO: Write assertions for results. This isn't testing anything
-        # otherwise...
+        output = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis([self.silence])
+        output1 = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis([self.equal_mag])
+        output2 = analysis.SpectralFlatnessAnalysis.create_spcflatness_analysis([self.peak])
+
+        self.assertIsNaN(output)
+        self.assertEqual(output1, 1.)
+        self.assertEqual(output2, 0.)
 
 class KurtosisAnalysisTests(globalTests):
     """Tests Kurtosis analysis generation."""

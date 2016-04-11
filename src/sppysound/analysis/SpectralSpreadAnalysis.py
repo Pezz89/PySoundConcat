@@ -44,7 +44,6 @@ class SpectralSpreadAnalysis(Analysis):
         self.create_analysis(
             fft.analysis['frames'][:],
             spccntr.analysis['frames'][:],
-            fft.analysis.attrs['win_size'],
             self.AnalysedAudioFile.samplerate
         )
         self.spccntr_window_count = None
@@ -59,7 +58,7 @@ class SpectralSpreadAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spcsprd_analysis(fft, spectral_centroid, length, samplerate, output_format = "freq"):
+    def create_spcsprd_analysis(fft, spectral_centroid, samplerate, output_format = "ind"):
         '''
         Calculate the spectral spread of the fft frames.
 
@@ -79,17 +78,17 @@ class SpectralSpreadAnalysis(Analysis):
         if output_format == "ind":
             freqs = np.arange(np.size(fft, axis=1))
         elif output_format == "freq":
-            freqs = np.fft.rfftfreq(length, 1.0/samplerate)
+            freqs = np.fft.rfftfreq((np.size(fft, axis=1)*2)-1, 1.0/samplerate)
         else:
             raise ValueError("\'{0}\' is not a valid output "
                              "format.".format(output_format))
 
         spectral_centroid = np.vstack(spectral_centroid)
 
-        a = np.power(freqs-spectral_centroid, 2)
-        mag_sqrd = np.power(magnitudes, 2)
+        a = (freqs-spectral_centroid)**2
+        mag_sqrd = magnitudes**2
         # Calculate the weighted mean
-        y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / (np.sum(mag_sqrd, axis=1)+np.finfo(float).eps))
+        y = np.sqrt(np.sum(a*mag_sqrd, axis=1) / (np.sum(mag_sqrd, axis=1)))
 
         return y
 
