@@ -498,12 +498,20 @@ class RMSAnalysisTests(globalTests):
     """Tests RMS analysis generation"""
 
     def setUp(self):
-        # TODO: Write this test...
         """Create functions and variables before each test is run."""
-        self.TestAudio = self.create_test_audio()
+        self.silence = np.zeros(512)
+        self.sine = np.sin(2*np.pi*5000*np.arange(512)/512)
+        self.noise = np.random.uniform(low=-1.0, high=1.0, size=512)
 
     def test_GenerateRMS(self):
         """Check that RMS values generated are the expected values"""
+        output = analysis.RMSAnalysis.create_rms_analysis(self.silence, 44100, window=None)
+        output1 = analysis.RMSAnalysis.create_rms_analysis(self.noise, 44100, window=None)
+        output2 = analysis.RMSAnalysis.create_rms_analysis(self.sine, 44100, window=None)
+
+        np.testing.assert_array_equal(output, 0.0)
+        np.testing.assert_almost_equal(output1[1], 1./np.sqrt(3), decimal=1)
+        np.testing.assert_almost_equal(output2[1], 1./np.sqrt(2), decimal=1)
 
 class PeakAnalysisTests(globalTests):
 
@@ -797,36 +805,6 @@ class MatcherTests(globalTests):
         """
         pathops.delete_if_exists("./.test_db1")
         pathops.delete_if_exists("./.test_db2")
-
-
-class PitchShiftTests(globalTests):
-    """Tests the pitch shifter function"""
-
-    def setUp(self):
-        # Generate a sine wave at 440hz
-        self.sr = 44100
-        x = np.arange(self.sr*2)+1
-        self.sine_wave = np.sin(2*np.pi*440/self.sr*x)
-
-        pathops.dir_must_exist("./.test_db3")
-        self.sine_audio = self.create_test_audio(filename="./.test_db3/test_sine.wav")
-        window = np.hanning(self.sine_wave.size)
-        self.sine_wave *= window
-        self.sine_audio.write_frames(self.sine_wave)
-        del self.sine_audio
-
-    def test_ShiftingAccuracy(self):
-        pitch = 2.
-        # TODO: Write a test here...
-
-    def tearDown(self):
-        """
-        Delete anything that is left over once tests are complete.
-
-        For example, remove all temporary test audio files generated during the
-        tests.
-        """
-        pathops.delete_if_exists("./.test_db3")
 
 
 ReadGrainSuite = unittest.TestLoader().loadTestsFromTestCase(ReadGrainTest)

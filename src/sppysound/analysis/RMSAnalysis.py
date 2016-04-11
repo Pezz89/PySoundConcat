@@ -81,7 +81,6 @@ class RMSAnalysis(Analysis):
 
 
         # Generate a window function to apply to rms windows before analysis
-        win = window(window_size)
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
@@ -98,8 +97,10 @@ class RMSAnalysis(Analysis):
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
 
-        frames *= win
-        rms = np.sqrt(np.mean(np.square(frames), axis=1))
+        if window:
+            win = window(window_size)
+            frames *= win
+        rms = np.sqrt(np.mean(np.square(np.abs(frames)), axis=1))
 
         return rms
 
