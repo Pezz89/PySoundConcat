@@ -48,8 +48,8 @@ matcher_weightings = {
     "centroid": 1.,
     "kurtosis": 1.,
     "skewness": 1.,
-    "variance": 3.,
-    "harm_ratio": 3.
+    "variance": 1.,
+    "harm_ratio": 1.
 }
 
 # Specifies the method for averaging analysis frames to create a single value

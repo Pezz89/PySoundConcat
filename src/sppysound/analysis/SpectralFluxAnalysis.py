@@ -72,7 +72,7 @@ class SpectralFluxAnalysis(Analysis):
         # magnitude.
         rolled_mags = np.roll(magnitudes, 1, axis=0)[1:]
         sum_of_squares = np.sum((magnitudes[1:]-rolled_mags)**2., axis=1)
-        spectral_flux = np.sqrt(sum_of_squares) / (np.size(fft, axis=1)/2)
+        spectral_flux = np.sqrt(sum_of_squares) / (np.size(fft, axis=1))
 
         return spectral_flux
 
@@ -83,6 +83,8 @@ class SpectralFluxAnalysis(Analysis):
 
         # Get number of frames for time and frequency
         timebins = spcflux_frames.shape[0]
+        if not timebins:
+            return np.array([])
         # Create array ranging from 0 to number of time frames
         scale = np.arange(timebins+1)
         # divide the number of samples by the total number of frames, then

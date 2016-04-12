@@ -426,9 +426,10 @@ class Matcher:
                 all_target_analyses[i] = target_data
 
 
-            imp = Imputer(axis=1)
-            nan_columns = np.all(np.isnan(all_target_analyses), axis=1)
-            all_target_analyses[nan_columns, :] = 0.
+            pdb.set_trace()
+            imp = Imputer(axis=0)
+            nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
+            all_target_analyses[:, nan_columns] = 0.
             # Impute values for Nans
             all_target_analyses = imp.fit_transform(all_target_analyses)
 
@@ -450,8 +451,8 @@ class Matcher:
 
 
                 # Impute values for Nans
-                nan_columns = np.all(np.isnan(all_source_analyses), axis=1)
-                all_source_analyses[nan_columns, :] = 0.
+                nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
+                all_source_analyses[:, nan_columns] = 0.
                 all_source_analyses = imp.fit_transform(all_source_analyses)
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
@@ -725,8 +726,11 @@ class Matcher:
         # Find indexes within the range of each source sample index.
         x = np.logical_and(
             np.vstack(x)>=source_sample_indexes[:,0],
-            np.vstack(x)<source_sample_indexes[:,1]
+            np.vstack(x)<=source_sample_indexes[:,1]
         )
+
+        if not np.all(np.any(x, axis=1)):
+            raise ValueError("Not all match indexes have a corresponding sample index. This shouldn't happen...")
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
 

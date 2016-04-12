@@ -600,9 +600,9 @@ class SpectralFluxAnalysisTests(globalTests):
 
     def test_GenerateSpectralFlux(self):
         x = np.vstack((self.equal_mag, self.peak))
-        output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x, 512)
+        output = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x)
         x = np.vstack((self.peak, self.peak))
-        output1 = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x, 512)
+        output1 = analysis.SpectralFluxAnalysis.create_spcflux_analysis(x)
         self.assertTrue(output[0] > output1[0])
 
 
