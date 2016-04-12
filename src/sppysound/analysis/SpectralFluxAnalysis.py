@@ -53,18 +53,16 @@ class SpectralFluxAnalysis(Analysis):
         return ({'frames': output, 'times': times}, {})
 
     @staticmethod
-    def create_spcflux_analysis(fft, samplerate):
+    def create_spcflux_analysis(fft):
         '''
         Calculate the spectral flux of the fft frames.
 
         length: the length of the window used to calculate the FFT.
-        samplerate: the samplerate of the audio analysed.
         output_format = Choose either "freq" for output in Hz or "ind" for bin
         index output
         '''
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
-        # Get highest magnitude
         if not np.nonzero(magnitudes)[0].size:
             y = np.empty(magnitudes.shape[0])
             y.fill(np.nan)

@@ -52,8 +52,13 @@ class KurtosisAnalysis(Analysis):
         self.create_analysis(frames, variance.analysis['frames'][:], self.window_size, overlapFac=self.overlap)
 
     @staticmethod
-    def create_kurtosis_analysis(frames, variance, window_size=512,
-                            overlapFac=0.5):
+    def create_kurtosis_analysis(
+        frames,
+        variance,
+        window_size=512,
+        window=signal.hanning,
+        overlapFac=0.5
+    ):
         """
         Calculate the Kurtosis values of windowed segments of the audio file and
         save to disk.
@@ -81,6 +86,10 @@ class KurtosisAnalysis(Analysis):
             shape=(cols, window_size),
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
+
+        if window:
+            win = window(window_size)
+            frames *= win
 
         frame_mean = np.mean(frames, axis=1)
 

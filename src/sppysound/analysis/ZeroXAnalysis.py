@@ -35,7 +35,13 @@ class ZeroXAnalysis(Analysis):
         self.create_analysis(frames)
 
     @staticmethod
-    def create_zerox_analysis(frames, window_size=512, overlapFac=0.5, *args, **kwargs):
+    def create_zerox_analysis(
+        frames,
+        window_size=512,
+        overlapFac=0.5,
+        *args,
+        **kwargs
+    ):
         """Generate zero crossing value for window of the signal"""
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
@@ -47,13 +53,17 @@ class ZeroXAnalysis(Analysis):
         # zeros at end (thus samples can be fully covered by frames)
         samples = np.append(samples, np.zeros(window_size))
 
+        # TODO: Better handeling of zeros based on previous sign would improve
+        # accuracy.
+        epsilon = np.finfo(float).eps
+        samples[samples == 0.] += epsilon
+
         frames = stride_tricks.as_strided(
             samples,
             shape=(cols, window_size),
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
-
-        zero_crossing = (1./(2.*samples.size))*np.sum(np.abs(np.diff(np.sign(frames))), axis=1)
+        zero_crossing = np.sum(np.abs(np.diff(np.sign(frames))), axis=1)
         return zero_crossing
 
     @staticmethod

@@ -513,6 +513,24 @@ class RMSAnalysisTests(globalTests):
         np.testing.assert_almost_equal(output1[1], 1./np.sqrt(3), decimal=1)
         np.testing.assert_almost_equal(output2[1], 1./np.sqrt(2), decimal=1)
 
+class ZeroXAnalysisTests(globalTests):
+
+    """Tests Zero-Crossing analysis generation"""
+
+    def setUp(self):
+        """Create functions and variables before each test is run."""
+        self.silence = np.zeros(512)
+        self.sine = np.sin(2*np.pi*5000*np.arange(44100)/44100)
+        self.noise = np.random.uniform(low=-1.0, high=1.0, size=512)
+
+    def test_GenerateRMS(self):
+        """Check that RMS values generated are the expected values"""
+        output = analysis.ZeroXAnalysis.create_zerox_analysis(self.silence)
+        output1 = analysis.ZeroXAnalysis.create_zerox_analysis(self.noise)
+        output2 = analysis.ZeroXAnalysis.create_zerox_analysis(self.sine, window_size=44100)
+        #TODO: Finish this test...
+
+
 class PeakAnalysisTests(globalTests):
 
     """Tests Peak analysis generation"""

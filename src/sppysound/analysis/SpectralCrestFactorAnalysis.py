@@ -72,7 +72,6 @@ class SpectralCrestFactorAnalysis(Analysis):
             warnings.filterwarnings('ignore')
             spectral_cf = max_bins / mag_sum
 
-
         return spectral_cf
 
     @staticmethod

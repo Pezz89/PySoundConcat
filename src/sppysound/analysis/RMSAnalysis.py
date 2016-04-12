@@ -53,9 +53,13 @@ class RMSAnalysis(Analysis):
         self.create_analysis(frames, self.AnalysedAudioFile.samplerate, window_size=self.window_size, overlapFac=self.overlap, )
 
     @staticmethod
-    def create_rms_analysis(frames,samplerate, window_size=512,
-                            window=signal.triang,
-                            overlapFac=0.5):
+    def create_rms_analysis(
+        frames,
+        samplerate,
+        window_size=512,
+        window=signal.hanning,
+        overlapFac=0.5
+    ):
         """
         Generate RMS contour analysis.
 

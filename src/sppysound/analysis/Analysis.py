@@ -118,10 +118,10 @@ class Analysis(object):
     ################################################################################
 
     def log2_median(self, x):
-        return np.log2(np.median(x))
+        return np.median(1000 * np.log2(1+x/1000))
 
     def log2_mean(self, x):
-        return np.log2(np.mean(x))
+        return np.mean(1000 * np.log2(1+x/1000))
 
     def formatter_func(self, selection, frames, valid_inds, formatter=None):
         # get all valid frames from current grain
