@@ -46,6 +46,10 @@ class F0HarmRatioAnalysis(Analysis):
         vtimes = times.reshape(-1, 1)
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
+        if not selection.any():
+            frame_center = start + (end-start)/2.
+            closest_frames = np.abs(vtimes-frame_center).argsort()[:2]
+            selection[closest_frames] = True
 
         return ((hr, times), selection)
 
@@ -53,6 +57,7 @@ class F0HarmRatioAnalysis(Analysis):
     def calc_F0HarmRatio_frame_times(F0HarmRatioframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
+        samplerate *= 4
 
         # Get number of frames for time and frequency
         timebins = F0HarmRatioframes.shape[0]

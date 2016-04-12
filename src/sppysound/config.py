@@ -5,7 +5,7 @@ rms = {
 }
 
 f0 = {
-    "window_size": 2048,
+    "window_size": 8192,
     "overlap": 8,
     "ratio_threshold": 0.0
 }
@@ -55,7 +55,7 @@ matcher_weightings = {
     "kurtosis": 1.,
     "skewness": 1.,
     "variance": 2.,
-    "harm_ratio": 5.
+    "harm_ratio": 2.
 }
 
 # Specifies the method for averaging analysis frames to create a single value

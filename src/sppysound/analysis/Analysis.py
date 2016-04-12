@@ -91,6 +91,12 @@ class Analysis(object):
         vtimes = times.reshape(-1, 1)
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
+        # If there are no frames for this grain, take the two closest frames
+        # from the adjacent grains.
+        if not selection.any():
+            frame_center = start + (end-start)/2.
+            closest_frames = np.abs(vtimes-frame_center).argsort()[:2]
+            selection[closest_frames] = True
 
         #start_ind = np.min(selection)
         #end_ind = np.argmax(selection)

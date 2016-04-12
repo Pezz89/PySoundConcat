@@ -7,6 +7,7 @@ from numpy.lib import stride_tricks
 from Analysis import Analysis
 from scipy import signal
 from numpy.fft import fft, ifft, fftshift
+from sppysound import multirate
 import warnings
 
 from numpy import polyfit, arange
@@ -70,6 +71,10 @@ class F0Analysis(Analysis):
         vtimes = times.reshape(-1, 1)
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
+        if not selection.any():
+            frame_center = start + (end-start)/2.
+            closest_frames = np.abs(vtimes-frame_center).argsort()[:2]
+            selection[closest_frames] = True
 
         return ((frames, times, hr), selection)
 
@@ -91,6 +96,7 @@ class F0Analysis(Analysis):
         """
         if not M:
             M=int(round(0.016*samplerate))
+
 
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
@@ -115,21 +121,6 @@ class F0Analysis(Analysis):
             window2[1:-1] = window[0:-2]
             Z = (1/(2*window.size)) * np.sum(np.abs(np.sign(window)-np.sign(window2)))
             return Z
-
-        def autocorr(x):
-            """
-            FFT based autocorrelation function, which is faster than numpy.correlate
-            Operates on muti-dimensional arrays on a per element basis.
-
-            Ref: http://stackoverflow.com/questions/4503325/autocorrelation-of-a-multidimensional-array-in-numpy
-
-            """
-            length = np.size(x, axis=1)
-            # x is supposed to be an array of sequences, of shape (totalelements, length)
-            fftx = fft(x, n=(length*2-1), axis=1)
-            ret = ifft(fftx * np.conjugate(fftx), axis=1).real
-            ret = fftshift(ret, axes=1)
-            return ret
 
         def parabolic(f, x):
             """
@@ -232,10 +223,13 @@ class F0Analysis(Analysis):
         Formats the output from the analysis method to save to the HDF5 file.
         '''
         samplerate = self.AnalysedAudioFile.samplerate
-        data = self.create_f0_analysis(*args, **kwargs)
+        frames = args[0]
+        frames = multirate.interp(frames, 2)
+        samplerate *= 2
+        data = self.create_f0_analysis(frames, samplerate, **kwargs)
         f0 = data[:, 0]
         harmonic_ratio = data[:, 1]
-        f0_times = self.calc_f0_frame_times(f0, args[0], samplerate)
+        f0_times = self.calc_f0_frame_times(f0, frames, samplerate)
         return ({'frames': f0, 'harmonic_ratio': harmonic_ratio, 'times': f0_times}, {})
 
     @staticmethod
@@ -267,7 +261,6 @@ class F0Analysis(Analysis):
             'log2_median': self.log2_median,
         }
 
-        # For debugging apply along axis:
         if not selection.size:
             # TODO: Add warning here
             return np.nan
