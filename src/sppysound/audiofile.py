@@ -87,7 +87,7 @@ class AudioFile(object):
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""
-        self.logger.info("Opening soundfile {0}".format(self.filepath))
+        self.logger.debug("Opening soundfile {0}".format(self.filepath))
         if self.mode == 'r':
             if not os.path.exists(self.filepath):
                 raise IOError(

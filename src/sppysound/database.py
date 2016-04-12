@@ -400,6 +400,9 @@ class Matcher:
             weightings = {x: 1. for x in self.matcher_analyses}
 
 
+        # Create an imputer object for handeling Nan values.
+        imp = Imputer(axis=0, strategy='median')
+
         for tind, target_entry in enumerate(self.target_db.analysed_audio):
             # Check if match data already exists and use it rather than
             # regenerating if it does.
@@ -426,12 +429,11 @@ class Matcher:
                 all_target_analyses[i] = target_data
 
 
-            pdb.set_trace()
-            imp = Imputer(axis=0)
             nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
             all_target_analyses[:, nan_columns] = 0.
             # Impute values for Nans
             all_target_analyses = imp.fit_transform(all_target_analyses)
+            # all_target_analyses[np.isnan(all_target_analyses)] = np.inf
 
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
                 self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
@@ -454,6 +456,8 @@ class Matcher:
                 nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
                 all_source_analyses[:, nan_columns] = 0.
                 all_source_analyses = imp.fit_transform(all_source_analyses)
+
+                # all_source_analyses[np.isnan(all_source_analyses)] = np.inf
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
                 results_vals, results_inds = source_tree.query(all_target_analyses.T, k=self.match_quantity, p=2)
@@ -730,7 +734,9 @@ class Matcher:
         )
 
         if not np.all(np.any(x, axis=1)):
+            pdb.set_trace()
             raise ValueError("Not all match indexes have a corresponding sample index. This shouldn't happen...")
+
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
 
@@ -760,10 +766,10 @@ class Synthesizer:
 
         self.config = kwargs.pop("config", None)
 
-        self.enforce_rms_bool = self.config.synthesizer["enforce_rms"]
+        self.enforce_intensity_bool = self.config.synthesizer["enforce_intensity"]
         # Key word arguments overwrite config file.
-        self.enforce_rms_bool = kwargs.pop("enforce_rms", self.enforce_rms_bool)
-        if self.enforce_rms_bool and ("rms" not in self.target_db.analysis_list or "rms" not in self.match_db.analysis_list):
+        self.enforce_intensity_bool = kwargs.pop("enforce_intensity", self.enforce_intensity_bool)
+        if self.enforce_intensity_bool and ("rms" not in self.target_db.analysis_list or "rms" not in self.match_db.analysis_list):
             raise RuntimeError("BLARGHHH")
 
         self.enforce_f0_bool = self.config.synthesizer["enforce_f0"]
@@ -772,7 +778,7 @@ class Synthesizer:
         if self.enforce_f0_bool and ("f0" not in self.target_db.analysis_list or "f0" not in self.match_db.analysis_list):
             raise RuntimeError("F0 enforcement cannot be enabled if both databases do not have F0 analyses.")
 
-        if self.enforce_rms:
+        if self.enforce_intensity:
             if not self.target_db:
                 raise ValueError("Target database must be provided if rms or F0 enforcement is enabled.")
 
@@ -820,6 +826,17 @@ class Synthesizer:
                     match_index = np.random.randint(matches.shape[0])
                     match_db_ind, match_grain_ind = matches[match_index]
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
+                        self.logger.info("Synthesizing grain:\n"
+                            "Source sample: {0}\n"
+                            "Source grain index: {1}\n"
+                            "Target output: {2}\n"
+                            "Target grain index: {3} out of {4}".format(
+                                match_sample,
+                                match_grain_ind,
+                                output_name,
+                                target_grain_ind,
+                                len(grain_matches)
+                            ))
                         match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                         # TODO: Make proper fix for grain index offset of 1
@@ -828,7 +845,8 @@ class Synthesizer:
                         except:
                             pdb.set_trace()
 
-                        if self.enforce_rms_bool:
+
+                        if self.enforce_intensity_bool:
                             # Get the target sample from the database
                             target_sample = self.target_db[job_ind]
 
@@ -836,7 +854,7 @@ class Synthesizer:
                             # indexing.
                             target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
-                            match_grain = self.enforce_rms(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
+                            match_grain = self.enforce_intensity(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
                         if self.enforce_f0_bool:
                             # Get the target sample from the database
@@ -848,6 +866,7 @@ class Synthesizer:
 
                             match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
+                        # Apply hanning window to grain
                         match_grain *= np.hanning(match_grain.size)
                         output_frames[offset:offset+match_grain.size] += match_grain
                     offset += hop_size
@@ -867,12 +886,23 @@ class Synthesizer:
         # TODO: Make proper fix for grain index offset of 1
         target_times = target_sample.times[target_grain_ind-1]
 
+        # Get mean harmonic ratio of f0 frames in time range specified.
+        target_harmonic_ratio = target_sample.analysis_data_grains(target_times, "harm_ratio", format="mean")[0][0]
+
+
         # Get mean of f0 frames in time range specified.
         target_f0 = target_sample.analysis_data_grains(target_times, "f0", format="median")[0][0]
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
         source_times = source_sample.times[source_grain_ind-1]
+
+        # Get mean harmonic ratio of f0 frames in time range specified.
+        source_harmonic_ratio = source_sample.analysis_data_grains(source_times, "harm_ratio", format="mean")[0][0]
+        hr_array = np.array([source_harmonic_ratio, target_harmonic_ratio])
+
+        if np.any(np.isnan(hr_array)):
+            return grain
 
         # Get mean of f0 frames in time range specified.
         source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="median")[0][0]
@@ -886,31 +916,15 @@ class Synthesizer:
         ratio_limit = self.config.synthesizer["enf_f0_ratio_limit"]
 
         if ratio_difference > ratio_limit:
-            self.logger.warning("Grain f0 ratio too large({0}), enforcing f0 at limit ({1})\n"
-                                "Source sample: {2}\n"
-                                "Source grain index: {3}\n"
-                                "Target sample: {4}\n"
-                                "Target grain index: {5}".format(
+            self.logger.warning("Grain f0 ratio too large({0}), enforcing f0 at limit ({1})".format(
                                     ratio_difference,
                                     ratio_limit,
-                                    source_sample,
-                                    source_grain_ind,
-                                    target_sample,
-                                    target_grain_ind
                                 ))
             ratio_difference = ratio_limit
         elif ratio_difference < 1./ratio_limit:
-            self.logger.warning("Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})\n"
-                                "Source sample: {2}\n"
-                                "Source grain index: {3}\n"
-                                "Target sample: {4}\n"
-                                "Target grain index: {5}".format(
+            self.logger.warning("Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})".format(
                                     ratio_difference,
                                     1./ratio_limit,
-                                    source_sample,
-                                    source_grain_ind,
-                                    target_sample,
-                                    target_grain_ind
                                 ))
             ratio_difference = 1./ratio_limit
 
@@ -918,11 +932,11 @@ class Synthesizer:
 
         return grain
 
-    def enforce_rms(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
+    def enforce_intensity(self, grain, source_sample, source_grain_ind, target_sample, target_grain_ind):
         """
-        Scales the amplitude of the grain by the difference between it's rms and the rms of the grain specified.
+        Scales the amplitude of the grain by the difference between it's intensity and the intensity of the grain specified.
 
-        This method will fail if either AnalysedAudioFile object does not have an rms analysis.
+        This method will fail if either AnalysedAudioFile object does not have any intensity analyses.
         """
 
         # Get grain start and finish range to retreive analysis frames from.
@@ -931,6 +945,9 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0][0]
+        target_peak = target_sample.analysis_data_grains(target_times, "peak", format="mean")[0][0]
+
+        target_intensity_value = np.mean([target_rms, target_peak])
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -938,26 +955,23 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         source_rms = source_sample.analysis_data_grains(source_times, "rms", format="mean")[0][0]
+        source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0][0]
 
-        ratio_difference = target_rms / source_rms
+        source_intensity_value = np.mean([source_rms, source_peak])
+
+        ratio_difference = target_intensity_value / source_intensity_value
+
         if not np.isfinite(ratio_difference):
             return grain
         # If the ratio difference is within the limits
-        ratio_limit = self.config.synthesizer["enf_rms_ratio_limit"]
+        ratio_limit = self.config.synthesizer["enf_intensity_ratio_limit"]
 
         if ratio_difference > ratio_limit:
-            self.logger.warning("Grain RMS ratio too large({0}), enforcing RMS at limit ({1})\n"
-                                "Source sample: {2}\n"
-                                "Source grain index: {3}\n"
-                                "Target sample: {4}\n"
-                                "Target grain index: {5}".format(
-                                    ratio_difference,
-                                    ratio_limit,
-                                    source_sample,
-                                    source_grain_ind,
-                                    target_sample,
-                                    target_grain_ind
-                                ))
+            self.logger.warning(
+                "Grain RMS ratio too large({0}), enforcing RMS at limit ({1})\n".format(
+                ratio_difference,
+                ratio_limit,
+            ))
             ratio_difference = ratio_limit
 
         grain *= ratio_difference

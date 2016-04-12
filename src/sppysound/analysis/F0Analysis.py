@@ -37,11 +37,24 @@ class F0Analysis(Analysis):
 
         self.nyquist_rate = self.AnalysedAudioFile.samplerate / 2.
 
+        if config:
+            self.window_size = config.f0["window_size"]
+            self.overlap = 1. / config.f0["overlap"]
+        else:
+            self.window_size=512
+            self.overlap = 0.5
+
         self.analysis_group = analysis_group
         frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
 
-        self.create_analysis(frames, self.AnalysedAudioFile.samplerate)
+        self.create_analysis(
+            frames,
+            self.AnalysedAudioFile.samplerate,
+            window_size=self.window_size,
+            overlapFac=self.overlap,
+            threshold=config.f0["ratio_threshold"]
+        )
 
     def get_analysis_grains(self, start, end):
         """
@@ -66,6 +79,7 @@ class F0Analysis(Analysis):
         samplerate,
         window_size=512,
         overlapFac=0.5,
+        threshold=0.0,
         m0=None,
         M=None,
     ):
@@ -76,7 +90,7 @@ class F0Analysis(Analysis):
         of the audio file and save to disk.
         """
         if not M:
-            M=round(0.016*samplerate)
+            M=int(round(0.016*samplerate))
 
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
@@ -154,7 +168,8 @@ class F0Analysis(Analysis):
                 f0 = np.nan
                 return f0, HR
 
-            R=autocorr([frames])[0]
+            #R=autocorr([frames])[0]
+            R = np.correlate(frames, frames, mode='full')
             g=R[frames.size]
 
             R=R[frames.size-1:]
@@ -201,6 +216,8 @@ class F0Analysis(Analysis):
                                  samplerate/2))
             if HR >= 1:
                 HR = 1
+            if HR < threshold:
+                HR = np.nan
             return (f0, HR)
 
         output = np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
