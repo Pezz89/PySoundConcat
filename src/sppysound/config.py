@@ -43,19 +43,19 @@ database = {
 # higher presendence when finding the best matches.
 matcher_weightings = {
     "f0" : 1,
-    "spccntr" : 0.,
-    "spcsprd" : 0.,
-    "spcflux" : 0.,
-    "spccf" : 0.,
-    "spcflatness": 0.,
+    "spccntr" : 1.,
+    "spcsprd" : 2.,
+    "spcflux" : 2.,
+    "spccf" : 2.,
+    "spcflatness": 3.,
     "zerox" : 0.,
-    "rms" : 0,
-    "peak": 0.,
-    "centroid": 0.,
-    "kurtosis": 0.,
-    "skewness": 0.,
-    "variance": 0.,
-    "harm_ratio": 0.
+    "rms" : 1,
+    "peak": 2.,
+    "centroid": 1.,
+    "kurtosis": 1.,
+    "skewness": 1.,
+    "variance": 2.,
+    "harm_ratio": 1.
 }
 
 # Specifies the method for averaging analysis frames to create a single value

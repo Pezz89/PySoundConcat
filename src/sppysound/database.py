@@ -426,6 +426,7 @@ class Matcher:
                 analysis_formatting = self.analysis_dict[analysis]
 
                 target_data, s = target_entry.analysis_data_grains(target_times, analysis, format=analysis_formatting)
+                target_data = target_data ** weightings[analysis]
                 all_target_analyses[i] = target_data
 
 
@@ -449,6 +450,7 @@ class Matcher:
                     analysis_formatting = self.analysis_dict[analysis]
 
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
+                    source_data = source_data ** weightings[analysis]
                     all_source_analyses[i] = source_data
 
 
