@@ -24,8 +24,8 @@ class SpectralFlatnessAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(SpectralFlatnessAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcFlatness')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(SpectralFlatnessAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'SpcFlatness')
         # Create logger for module
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
@@ -41,7 +41,7 @@ class SpectralFlatnessAnalysis(Analysis):
         self.logger.info("Creating Spectral Flatness analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
             self.create_spcflatness_analysis,
-            fft.analysis['frames'][:],
+            fft.analysis['frames'],
         )
         self.spcflatness_window_count = None
 
@@ -59,6 +59,7 @@ class SpectralFlatnessAnalysis(Analysis):
         '''
         Calculate the spectral flatness of the fft frames.
         '''
+        fft = fft[:]
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         if not np.nonzero(magnitudes)[0].size:

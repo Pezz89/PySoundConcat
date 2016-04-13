@@ -891,15 +891,13 @@ class AnalysedAudioFile(AudioFile):
         ]
 
         self.analyses = defaultdict(None)
+        frames = self.read_grain
 
         # Create the analysis objects for analyses that have been specified in
         # the analyses member variable.
         for analysis in analysis_object_list:
             if analysis.name in self.available_analyses:
-                self.analyses[analysis.name] = analysis.analysis_object(self, self.analysis_storage, config=self.config)
-        self.analysis_storage.file.flush()
-        gc.collect()
-
+                self.analyses[analysis.name] = analysis.analysis_object(self, frames, self.analysis_storage, config=self.config)
 
     def create_analysis_group(self, analysis_file):
         """

@@ -24,11 +24,16 @@ class F0HarmRatioAnalysis(Analysis):
     this object.
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(F0HarmRatioAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'F0HarmRatio')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(F0HarmRatioAnalysis, self).__init__(AnalysedAudioFile, frames, analysis_group, 'F0HarmRatio')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
+
+        if config:
+            self.threshold = config.f0["ratio_threshold"]
+        else:
+            self.threshold = 0.
 
         self.analysis_group = analysis_group
         self.logger.info("Initialising F0HarmRatio analysis for {0}".format(self.AnalysedAudioFile.name))
@@ -45,6 +50,9 @@ class F0HarmRatioAnalysis(Analysis):
         end = end / 1000
         vtimes = times.reshape(-1, 1)
 
+        nan_inds = hr < self.threshold
+        hr[nan_inds] = np.nan
+
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
         if not selection.any():
             frame_center = start + (end-start)/2.
@@ -59,6 +67,8 @@ class F0HarmRatioAnalysis(Analysis):
         """Calculate times for frames using sample size and samplerate."""
         samplerate *= 1
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = F0HarmRatioframes.shape[0]
         # Create array ranging from 0 to number of time frames

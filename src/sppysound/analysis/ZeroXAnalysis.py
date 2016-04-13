@@ -26,12 +26,11 @@ class ZeroXAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(ZeroXAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'ZeroCrossing')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(ZeroXAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'ZeroCrossing')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         self.analysis_group = analysis_group
         self.logger.info("Creating zero crossing analysis for {0}".format(self.AnalysedAudioFile.name))
-        frames = self.AnalysedAudioFile.read_grain()
         self.create_analysis(frames)
 
     @staticmethod
@@ -43,6 +42,8 @@ class ZeroXAnalysis(Analysis):
         **kwargs
     ):
         """Generate zero crossing value for window of the signal"""
+        if hasattr(frames, '__call__'):
+            frames = frames()
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
@@ -71,6 +72,8 @@ class ZeroXAnalysis(Analysis):
 
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = zerox_frames.shape[0]
         # Create array ranging from 0 to number of time frames

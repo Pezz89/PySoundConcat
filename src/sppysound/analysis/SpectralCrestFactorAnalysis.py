@@ -23,8 +23,8 @@ class SpectralCrestFactorAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(SpectralCrestFactorAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcCrestFactor')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(SpectralCrestFactorAnalysis, self).__init__(AnalysedAudioFile, frames, analysis_group, 'SpcCrestFactor')
         # Create logger for module
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
@@ -40,7 +40,7 @@ class SpectralCrestFactorAnalysis(Analysis):
         self.logger.info("Creating Spectral CrestFactor analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
             self.create_spccf_analysis,
-            fft.analysis['frames'][:],
+            fft.analysis['frames'],
         )
         self.spccf_window_count = None
 
@@ -58,6 +58,7 @@ class SpectralCrestFactorAnalysis(Analysis):
         '''
         Calculate the spectral crest factor of the fft frames.
         '''
+        fft = fft[:]
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get highest magnitude

@@ -30,8 +30,8 @@ class F0Analysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(F0Analysis, self).__init__(AnalysedAudioFile, analysis_group, 'F0')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(F0Analysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'F0')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -41,12 +41,13 @@ class F0Analysis(Analysis):
         if config:
             self.window_size = config.f0["window_size"]
             self.overlap = 1. / config.f0["overlap"]
+            self.threshold = config.f0["ratio_threshold"]
         else:
             self.window_size=512
             self.overlap = 0.5
+            self.threshold = 0.
 
         self.analysis_group = analysis_group
-        frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating F0 analysis for {0}".format(self.AnalysedAudioFile.name))
 
         self.create_analysis(
@@ -69,6 +70,9 @@ class F0Analysis(Analysis):
         start = start / 1000
         end = end / 1000
         vtimes = times.reshape(-1, 1)
+        nan_inds = hr < self.threshold
+        hr[nan_inds] = np.nan
+        frames[nan_inds] = np.nan
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
         if not selection.any():
@@ -94,6 +98,8 @@ class F0Analysis(Analysis):
         Calculate the frequency and harmonic ratio values of windowed segments
         of the audio file and save to disk.
         """
+        if hasattr(frames, '__call__'):
+            frames = frames()
         if not M:
             M=int(round(0.016*samplerate))
 
@@ -202,8 +208,6 @@ class F0Analysis(Analysis):
                                  samplerate/2))
             if HR >= 1:
                 HR = 1
-            if HR < threshold:
-                HR = np.nan
             return (f0, HR)
 
         output = np.apply_along_axis(per_frame_f0, 1, frames, m0, M)
@@ -232,6 +236,8 @@ class F0Analysis(Analysis):
 
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = f0frames.shape[0]
         # Create array ranging from 0 to number of time frames

@@ -33,8 +33,8 @@ class FFTAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(FFTAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'FFT')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(FFTAnalysis, self).__init__(AnalysedAudioFile, frames, analysis_group, 'FFT')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -45,21 +45,22 @@ class FFTAnalysis(Analysis):
             window_size = 2048
         self.analysis_group = analysis_group
         self.logger.info("Creating FFT analysis for {0}".format(self.AnalysedAudioFile.name))
-        self.create_analysis(window_size=window_size)
+        self.create_analysis(frames, window_size=window_size)
         self.fft_window_count = None
 
 
 
-    def create_fft_analysis(self, window_size=512, window_overlap=2,
+    def create_fft_analysis(self, frames, window_size=512, window_overlap=2,
                             window_type='hanning'):
         """Create a spectral analysis for overlapping frames of audio."""
+        if hasattr(frames, '__call__'):
+            frames = frames()
         # Calculate the period of the window in hz
         lowest_freq = 1.0 / window_size
         # Filter frequencies lower than the period of the window
         # filter = ButterFilter()
         # filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)
 
-        frames = self.AnalysedAudioFile.read_grain()
         # frames = filter.filter_butter(frames)
         stft = self.stft(frames, window_size, overlapFac=1/window_overlap)
         frame_times = self.calc_fft_frame_times(
@@ -219,6 +220,8 @@ class FFTAnalysis(Analysis):
     def calc_fft_frame_times(self, fftframes, sample_frames, samplerate):
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins, freqbins = np.shape(fftframes)
         # Create array ranging from 0 to number of time frames

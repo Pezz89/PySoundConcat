@@ -30,8 +30,8 @@ class KurtosisAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(KurtosisAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'kurtosis')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(KurtosisAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'kurtosis')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -47,7 +47,6 @@ class KurtosisAnalysis(Analysis):
                              "analysis.")
 
         self.analysis_group = analysis_group
-        frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating kurtosis analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, variance.analysis['frames'][:], self.window_size, overlapFac=self.overlap)
 
@@ -63,6 +62,8 @@ class KurtosisAnalysis(Analysis):
         Calculate the Kurtosis values of windowed segments of the audio file and
         save to disk.
         """
+        if hasattr(frames, '__call__'):
+            frames = frames()
         # Calculate the period of the window in hz
         # lowest_freq = 1.0 / window_size
         # Filter frequencies lower than the period of the window
@@ -115,6 +116,8 @@ class KurtosisAnalysis(Analysis):
 
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = kurtosisframes.shape[0]
         # Create array ranging from 0 to number of time frames

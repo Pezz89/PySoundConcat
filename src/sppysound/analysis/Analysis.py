@@ -27,7 +27,7 @@ class Analysis(object):
     through the currently implemented descriptors.
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, name, config=None):
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, name, config=None):
         # Create object logger
         self.logger = logging.getLogger(__name__ + '.{0}Analysis'.format(name))
         # Store AnalysedAudioFile object to be analysed.
@@ -44,10 +44,10 @@ class Analysis(object):
         """
 
         try:
-            self.analysis = self.analysis_group.create_group(self.name)
-        except ValueError:
-            self.logger.info("{0} analysis group already exists".format(self.name))
             self.analysis = self.analysis_group[self.name]
+        except KeyError:
+            self.logger.info("{0} analysis group already exists".format(self.name))
+            self.analysis = self.analysis_group.create_group(self.name)
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one
@@ -61,12 +61,12 @@ class Analysis(object):
             # be saved in the HDF5 file
             data_dict, attrs_dict = self.hdf5_dataset_formatter(*args, **kwargs)
             for key, value in data_dict.iteritems():
-                self.analysis.create_dataset(key, data=value)
+                self.analysis.create_dataset(key, data=value, chunks=True)
             for key, value in attrs_dict.iteritems():
                 self.analysis.attrs[key] = value
         else:
 
-            if self.analysis.items():
+            if self.analysis.keys():
                 self.logger.info("Analysis already exists. Reading from: "
                                  "{0}".format(self.analysis.name))
             else:

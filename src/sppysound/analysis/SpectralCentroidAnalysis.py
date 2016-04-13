@@ -22,8 +22,8 @@ class SpectralCentroidAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(SpectralCentroidAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcCntr')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(SpectralCentroidAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'SpcCntr')
         # Create logger for module
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
@@ -39,7 +39,7 @@ class SpectralCentroidAnalysis(Analysis):
         self.logger.info("Creating Spectral Centroid analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
             self.create_spccntr_analysis,
-            fft.analysis['frames'][:],
+            fft.analysis['frames'],
             self.AnalysedAudioFile.samplerate
         )
         self.spccntr_window_count = None
@@ -62,6 +62,7 @@ class SpectralCentroidAnalysis(Analysis):
         output_format = Choose either "freq" for output in Hz or "ind" for bin
         index output
         '''
+        fft = fft[:]
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         # Get the highest magnitude.

@@ -33,8 +33,8 @@ class RMSAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(RMSAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'RMS')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(RMSAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'RMS')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -47,7 +47,6 @@ class RMSAnalysis(Analysis):
             self.overlap = 0.5
 
         self.analysis_group = analysis_group
-        frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating RMS analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, self.AnalysedAudioFile.samplerate, window_size=self.window_size, overlapFac=self.overlap, )
 
@@ -65,6 +64,8 @@ class RMSAnalysis(Analysis):
         Calculate the RMS values of windowed segments of the audio file and
         save to disk.
         """
+        if hasattr(frames, '__call__'):
+            frames = frames()
         def butter_lowpass(cutoff, fs, order=5):
             # red: taken from http://stackoverflow.com/questions/25191620/creating-lowpass-filter-in-scipy-understanding-methods-and-units
             nyq = 0.5 * fs
@@ -122,6 +123,8 @@ class RMSAnalysis(Analysis):
 
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = rmsframes.shape[0]
         # Create array ranging from 0 to number of time frames

@@ -22,8 +22,8 @@ class SpectralSpreadAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(SpectralSpreadAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'SpcSprd')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(SpectralSpreadAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'SpcSprd')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -42,8 +42,8 @@ class SpectralSpreadAnalysis(Analysis):
         self.analysis_group = analysis_group
         self.logger.info("Creating Spectral Spread analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(
-            fft.analysis['frames'][:],
-            spccntr.analysis['frames'][:],
+            fft.analysis['frames'],
+            spccntr.analysis['frames'],
             self.AnalysedAudioFile.samplerate
         )
         self.spccntr_window_count = None
@@ -67,6 +67,8 @@ class SpectralSpreadAnalysis(Analysis):
         length: the length of the window used to calculate the FFT.
         samplerate: the samplerate of the audio analysed.
         '''
+        fft = fft[:]
+        spectral_centroid = spectral_centroid[:]
         # Get the positive magnitudes of each bin.
         magnitudes = np.abs(fft)
         mag_max = np.max(magnitudes)

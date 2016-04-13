@@ -32,8 +32,8 @@ class VarianceAnalysis(Analysis):
     - config: The configuration module used to configure the analysis
     """
 
-    def __init__(self, AnalysedAudioFile, analysis_group, config=None):
-        super(VarianceAnalysis, self).__init__(AnalysedAudioFile, analysis_group, 'variance')
+    def __init__(self, AnalysedAudioFile, frames, analysis_group, config=None):
+        super(VarianceAnalysis, self).__init__(AnalysedAudioFile,frames, analysis_group, 'variance')
         self.logger = logging.getLogger(__name__+'.{0}Analysis'.format(self.name))
         # Store reference to the file to be analysed
         self.AnalysedAudioFile = AnalysedAudioFile
@@ -43,7 +43,6 @@ class VarianceAnalysis(Analysis):
             self.overlap = 1. / config.variance["overlap"]
 
         self.analysis_group = analysis_group
-        frames = self.AnalysedAudioFile.read_grain()
         self.logger.info("Creating variance analysis for {0}".format(self.AnalysedAudioFile.name))
         self.create_analysis(frames, self.window_size, overlapFac=self.overlap)
 
@@ -64,6 +63,8 @@ class VarianceAnalysis(Analysis):
         # TODO: Fix filter
         # frames = filter.filter_butter(frames)
 
+        if hasattr(frames, '__call__'):
+            frames = frames()
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
@@ -99,6 +100,8 @@ class VarianceAnalysis(Analysis):
 
         """Calculate times for frames using sample size and samplerate."""
 
+        if hasattr(sample_frames, '__call__'):
+            sample_frames = sample_frames()
         # Get number of frames for time and frequency
         timebins = varianceframes.shape[0]
         # Create array ranging from 0 to number of time frames

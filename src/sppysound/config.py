@@ -7,7 +7,7 @@ rms = {
 f0 = {
     "window_size": 2048,
     "overlap": 8,
-    "ratio_threshold": 0.4
+    "ratio_threshold": 0.6
 }
 
 # Specify analysis parameters for variance analysis.
