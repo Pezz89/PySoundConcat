@@ -44,10 +44,10 @@ class Analysis(object):
         """
 
         try:
-            self.analysis = self.analysis_group[self.name]
-        except KeyError:
-            self.logger.info("{0} analysis group already exists".format(self.name))
             self.analysis = self.analysis_group.create_group(self.name)
+        except ValueError:
+            self.logger.info("{0} analysis group already exists".format(self.name))
+            self.analysis = self.analysis_group[self.name]
 
         # If forcing new analysis creation then delete old analysis and create
         # a new one

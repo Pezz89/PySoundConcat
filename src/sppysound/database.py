@@ -820,8 +820,8 @@ class Synthesizer:
                 channels=output_config["channels"]
             ) as output:
                 hop_size = (grain_size / overlap) * output.samplerate/1000
-                _grain_size *= output.samplerate / 1000
-                output_frames = np.zeros(_grain_size + (hop_size*len(grain_matches)-1))
+                _grain_size *= int(output.samplerate / 1000)
+                output_frames = np.zeros(_grain_size*2 + (int(hop_size*len(grain_matches))))
                 offset = 0
                 for target_grain_ind, matches in enumerate(grain_matches):
                     # If there are multiple matches, choose a match at random
@@ -871,7 +871,10 @@ class Synthesizer:
 
                         # Apply hanning window to grain
                         match_grain *= np.hanning(match_grain.size)
-                        output_frames[offset:offset+match_grain.size] += match_grain
+                        try:
+                            output_frames[offset:offset+match_grain.size] += match_grain
+                        except:
+                            pdb.set_trace()
                     offset += hop_size
                 # If output normalization is active, normalize output.
                 if self.config.synthesizer["normalize"]:
@@ -905,7 +908,7 @@ class Synthesizer:
         hr_array = np.array([source_harmonic_ratio, target_harmonic_ratio])
 
         if np.any(np.isnan(hr_array)):
-            return grain
+            return grain*0
 
         # Get mean of f0 frames in time range specified.
         source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="median")[0][0]
@@ -913,7 +916,7 @@ class Synthesizer:
         ratio_difference = target_f0 / source_f0
 
         if not np.isfinite(ratio_difference):
-            return grain
+            return grain*0
 
         # If the ratio difference is within the limits
         ratio_limit = self.config.synthesizer["enf_f0_ratio_limit"]
@@ -932,6 +935,8 @@ class Synthesizer:
             ratio_difference = 1./ratio_limit
 
         grain = pitch_shift.shift(grain, ratio_difference)
+        if ratio_difference > ratio_limit or ratio_difference < 1./ratio_limit:
+            grain *= 0
 
         return grain
 
@@ -978,6 +983,7 @@ class Synthesizer:
             ratio_difference = ratio_limit
 
         grain *= ratio_difference
+
 
         return grain
 

@@ -630,9 +630,9 @@ class AudioFile(object):
             position = self.ms_to_samps(position)
             # multiply samples by the fade values from the start position for
             # the duration of the fade
-            audio[position:position+fade.size] *= fade
+            audio[-position:position-fade.size] *= fade
             # zero any samples after the fade in
-            audio[position+fade.size:] *= 0
+            audio[-position-fade.size:] *= 0
         else:
             self.logger.exception("{0} is not a valid fade option. Use either \"in\" or "
                   "\"out\"".format(mode))
