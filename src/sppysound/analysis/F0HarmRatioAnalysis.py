@@ -57,7 +57,7 @@ class F0HarmRatioAnalysis(Analysis):
     def calc_F0HarmRatio_frame_times(F0HarmRatioframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
-        samplerate *= 4
+        samplerate *= 1
 
         # Get number of frames for time and frequency
         timebins = F0HarmRatioframes.shape[0]

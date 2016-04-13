@@ -1,30 +1,30 @@
 # Specify analysis parameters for root mean square analysis.
 rms = {
-    "window_size": 100,
+    "window_size": 70,
     "overlap": 8,
 }
 
 f0 = {
-    "window_size": 8192,
+    "window_size": 2048,
     "overlap": 8,
-    "ratio_threshold": 0.0
+    "ratio_threshold": 0.1
 }
 
 # Specify analysis parameters for variance analysis.
 variance = {
-    "window_size": 100,
+    "window_size": 70,
     "overlap": 8
 }
 
 # Specify analysis parameters for temporal kurtosis analysis.
 kurtosis = {
-    "window_size": 100,
+    "window_size": 70,
     "overlap": 8
 }
 
 # Specify analysis parameters for temporal skewness analysis.
 skewness = {
-    "window_size": 100,
+    "window_size": 70,
     "overlap": 8
 }
 
@@ -42,20 +42,20 @@ database = {
 # Sets the weighting for each analysis. a higher weighting gives an analysis
 # higher presendence when finding the best matches.
 matcher_weightings = {
-    "f0" : 2.,
-    "spccntr" : 1.,
-    "spcsprd" : 2.,
-    "spcflux" : 2.,
-    "spccf" : 2.,
-    "spcflatness": 3.,
+    "f0" : 1,
+    "spccntr" : 0.,
+    "spcsprd" : 0.,
+    "spcflux" : 0.,
+    "spccf" : 0.,
+    "spcflatness": 0.,
     "zerox" : 0.,
     "rms" : 0,
     "peak": 0.,
-    "centroid": 1.,
-    "kurtosis": 1.,
-    "skewness": 1.,
-    "variance": 2.,
-    "harm_ratio": 2.
+    "centroid": 0.,
+    "kurtosis": 0.,
+    "skewness": 0.,
+    "variance": 0.,
+    "harm_ratio": 0.
 }
 
 # Specifies the method for averaging analysis frames to create a single value
@@ -88,7 +88,7 @@ analysis = {
 matcher = {
     # Force the re-matching of analyses
     "rematch": False,
-    "grain_size": 100,
+    "grain_size": 70,
     "overlap": 8,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
@@ -103,13 +103,13 @@ synthesizer = {
     # between source and target.
     "enforce_intensity": True,
     # Specify the ratio limit that is the grain can be scaled by.
-    "enf_intensity_ratio_limit": 5.,
+    "enf_intensity_ratio_limit": 25.,
     # Artificially modify the pitch by the difference in f0 values between
     # source and target.
     "enforce_f0": True,
     # Specify the ratio limit that is the grain can be modified by.
-    "enf_f0_ratio_limit": 10.,
-    "grain_size": 100,
+    "enf_f0_ratio_limit": 100.,
+    "grain_size": 70,
     "overlap": 8,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.

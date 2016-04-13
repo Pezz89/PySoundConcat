@@ -182,25 +182,20 @@ class F0Analysis(Analysis):
                 except Warning:
                     pass
 
-            Z = feature_zcr(Gamma)
-            if Z > 0.15:
+            # compute T0 and harmonic ratio:
+            if np.isnan(Gamma).any():
                 HR = np.nan
                 f0 = np.nan
             else:
-                # compute T0 and harmonic ratio:
-                if np.isnan(Gamma).any():
-                    HR=np.nan
+                blag = np.argmax(Gamma)
+                HR = Gamma[blag]
+                interp, HR = parabolic(Gamma, blag)
+                if not interp:
                     f0 = np.nan
+                    HR = np.nan
                 else:
-                    blag = np.argmax(Gamma)
-                    HR = Gamma[blag]
-                    interp, HR = parabolic(Gamma, blag)
-                    if not interp:
-                        f0 = np.nan
-                        HR = np.nan
-                    else:
-                        # get fundamental frequency:
-                        f0 = samplerate / interp
+                    # get fundamental frequency:
+                    f0 = samplerate / interp
             if f0 > samplerate/2:
                 raise ValueError("F0 value ({0}) is above the nyquist rate "
                                  "({1}). This shouldn't happen...".format(f0,
@@ -224,8 +219,8 @@ class F0Analysis(Analysis):
         '''
         samplerate = self.AnalysedAudioFile.samplerate
         frames = args[0]
-        frames = multirate.interp(frames, 2)
-        samplerate *= 2
+        # frames = multirate.interp(frames, 4)
+        samplerate *= 1
         data = self.create_f0_analysis(frames, samplerate, **kwargs)
         f0 = data[:, 0]
         harmonic_ratio = data[:, 1]

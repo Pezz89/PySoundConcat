@@ -133,11 +133,10 @@ class Analysis(object):
         # get all valid frames from current grain
         frames = frames[selection & valid_inds]
 
+        return formatter(frames)
         #if less than half the frames are valid then the grain is not valid.
         if frames.size < valid_inds[selection].nonzero()[0].size/2:
             return np.nan
-        else:
-            return formatter(frames)
 
     def analysis_formatter(self, frames, selection, format):
         """Calculate the average analysis value of the grain using the match format specified."""

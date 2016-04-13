@@ -429,11 +429,11 @@ class Matcher:
                 all_target_analyses[i] = target_data
 
 
-            nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
-            all_target_analyses[:, nan_columns] = 0.
+            # nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
+            # all_target_analyses[:, nan_columns] = 0.
             # Impute values for Nans
-            all_target_analyses = imp.fit_transform(all_target_analyses)
-            # all_target_analyses[np.isnan(all_target_analyses)] = np.inf
+            # all_target_analyses = imp.fit_transform(all_target_analyses)
+            all_target_analyses[np.isnan(all_target_analyses)] = np.inf
 
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
                 self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
@@ -453,11 +453,11 @@ class Matcher:
 
 
                 # Impute values for Nans
-                nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
-                all_source_analyses[:, nan_columns] = 0.
-                all_source_analyses = imp.fit_transform(all_source_analyses)
+                # nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
+                # all_source_analyses[:, nan_columns] = 0.
+                # all_source_analyses = imp.fit_transform(all_source_analyses)
 
-                # all_source_analyses[np.isnan(all_source_analyses)] = np.inf
+                all_source_analyses[np.isnan(all_source_analyses)] = np.inf
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
                 results_vals, results_inds = source_tree.query(all_target_analyses.T, k=self.match_quantity, p=2)
