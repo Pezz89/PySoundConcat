@@ -3,6 +3,12 @@ rms = {
     "overlap": 16,
 }
 
+f0 = {
+    "window_size": 2048,
+    "overlap": 8,
+    "ratio_threshold": 0.0
+}
+
 variance = {
     "window_size": 130,
     "overlap": 16

@@ -1,31 +1,31 @@
 # Specify analysis parameters for root mean square analysis.
 rms = {
-    "window_size": 70,
-    "overlap": 8,
+    "window_size": 100,
+    "overlap": 4,
 }
 
 f0 = {
     "window_size": 2048,
     "overlap": 8,
-    "ratio_threshold": 0.1
+    "ratio_threshold": 0.4
 }
 
 # Specify analysis parameters for variance analysis.
 variance = {
-    "window_size": 70,
-    "overlap": 8
+    "window_size": 100,
+    "overlap": 4
 }
 
 # Specify analysis parameters for temporal kurtosis analysis.
 kurtosis = {
-    "window_size": 70,
-    "overlap": 8
+    "window_size": 100,
+    "overlap": 4
 }
 
 # Specify analysis parameters for temporal skewness analysis.
 skewness = {
-    "window_size": 70,
-    "overlap": 8
+    "window_size": 100,
+    "overlap": 4
 }
 
 # Specify analysis parameters for FFT analysis.
@@ -48,7 +48,7 @@ matcher_weightings = {
     "spcflux" : 2.,
     "spccf" : 2.,
     "spcflatness": 3.,
-    "zerox" : 0.,
+    "zerox" : 1.,
     "rms" : 1,
     "peak": 2.,
     "centroid": 1.,
@@ -88,11 +88,11 @@ analysis = {
 matcher = {
     # Force the re-matching of analyses
     "rematch": False,
-    "grain_size": 70,
-    "overlap": 8,
+    "grain_size": 100,
+    "overlap": 4,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 20,
+    "match_quantity": 10,
     # Choose the algorithm used to perform matching. kdtree is recommended for
     # larger datasets.
     "method": 'kdtree'
@@ -109,14 +109,14 @@ synthesizer = {
     "enforce_f0": True,
     # Specify the ratio limit that is the grain can be modified by.
     "enf_f0_ratio_limit": 100.,
-    "grain_size": 70,
-    "overlap": 8,
+    "grain_size": 100,
+    "overlap": 4,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.
     "normalize" : True,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
-    "match_quantity": 20
+    "match_quantity": 10
 }
 
 output_file = {

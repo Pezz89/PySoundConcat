@@ -49,7 +49,7 @@ the fundamental period.
 
 In order to improve the accuracy of peak detection, parabolic interpolation is
 used to estimate the peak's location with greater accuracy by using the peak
-correlation and it's two closes neighbour's values to estimate the fractional
+correlation and it's two closest neighbour's values to estimate the fractional
 peak value.
 
 The method for parabolic interpolation is defined as:
@@ -78,7 +78,7 @@ Fourier Transform for windows of a signal. The full description of this
 transform is outside the scope of this project, however it should be understood
 that this analysis provides a description of the spectral content of a windowed
 signal. By applying the transform, a number of bins of size :math:`K` are
-calculated that detail the sine and cosine apmlitudes required to reconstruct
+calculated that detail the sine and cosine amplitudes required to reconstruct
 the signal. The calculation of the STFT is defined as:
 
 .. math::
@@ -90,9 +90,9 @@ Ref: :cite:`lerch2012itaca`
 Harmonic Ratio
 ~~~~~~~~~~~~~~
 The harmonic ratio can be used to differentiate between noisy and periodic
-signals. higher values suggest that the signal is more periodic (such as a sine
+signals. Higher values suggest that the signal is more periodic (such as a sine
 wave) and lower values represent less periodicity. This can be used as a form
-of confidence measure in determining the validity of F0 values. it is
+of confidence measure in determining the validity of F0 values. It is
 calculated as part of the F0 estimation algorithm as:
 
 .. math::
@@ -113,7 +113,7 @@ Ref: :cite:`lerch2012itaca`
 
 Peak Amplitude
 ~~~~~~~~~~~~~~
-Peak amplitude measures the highest peak in the absoulte signal. it is
+Peak amplitude measures the highest peak in the absolute signal. It is
 calculated as:
 
 .. math::
@@ -136,10 +136,10 @@ Ref: :cite:`lerch2012itaca`
 
 Spectral Centroid
 ~~~~~~~~~~~~~~~~~
-The spectral centroid measure the center of gravity accross frequency bins to
-determine the central point accross the spectral content of the frame. High
-value sindicate that the spectral content is centered in higher frequencies and
-lower value indicate a lower center. The spectral centroid is calculated as:
+The spectral centroid measure the centre of gravity across frequency bins to
+determine the central point across the spectral content of the frame. High
+values indicate that the spectral content is centred in higher frequencies and
+lower value indicate a lower centre. The spectral centroid is calculated as:
 
 .. math::
     SC(n) = \frac{\sum_{k=0}^{K/2-1} k \cdot | X(k,n) | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}
@@ -151,11 +151,11 @@ Ref: :cite:`lerch2012itaca`
 
 Spectral Crest Factor
 ~~~~~~~~~~~~~~~~~~~~~
-The spectral crest factor can be used as a mesure of tonalness of the signal.
-it is calculated by taking the maximum magnitude and dividing by the sum of
+The spectral crest factor can be used as a measure of tonalness of the signal.
+It is calculated by taking the maximum magnitude and dividing by the sum of
 magnitudes.
-This differntiates between flat spectrums and sinusoidal spectrums. (low values
-represnting the former and high values representing the latter.)
+This differentiates between flat spectrums and sinusoidal spectrums. (low values
+representing the former and high values representing the latter.)
 
 .. math::
     SCF = \frac{ \max_{0 \leq k \leq K/2-1} \{| X(k,n) | \}}{\sum_{k=0}^{K/2-1} | X(k,n) | }
@@ -180,7 +180,7 @@ Spectral Flux
 Spectral flux is a measure of change between consecutive frames. It calculates
 the average difference between frames to differentiate between adjacent frames
 that are largely dissimilar (suggesting a non-stationary section of signal) and
-similiar frames (that suggests a steady state signal). It is calculated as:
+similar frames (that suggests a steady state signal). It is calculated as:
 
 .. math::
     SF(n) = \frac{\sqrt{\sum_{k=0}^{K/2-1} \Big( | X(k,n) | - | X(k,n-1) | \Big)^2
@@ -213,8 +213,8 @@ Ref: :cite:`lerch2012itaca`
 Zero-Crossing
 ~~~~~~~~~~~~~
 The zero-crossing rate counts the number of times a signal's value changes from
-positive to negative in a frame. it is relevant to determining the noisiness of
-a signal, as noisy signals will pass from positive to negative more frequenctly
+positive to negative in a frame. It is relevant to determining the noisiness of
+a signal, as noisy signals will pass from positive to negative more frequently
 than period signals. It is calculated as:
 
 .. math::

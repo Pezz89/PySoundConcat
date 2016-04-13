@@ -426,15 +426,15 @@ class Matcher:
                 analysis_formatting = self.analysis_dict[analysis]
 
                 target_data, s = target_entry.analysis_data_grains(target_times, analysis, format=analysis_formatting)
-                target_data = target_data ** weightings[analysis]
+                target_data **= weightings[analysis]
                 all_target_analyses[i] = target_data
 
 
-            # nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
-            # all_target_analyses[:, nan_columns] = 0.
+            nan_columns = np.all(np.isnan(all_target_analyses), axis=0)
+            all_target_analyses[:, nan_columns] = 0.
             # Impute values for Nans
-            # all_target_analyses = imp.fit_transform(all_target_analyses)
-            all_target_analyses[np.isnan(all_target_analyses)] = np.inf
+            all_target_analyses = imp.fit_transform(all_target_analyses)
+            # all_target_analyses[np.isnan(all_target_analyses)] = np.inf
 
             for sind, source_entry in enumerate(self.source_db.analysed_audio):
                 self.logger.info("K-d Tree Matching: {0} to {1}".format(source_entry.name, target_entry.name))
@@ -450,16 +450,16 @@ class Matcher:
                     analysis_formatting = self.analysis_dict[analysis]
 
                     source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
-                    source_data = source_data ** weightings[analysis]
+                    source_data **= weightings[analysis]
                     all_source_analyses[i] = source_data
 
 
                 # Impute values for Nans
-                # nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
-                # all_source_analyses[:, nan_columns] = 0.
-                # all_source_analyses = imp.fit_transform(all_source_analyses)
+                nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
+                all_source_analyses[:, nan_columns] = 0.
+                all_source_analyses = imp.fit_transform(all_source_analyses)
 
-                all_source_analyses[np.isnan(all_source_analyses)] = np.inf
+                # all_source_analyses[np.isnan(all_source_analyses)] = np.inf
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
                 results_vals, results_inds = source_tree.query(all_target_analyses.T, k=self.match_quantity, p=2)
@@ -736,8 +736,9 @@ class Matcher:
         )
 
         if not np.all(np.any(x, axis=1)):
-            pdb.set_trace()
-            raise ValueError("Not all match indexes have a corresponding sample index. This shouldn't happen...")
+            raise ValueError("Not all match indexes have a corresponding sample index. This shouldn't happen...\n"
+                             "Check that all database path arguments are correct then try re-running with the --rematch and --reanalyse flags.\n"
+                             "If this does'nt work, delete the audio and data directories in all databases and try again...")
 
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
