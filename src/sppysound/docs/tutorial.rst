@@ -84,7 +84,7 @@ For this demonstration, the following file structure will be used:
         |-- target.03.wav
         `-- target.04.wav
 
-A source database containing a small selection of trumpet samples (aquired from
+A source database containing a small selection of trumpet samples (acquired from
 
 http://theremin.music.uiowa.edu/MIS.html) will be used to match grains with 4
 target sounds. This will produce 4 output files, one for each target sound.
@@ -417,7 +417,9 @@ concatenate.py Script Flags
 
 --match_method        Choose the algorithm to use when matching analyses. Available algorithms are:
 
-                         Brute force: 'bruteforce'
+                         Brute force: 'bruteforce' (BROKEN. The brute force
+                         matcher no longer works with the current release of
+                         this script. Use the K-d Tree Search.)
 
                          K-d Tree Search: 'kdtree'
 

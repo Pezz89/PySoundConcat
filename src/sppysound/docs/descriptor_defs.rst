@@ -15,7 +15,7 @@ used to determine the central point of a signal's amplitude and is calculated
 as:
 
 .. math::
-    C(n) = \frac{\sum_{i=i_s(n)}^{i_e(n)}(i-i_s(n)) \cdot x(i)}{\sum_{i=i_s(n)}^{i_e(n)} \cdot x(n)}
+    C(n) = \frac{\sum_{i=i_s(n)}^{i_e(n)}(i-i_s(n)) \cdot x(i)}{\sum_{i=i_s(n)}^{i_e(n)} \cdot x(n)}.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -34,10 +34,10 @@ defined as:
 .. math::
     R_n(m) = \sum_{i=i_s(n)}^{i_e(n)} x(i) x(i-m)
 
-Then normalizing:
+then normalizing:
 
 .. math::
-    \Gamma_n(m) = \frac{R_n(m)}{\sqrt{\sum_{i=i_s(n)}^{i_e(n)}x(i)^2 \sum_{i=i_s(n)}^{i_e(n)}x(i-m)^2}}
+    \Gamma_n(m) = \frac{R_n(m)}{\sqrt{\sum_{i=i_s(n)}^{i_e(n)}x(i)^2 \sum_{i=i_s(n)}^{i_e(n)}x(i-m)^2}}.
 
 The fundamental period of the signal is then calculated as the point between
 :math:`T_{min}` and :math:`T_{max}` at which the correlated signal most closely matches the
@@ -45,7 +45,7 @@ original. :math:`T_{min}` and :math:`T_{max}` are defined as the minimum and max
 the fundamental period.
 
 .. math::
-    y = arg\,max_{T_{min} \leq m \leq T_{max}} \{\Gamma_i(m)\}
+    y = arg\,max_{T_{min} \leq m \leq T_{max}} \{\Gamma_i(m)\}.
 
 In order to improve the accuracy of peak detection, parabolic interpolation is
 used to estimate the peak's location with greater accuracy by using the peak
@@ -66,7 +66,7 @@ Ref: :cite:`smith2011sasp`
 From this, the fundamental period the frequency is then calculated as:
 
 .. math::
-    f_0^n = \frac{1}{T_0^n}
+    f_0^n = \frac{1}{T_0^n}.
 
 Ref: :cite:`itaa2014`
 
@@ -83,7 +83,7 @@ the signal. The calculation of the STFT is defined as:
 
 .. math::
     X(k,n) = \sum_{i=i_s(n)}^{i_e(n)} x(i) \exp{\Big(-jk \cdot (i -
-    i_s(n))\frac{2\pi}{K}\Big)}
+    i_s(n))\frac{2\pi}{K}\Big)}.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -96,7 +96,7 @@ of confidence measure in determining the validity of F0 values. It is
 calculated as part of the F0 estimation algorithm as:
 
 .. math::
-    HR(n) = max_{T_{min} \leq m \leq T_{max}}{\{T_n(m)\}}
+    HR(n) = max_{T_{min} \leq m \leq T_{max}}{\{T_n(m)\}}.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -107,7 +107,7 @@ values indicate a flatter distribution and positive values indicate a more
 "peaky" distribution. Kurtosis is calculated as:
 
 .. math::
-    TK(n)=\frac{1}{\sigma_x^4(n) \cdot K}\sum_{i=i_s(n)}^{i_e(n)}\Big(x(i)-\mu_x(n)\Big)^4-3
+    TK(n)=\frac{1}{\sigma_x^4(n) \cdot K}\sum_{i=i_s(n)}^{i_e(n)}\Big(x(i)-\mu_x(n)\Big)^4-3.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -117,16 +117,17 @@ Peak amplitude measures the highest peak in the absolute signal. It is
 calculated as:
 
 .. math::
-    P(n) = \max_{i_s(n) \leq i \leq i_e(n)}\{\left|x(i)\right|\}
+    P(n) = \max_{i_s(n) \leq i \leq i_e(n)}\{\left|x(i)\right|\}.
 
 RMS
 ~~~
 The perceived loudness of a signal is an important feature as it can be related
 to the dynamics of the signal.  RMS is used as a measure of sound intensity and
-is used for distinguishing between loud and quiet audio. It is calculated as:
+is used for distinguishing between loud and quiet audio. It is calculated as,
+where $K$ is the total number of samples:
 
 .. math::
-    RMS(n) = \sqrt{\frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)} x(i)^2}
+    RMS(n) = \sqrt{\frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)} x(i)^2}.
 
 Other methods that take the human perception of loudness into account may
 provide more perceptually relevant results. However the RMS measurement
@@ -142,7 +143,7 @@ values indicate that the spectral content is centred in higher frequencies and
 lower value indicate a lower centre. The spectral centroid is calculated as:
 
 .. math::
-    SC(n) = \frac{\sum_{k=0}^{K/2-1} k \cdot | X(k,n) | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}
+    SC(n) = \frac{\sum_{k=0}^{K/2-1} k \cdot | X(k,n) | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}.
 
 The result is the sum of magnitudes, weighted by their index, normalized by the
 unweighted sum.
@@ -158,7 +159,7 @@ This differentiates between flat spectrums and sinusoidal spectrums. (low values
 representing the former and high values representing the latter.)
 
 .. math::
-    SCF = \frac{ \max_{0 \leq k \leq K/2-1} \{| X(k,n) | \}}{\sum_{k=0}^{K/2-1} | X(k,n) | }
+    SCF = \frac{ \max_{0 \leq k \leq K/2-1} \{| X(k,n) | \}}{\sum_{k=0}^{K/2-1} | X(k,n) | }.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -171,7 +172,7 @@ values that represent a more tonal signal. Spectral flatness is calculated as:
 
 .. math::
     TFl(n) = \frac{\sqrt[K/2]{\prod_{k=0}^{K/2-1} | X(k,n) | }}{2/K \cdot
-    \sum_{k=0}^{K/2-1} | X(k,n) | }
+    \sum_{k=0}^{K/2-1} | X(k,n) | }.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -184,7 +185,7 @@ similar frames (that suggests a steady state signal). It is calculated as:
 
 .. math::
     SF(n) = \frac{\sqrt{\sum_{k=0}^{K/2-1} \Big( | X(k,n) | - | X(k,n-1) | \Big)^2
-    }}{K/2}
+    }}{K/2}.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -196,7 +197,7 @@ and is associated with perceptions of timbre. It is calculated as:
 
 .. math::
     SS(n) = \sqrt{\frac{\sum_{k=0}^{K/2-1} \Big(k-SC(n)\Big)^2 \cdot | X(k,n)
-    | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}}
+    | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}}.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -206,7 +207,7 @@ The variance of a signal measures it's spread around the signal's arithmetic
 mean. It is used in the calculation of Kurtosis and is calculated as:
 
 .. math::
-    \sigma_x^2 = \frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)}(x(i) - \mu_x(n))^2    
+    \sigma_x^2 = \frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)}(x(i) - \mu_x(n))^2.
 
 Ref: :cite:`lerch2012itaca`
 
@@ -218,7 +219,7 @@ a signal, as noisy signals will pass from positive to negative more frequently
 than period signals. It is calculated as:
 
 .. math::
-    Z(n) = \frac{1}{2K} \sum_{i=i_s(n)}^{i_e(n)} | sgn[x(i)] - sgn[x(i-1)] |
+    Z(n) = \frac{1}{2K} \sum_{i=i_s(n)}^{i_e(n)} | sgn[x(i)] - sgn[x(i-1)] | 
 
     \text{Where the sgn function is defined as:}
     
