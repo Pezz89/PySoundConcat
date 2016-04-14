@@ -29,5 +29,5 @@ def shift(sigin, pitch):
 
     with AudioFile(output_filepath, mode='r') as shift_output:
         # Read result
-        result = shift_output.read_frames()
+        result = shift_output.read_grain()
     return result
