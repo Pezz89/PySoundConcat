@@ -1,49 +1,24 @@
-# SPPySound
+# Pysound
 
-SPPySound is a python project that acts as a wrapper to the pysndfile library, adding aditional functionality needed for audio and DSP related projects.
-Currently the project is focused on the generation of audio descriptor meta data for sound databases as part of my final year project. 
-The project is currently in development but aims to generate a range of useful functions for sound manipulation.
-The project is designed with flexability in mind so that new functions and features can be added as needed.
-To address this the project has a modular nature and currently consists of 3 main classes for the encapsulation of audio files:
+A python script for generating granular synthesis driven representations of
+audio files based on audio database analysis.
 
-## Main audiofile Module
+This script was developed to explore the creative potential of combining
+short-time audio analyses with granular synthesis, to synthesize perceptually
+related representations of target audio files. Through use of analysed
+databases of varying sizes, an output can be generated that represents a mix of
+the spectral and temporal features of the original target sound and the corpus
+of source sounds.
 
-### AudioFile
+To achieve this, a technique known as "concatenative synthesis" is used. This
+form of synthesis combines the ability to window and join small segments of
+sound to create a new sound (a process known as granular synthesis), with audio
+analysis techniques capable of describing a sound in order to differentiate it
+from others. By analysing small segments in a target sound for their perceptual
+characteristics (such as pitch, timbre and loudness), it is then possible to
+compare these segments to a collection of source sounds to find perceptually
+similar segments. From this, the most perceptually similar matches can be taken
+and joined using granular synthesis techniques in order to achieve the final
+result.
 
-This is the base class for creating an audio file object and has methods for simple processed on the audio file.
-Functionality such as converting the file to mono and convenience functions for reading and writing grains of audio are included.
-
-### AnalysedAudioFile
-
-Inheriting from the AudioFile class, this encapsulates the audio file and the analyses that can be generated through the seperate audio analysis modules.
-This will be used for the processing of analyses of audio files and to group audio files with their analyses.
-
-### AudioDatabase
-
-An audio database is a class used to group AnalysedAudioFiles for batch processing. 
-This class will be used for comparison methods to compare audiofiles and their meta data.
-
-## Analysis Modules - Under development
-
-### RMSAnalysis
-Generates an RMS analysis file.
-Currently stored as a plain text file. 
-Values can be accessed through RMSAnalysis class methods.
-
-### ZeroXAnalysis
-Generates a windowed zero-crossing anaysis of the audio file
-Currently stored as a plain text file
-Values can be accessed through ZeroXAnalysis class methods.
-
-### AttackAnalysis
-Generates an estimate for the attack start and end of a monophonic audio file.
-Will only work on single event audio files
-Estimation algorithm needs improvments.
-
-## Package Installation
-Simply run:
-pip install .
-from the package folder
-Alternatively:
-pip install -e .
-will install the package keeping it's contents in place in the folder so that they can be easily developed and tested.
+Full documentation can be found at: http://pezz89.github.io/pysound/index.html
