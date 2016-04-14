@@ -874,7 +874,7 @@ class Synthesizer:
                         try:
                             output_frames[offset:offset+match_grain.size] += match_grain
                         except:
-                            pdb.set_trace()
+                            pass
                     offset += hop_size
                 # If output normalization is active, normalize output.
                 if self.config.synthesizer["normalize"]:
