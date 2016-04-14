@@ -472,7 +472,7 @@ class FadeAudioTest(globalTests):
         self.test_audio = np.ones(88200)
         faded_audio = self.TestAudio.fade_audio(
             self.test_audio,
-            500,
+            0,
             1000,
             "out"
         )
