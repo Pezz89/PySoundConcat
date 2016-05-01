@@ -258,8 +258,8 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">    - config: The configuration module used to configure the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SpectralFluxAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;SpcFlux&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SpectralFluxAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span><span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;SpcFlux&#39;</span><span class="p">)</span>
         <span class="c"># Create logger for module</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="c"># Store reference to the file to be analysed</span>
@@ -275,9 +275,7 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating Spectral Flux analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_spcflux_analysis</span><span class="p">,</span>
-            <span class="n">fft</span><span class="o">.</span><span class="n">analysis</span><span class="p">[</span><span class="s">&#39;frames&#39;</span><span class="p">][:],</span>
-            <span class="n">fft</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;win_size&#39;</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
+            <span class="n">fft</span><span class="o">.</span><span class="n">analysis</span><span class="p">[</span><span class="s">&#39;frames&#39;</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spcflux_window_count</span> <span class="o">=</span> <span class="bp">None</span>
 
@@ -291,19 +289,18 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="k">return</span> <span class="p">({</span><span class="s">&#39;frames&#39;</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span> <span class="s">&#39;times&#39;</span><span class="p">:</span> <span class="n">times</span><span class="p">},</span> <span class="p">{})</span></div>
 
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="SpectralFluxAnalysis.create_spcflux_analysis"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.create_spcflux_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_spcflux_analysis</span><span class="p">(</span><span class="n">fft</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s">&quot;freq&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="SpectralFluxAnalysis.create_spcflux_analysis"><a class="viewcode-back" href="../../api.html#analysis.SpectralFluxAnalysis.create_spcflux_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_spcflux_analysis</span><span class="p">(</span><span class="n">fft</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Calculate the spectral flux of the fft frames.</span>
 
 <span class="sd">        length: the length of the window used to calculate the FFT.</span>
-<span class="sd">        samplerate: the samplerate of the audio analysed.</span>
 <span class="sd">        output_format = Choose either &quot;freq&quot; for output in Hz or &quot;ind&quot; for bin</span>
 <span class="sd">        index output</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">fft</span> <span class="o">=</span> <span class="n">fft</span><span class="p">[:]</span>
         <span class="c"># Get the positive magnitudes of each bin.</span>
         <span class="n">magnitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fft</span><span class="p">)</span>
-        <span class="c"># Get highest magnitude</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">magnitudes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">y</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">y</span>
@@ -312,7 +309,7 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="c"># magnitude.</span>
         <span class="n">rolled_mags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">magnitudes</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">sum_of_squares</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">magnitudes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">rolled_mags</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">spectral_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sum_of_squares</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">spectral_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sum_of_squares</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">fft</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">spectral_flux</span></div>
 
@@ -323,6 +320,8 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="c"># Get number of frames for time and frequency</span>
         <span class="n">timebins</span> <span class="o">=</span> <span class="n">spcflux_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timebins</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
         <span class="c"># Create array ranging from 0 to number of time frames</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">timebins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="c"># divide the number of samples by the total number of frames, then</span>

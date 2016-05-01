@@ -323,7 +323,7 @@ div.nboutput  > :nth-child(2).stderr {
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Allow AudioFile object to be opened by &#39;with&#39; statements&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Opening soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Opening soundfile {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;r&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
@@ -866,9 +866,9 @@ div.nboutput  > :nth-child(2).stderr {
             <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ms_to_samps</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
             <span class="c"># multiply samples by the fade values from the start position for</span>
             <span class="c"># the duration of the fade</span>
-            <span class="n">audio</span><span class="p">[</span><span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">*=</span> <span class="n">fade</span>
+            <span class="n">audio</span><span class="p">[</span><span class="o">-</span><span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">-</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">*=</span> <span class="n">fade</span>
             <span class="c"># zero any samples after the fade in</span>
-            <span class="n">audio</span><span class="p">[</span><span class="n">position</span><span class="o">+</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">:]</span> <span class="o">*=</span> <span class="mi">0</span>
+            <span class="n">audio</span><span class="p">[</span><span class="o">-</span><span class="n">position</span><span class="o">-</span><span class="n">fade</span><span class="o">.</span><span class="n">size</span><span class="p">:]</span> <span class="o">*=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s">&quot;{0} is not a valid fade option. Use either </span><span class="se">\&quot;</span><span class="s">in</span><span class="se">\&quot;</span><span class="s"> or &quot;</span>
                   <span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">out</span><span class="se">\&quot;</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
@@ -1127,15 +1127,13 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_grain</span>
 
         <span class="c"># Create the analysis objects for analyses that have been specified in</span>
         <span class="c"># the analyses member variable.</span>
         <span class="k">for</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="n">analysis_object_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">analysis</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_analyses</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span><span class="p">[</span><span class="n">analysis</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">analysis_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-
+                <span class="bp">self</span><span class="o">.</span><span class="n">analyses</span><span class="p">[</span><span class="n">analysis</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">analysis_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_storage</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_analysis_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

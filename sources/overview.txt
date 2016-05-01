@@ -13,7 +13,7 @@ To create the final output, there are three main operations to perform:
 
 .. graphviz::
 
-   digraph a[center=True] {
+   digraph a {
       "Database Analysis" -> "Grain Matching" -> "Output Synthesis";
    }
 

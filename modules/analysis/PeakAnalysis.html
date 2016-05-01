@@ -267,14 +267,13 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">    - config: The configuration module used to configure the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PeakAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;Peak&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PeakAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span><span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;Peak&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="c"># Store reference to the file to be analysed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
-        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">read_grain</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating Peak analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 
@@ -286,6 +285,8 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">        Calculate the Peak values of windowed segments of the audio file and</span>
 <span class="sd">        save to disk.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="p">()</span>
         <span class="c"># Calculate the period of the window in hz</span>
         <span class="c"># lowest_freq = 1.0 / window_size</span>
         <span class="c"># Filter frequencies lower than the period of the window</span>
@@ -329,6 +330,8 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sample_frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">sample_frames</span> <span class="o">=</span> <span class="n">sample_frames</span><span class="p">()</span>
         <span class="c"># Get number of frames for time and frequency</span>
         <span class="n">timebins</span> <span class="o">=</span> <span class="n">peakframes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c"># Create array ranging from 0 to number of time frames</span>

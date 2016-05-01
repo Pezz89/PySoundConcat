@@ -326,7 +326,7 @@ works by analysing overlapping segments of audio (known as grains) from both
     `-- target.04.wav
 </pre></div>
 </div>
-<p>A source database containing a small selection of trumpet samples (aquired from</p>
+<p>A source database containing a small selection of trumpet samples (acquired from</p>
 <p><a class="reference external" href="http://theremin.music.uiowa.edu/MIS.html">http://theremin.music.uiowa.edu/MIS.html</a>) will be used to match grains with 4
 target sounds. This will produce 4 output files, one for each target sound.</p>
 <p>The following command is used to to generate the output:</p>
@@ -652,7 +652,9 @@ databases.</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">--match_method</span></kbd></td>
 <td><p class="first">Choose the algorithm to use when matching analyses. Available algorithms are:</p>
-<p>Brute force: &#8216;bruteforce&#8217;</p>
+<p>Brute force: &#8216;bruteforce&#8217; (BROKEN. The brute force
+matcher no longer works with the current release of
+this script. Use the K-d Tree Search.)</p>
 <p class="last">K-d Tree Search: &#8216;kdtree&#8217;</p>
 </td></tr>
 <tr><td class="option-group">

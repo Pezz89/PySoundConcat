@@ -279,7 +279,7 @@ descriptors would match audio based on it&#8217;s pitch and energy.</p>
 used to determine the central point of a signal&#8217;s amplitude and is calculated
 as:</p>
 <div class="math">
-\[C(n) = \frac{\sum_{i=i_s(n)}^{i_e(n)}(i-i_s(n)) \cdot x(i)}{\sum_{i=i_s(n)}^{i_e(n)} \cdot x(n)}\]</div>
+\[C(n) = \frac{\sum_{i=i_s(n)}^{i_e(n)}(i-i_s(n)) \cdot x(i)}{\sum_{i=i_s(n)}^{i_e(n)} \cdot x(n)}.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id1">[Ler12]</a></p>
 </div>
 <div class="section" id="f0-pitch-detection">
@@ -294,18 +294,18 @@ reasonable versatility for a wide range of signals.</p>
 defined as:</p>
 <div class="math">
 \[R_n(m) = \sum_{i=i_s(n)}^{i_e(n)} x(i) x(i-m)\]</div>
-<p>Then normalizing:</p>
+<p>then normalizing:</p>
 <div class="math">
-\[\Gamma_n(m) = \frac{R_n(m)}{\sqrt{\sum_{i=i_s(n)}^{i_e(n)}x(i)^2 \sum_{i=i_s(n)}^{i_e(n)}x(i-m)^2}}\]</div>
+\[\Gamma_n(m) = \frac{R_n(m)}{\sqrt{\sum_{i=i_s(n)}^{i_e(n)}x(i)^2 \sum_{i=i_s(n)}^{i_e(n)}x(i-m)^2}}.\]</div>
 <p>The fundamental period of the signal is then calculated as the point between
 <span class="math">\(T_{min}\)</span> and <span class="math">\(T_{max}\)</span> at which the correlated signal most closely matches the
 original. <span class="math">\(T_{min}\)</span> and <span class="math">\(T_{max}\)</span> are defined as the minimum and maximum values of
 the fundamental period.</p>
 <div class="math">
-\[y = arg\,max_{T_{min} \leq m \leq T_{max}} \{\Gamma_i(m)\}\]</div>
+\[y = arg\,max_{T_{min} \leq m \leq T_{max}} \{\Gamma_i(m)\}.\]</div>
 <p>In order to improve the accuracy of peak detection, parabolic interpolation is
 used to estimate the peak&#8217;s location with greater accuracy by using the peak
-correlation and it&#8217;s two closes neighbour&#8217;s values to estimate the fractional
+correlation and it&#8217;s two closest neighbour&#8217;s values to estimate the fractional
 peak value.</p>
 <p>The method for parabolic interpolation is defined as:</p>
 <div class="math">
@@ -316,7 +316,7 @@ peak value.</p>
 <p>Ref: <a class="reference internal" href="#smith2011sasp" id="id2">[Smi16]</a></p>
 <p>From this, the fundamental period the frequency is then calculated as:</p>
 <div class="math">
-\[f_0^n = \frac{1}{T_0^n}\]</div>
+\[f_0^n = \frac{1}{T_0^n}.\]</div>
 <p>Ref: <a class="reference internal" href="#itaa2014" id="id3">[GP14]</a></p>
 </div>
 <div class="section" id="fft">
@@ -326,22 +326,22 @@ Fourier Transform for windows of a signal. The full description of this
 transform is outside the scope of this project, however it should be understood
 that this analysis provides a description of the spectral content of a windowed
 signal. By applying the transform, a number of bins of size <span class="math">\(K\)</span> are
-calculated that detail the sine and cosine apmlitudes required to reconstruct
+calculated that detail the sine and cosine amplitudes required to reconstruct
 the signal. The calculation of the STFT is defined as:</p>
 <div class="math">
 \[X(k,n) = \sum_{i=i_s(n)}^{i_e(n)} x(i) \exp{\Big(-jk \cdot (i -
-i_s(n))\frac{2\pi}{K}\Big)}\]</div>
+i_s(n))\frac{2\pi}{K}\Big)}.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id4">[Ler12]</a></p>
 </div>
 <div class="section" id="harmonic-ratio">
 <h2>Harmonic Ratio<a class="headerlink" href="#harmonic-ratio" title="Permalink to this headline">¶</a></h2>
 <p>The harmonic ratio can be used to differentiate between noisy and periodic
-signals. higher values suggest that the signal is more periodic (such as a sine
+signals. Higher values suggest that the signal is more periodic (such as a sine
 wave) and lower values represent less periodicity. This can be used as a form
-of confidence measure in determining the validity of F0 values. it is
+of confidence measure in determining the validity of F0 values. It is
 calculated as part of the F0 estimation algorithm as:</p>
 <div class="math">
-\[HR(n) = max_{T_{min} \leq m \leq T_{max}}{\{T_n(m)\}}\]</div>
+\[HR(n) = max_{T_{min} \leq m \leq T_{max}}{\{T_n(m)\}}.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id5">[Ler12]</a></p>
 </div>
 <div class="section" id="kurtosis">
@@ -350,23 +350,24 @@ calculated as part of the F0 estimation algorithm as:</p>
 values indicate a flatter distribution and positive values indicate a more
 &#8220;peaky&#8221; distribution. Kurtosis is calculated as:</p>
 <div class="math">
-\[TK(n)=\frac{1}{\sigma_x^4(n) \cdot K}\sum_{i=i_s(n)}^{i_e(n)}\Big(x(i)-\mu_x(n)\Big)^4-3\]</div>
+\[TK(n)=\frac{1}{\sigma_x^4(n) \cdot K}\sum_{i=i_s(n)}^{i_e(n)}\Big(x(i)-\mu_x(n)\Big)^4-3.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id6">[Ler12]</a></p>
 </div>
 <div class="section" id="peak-amplitude">
 <h2>Peak Amplitude<a class="headerlink" href="#peak-amplitude" title="Permalink to this headline">¶</a></h2>
-<p>Peak amplitude measures the highest peak in the absoulte signal. it is
+<p>Peak amplitude measures the highest peak in the absolute signal. It is
 calculated as:</p>
 <div class="math">
-\[P(n) = \max_{i_s(n) \leq i \leq i_e(n)}\{\left|x(i)\right|\}\]</div>
+\[P(n) = \max_{i_s(n) \leq i \leq i_e(n)}\{\left|x(i)\right|\}.\]</div>
 </div>
 <div class="section" id="rms">
 <h2>RMS<a class="headerlink" href="#rms" title="Permalink to this headline">¶</a></h2>
 <p>The perceived loudness of a signal is an important feature as it can be related
 to the dynamics of the signal.  RMS is used as a measure of sound intensity and
-is used for distinguishing between loud and quiet audio. It is calculated as:</p>
+is used for distinguishing between loud and quiet audio. It is calculated as,
+where $K$ is the total number of samples:</p>
 <div class="math">
-\[RMS(n) = \sqrt{\frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)} x(i)^2}\]</div>
+\[RMS(n) = \sqrt{\frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)} x(i)^2}.\]</div>
 <p>Other methods that take the human perception of loudness into account may
 provide more perceptually relevant results. However the RMS measurement
 produced acceptable results for this application.</p>
@@ -374,25 +375,25 @@ produced acceptable results for this application.</p>
 </div>
 <div class="section" id="spectral-centroid">
 <h2>Spectral Centroid<a class="headerlink" href="#spectral-centroid" title="Permalink to this headline">¶</a></h2>
-<p>The spectral centroid measure the center of gravity accross frequency bins to
-determine the central point accross the spectral content of the frame. High
-value sindicate that the spectral content is centered in higher frequencies and
-lower value indicate a lower center. The spectral centroid is calculated as:</p>
+<p>The spectral centroid measure the centre of gravity across frequency bins to
+determine the central point across the spectral content of the frame. High
+values indicate that the spectral content is centred in higher frequencies and
+lower value indicate a lower centre. The spectral centroid is calculated as:</p>
 <div class="math">
-\[SC(n) = \frac{\sum_{k=0}^{K/2-1} k \cdot | X(k,n) | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}\]</div>
+\[SC(n) = \frac{\sum_{k=0}^{K/2-1} k \cdot | X(k,n) | ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}.\]</div>
 <p>The result is the sum of magnitudes, weighted by their index, normalized by the
 unweighted sum.</p>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id8">[Ler12]</a></p>
 </div>
 <div class="section" id="spectral-crest-factor">
 <h2>Spectral Crest Factor<a class="headerlink" href="#spectral-crest-factor" title="Permalink to this headline">¶</a></h2>
-<p>The spectral crest factor can be used as a mesure of tonalness of the signal.
-it is calculated by taking the maximum magnitude and dividing by the sum of
+<p>The spectral crest factor can be used as a measure of tonalness of the signal.
+It is calculated by taking the maximum magnitude and dividing by the sum of
 magnitudes.
-This differntiates between flat spectrums and sinusoidal spectrums. (low values
-represnting the former and high values representing the latter.)</p>
+This differentiates between flat spectrums and sinusoidal spectrums. (low values
+representing the former and high values representing the latter.)</p>
 <div class="math">
-\[SCF = \frac{ \max_{0 \leq k \leq K/2-1} \{| X(k,n) | \}}{\sum_{k=0}^{K/2-1} | X(k,n) | }\]</div>
+\[SCF = \frac{ \max_{0 \leq k \leq K/2-1} \{| X(k,n) | \}}{\sum_{k=0}^{K/2-1} | X(k,n) | }.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id9">[Ler12]</a></p>
 </div>
 <div class="section" id="spectral-flatness">
@@ -403,7 +404,7 @@ indicate a flatter spectrum (suggesting a noisy signal) as opposed to lower
 values that represent a more tonal signal. Spectral flatness is calculated as:</p>
 <div class="math">
 \[TFl(n) = \frac{\sqrt[K/2]{\prod_{k=0}^{K/2-1} | X(k,n) | }}{2/K \cdot
-\sum_{k=0}^{K/2-1} | X(k,n) | }\]</div>
+\sum_{k=0}^{K/2-1} | X(k,n) | }.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id10">[Ler12]</a></p>
 </div>
 <div class="section" id="spectral-flux">
@@ -411,10 +412,10 @@ values that represent a more tonal signal. Spectral flatness is calculated as:</
 <p>Spectral flux is a measure of change between consecutive frames. It calculates
 the average difference between frames to differentiate between adjacent frames
 that are largely dissimilar (suggesting a non-stationary section of signal) and
-similiar frames (that suggests a steady state signal). It is calculated as:</p>
+similar frames (that suggests a steady state signal). It is calculated as:</p>
 <div class="math">
 \[SF(n) = \frac{\sqrt{\sum_{k=0}^{K/2-1} \Big( | X(k,n) | - | X(k,n-1) | \Big)^2
-}}{K/2}\]</div>
+}}{K/2}.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id11">[Ler12]</a></p>
 </div>
 <div class="section" id="spectral-spread">
@@ -424,7 +425,7 @@ spectral centroid. This description relates to the spectral shape of the signal
 and is associated with perceptions of timbre. It is calculated as:</p>
 <div class="math">
 \[SS(n) = \sqrt{\frac{\sum_{k=0}^{K/2-1} \Big(k-SC(n)\Big)^2 \cdot | X(k,n)
-| ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}}\]</div>
+| ^2}{\sum_{k=0}^{K/2-1} | X(k,n) | ^2}}.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id12">[Ler12]</a></p>
 </div>
 <div class="section" id="variance">
@@ -432,14 +433,14 @@ and is associated with perceptions of timbre. It is calculated as:</p>
 <p>The variance of a signal measures it&#8217;s spread around the signal&#8217;s arithmetic
 mean. It is used in the calculation of Kurtosis and is calculated as:</p>
 <div class="math">
-\[\sigma_x^2 = \frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)}(x(i) - \mu_x(n))^2\]</div>
+\[\sigma_x^2 = \frac{1}{K} \sum_{i=i_s(n)}^{i_e(n)}(x(i) - \mu_x(n))^2.\]</div>
 <p>Ref: <a class="reference internal" href="#lerch2012itaca" id="id13">[Ler12]</a></p>
 </div>
 <div class="section" id="zero-crossing">
 <h2>Zero-Crossing<a class="headerlink" href="#zero-crossing" title="Permalink to this headline">¶</a></h2>
 <p>The zero-crossing rate counts the number of times a signal&#8217;s value changes from
-positive to negative in a frame. it is relevant to determining the noisiness of
-a signal, as noisy signals will pass from positive to negative more frequenctly
+positive to negative in a frame. It is relevant to determining the noisiness of
+a signal, as noisy signals will pass from positive to negative more frequently
 than period signals. It is calculated as:</p>
 <div class="math">
 \[Z(n) = \frac{1}{2K} \sum_{i=i_s(n)}^{i_e(n)} | sgn[x(i)] - sgn[x(i-1)] |\]\[\text{Where the sgn function is defined as:}\]\[\begin{split}sgn[x_i(n)] = \left\{

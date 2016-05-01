@@ -269,8 +269,8 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">    - config: The configuration module used to configure the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FFTAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;FFT&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FFTAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;FFT&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="c"># Store reference to the file to be analysed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
@@ -281,21 +281,22 @@ div.nboutput  > :nth-child(2).stderr {
             <span class="n">window_size</span> <span class="o">=</span> <span class="mi">2048</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating FFT analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fft_window_count</span> <span class="o">=</span> <span class="bp">None</span>
 
 
 
-<div class="viewcode-block" id="FFTAnalysis.create_fft_analysis"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.create_fft_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_fft_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">window_overlap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<div class="viewcode-block" id="FFTAnalysis.create_fft_analysis"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.create_fft_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">create_fft_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">window_overlap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                             <span class="n">window_type</span><span class="o">=</span><span class="s">&#39;hanning&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a spectral analysis for overlapping frames of audio.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="p">()</span>
         <span class="c"># Calculate the period of the window in hz</span>
         <span class="n">lowest_freq</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">window_size</span>
         <span class="c"># Filter frequencies lower than the period of the window</span>
         <span class="c"># filter = ButterFilter()</span>
         <span class="c"># filter.design_butter(lowest_freq, self.AnalysedAudioFile.samplerate)</span>
 
-        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">read_grain</span><span class="p">()</span>
         <span class="c"># frames = filter.filter_butter(frames)</span>
         <span class="n">stft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stft</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">overlapFac</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">window_overlap</span><span class="p">)</span>
         <span class="n">frame_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_fft_frame_times</span><span class="p">(</span>
@@ -455,6 +456,8 @@ div.nboutput  > :nth-child(2).stderr {
 <div class="viewcode-block" id="FFTAnalysis.calc_fft_frame_times"><a class="viewcode-back" href="../../api.html#analysis.FFTAnalysis.calc_fft_frame_times">[docs]</a>    <span class="k">def</span> <span class="nf">calc_fft_frame_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fftframes</span><span class="p">,</span> <span class="n">sample_frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sample_frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">sample_frames</span> <span class="o">=</span> <span class="n">sample_frames</span><span class="p">()</span>
         <span class="c"># Get number of frames for time and frequency</span>
         <span class="n">timebins</span><span class="p">,</span> <span class="n">freqbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fftframes</span><span class="p">)</span>
         <span class="c"># Create array ranging from 0 to number of time frames</span>

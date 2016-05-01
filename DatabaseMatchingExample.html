@@ -277,7 +277,7 @@ In [2]:
 </div>
 </div>
 <p>Load source and target databases for matching...</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
 In [3]:
 </pre></div>
@@ -297,6 +297,39 @@ In [3]:
 <span class="n">target_database</span><span class="o">.</span><span class="n">load_database</span><span class="p">(</span><span class="n">reanalyse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast container">
+<div class="container">
+</div>
+<div class="container">
+<div class="highlight"><pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">IOError</span>                                   Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-3-9c41c481744c&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">      4</span>     config<span class="ansiblue">=</span>matching_config<span class="ansiblue"></span>
+<span class="ansigreen">      5</span> )
+<span class="ansigreen">----&gt; 6</span><span class="ansired"> </span>source_database<span class="ansiblue">.</span>load_database<span class="ansiblue">(</span>reanalyse<span class="ansiblue">=</span>True<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      7</span> target_database = AudioDatabase(
+<span class="ansigreen">      8</span>     target_dir<span class="ansiblue">,</span><span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/samuelperry/PerryPerrySource/pysource/sppysound/src/sppysound/database.pyc</span> in <span class="ansicyan">load_database</span><span class="ansiblue">(self, reanalyse)</span>
+<span class="ansigreen">    119</span>             self<span class="ansiblue">.</span>organize_audio<span class="ansiblue">(</span>subdir_paths<span class="ansiblue">,</span> symlink<span class="ansiblue">=</span>self<span class="ansiblue">.</span>config<span class="ansiblue">.</span>database<span class="ansiblue">[</span><span class="ansiblue">&quot;symlink&quot;</span><span class="ansiblue">]</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    120</span> <span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 121</span><span class="ansired">         </span>self<span class="ansiblue">.</span>analyse_database<span class="ansiblue">(</span>subdir_paths<span class="ansiblue">,</span> reanalyse<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">    122</span> <span class="ansiblue"></span>
+<span class="ansigreen">    123</span>     <span class="ansigreen">def</span> analyse_database<span class="ansiblue">(</span>self<span class="ansiblue">,</span> subdir_paths<span class="ansiblue">,</span> reanalyse<span class="ansiblue">)</span><span class="ansiblue">:</span><span class="ansiblue"></span>
+
+<span class="ansigreen">/Users/samuelperry/PerryPerrySource/pysource/sppysound/src/sppysound/database.pyc</span> in <span class="ansicyan">analyse_database</span><span class="ansiblue">(self, subdir_paths, reanalyse)</span>
+<span class="ansigreen">    140</span>                           <span class="ansiblue">&quot;corrupted HDF5 file.\n Make sure this is the only &quot;</span><span class="ansiblue"></span>
+<span class="ansigreen">    141</span>                           <span class="ansiblue">&quot;running instance and regenerate HDF5 if &quot;</span><span class="ansiblue"></span>
+<span class="ansigreen">--&gt; 142</span><span class="ansired">                           &quot;neccesary.&quot;.format(datapath))
+</span><span class="ansigreen">    143</span>         self<span class="ansiblue">.</span>analysed_audio <span class="ansiblue">=</span> <span class="ansiblue">[</span><span class="ansiblue">]</span><span class="ansiblue"></span>
+<span class="ansigreen">    144</span> <span class="ansiblue"></span>
+
+<span class="ansired">IOError</span>: Unable to create/append to file: ./ExampleDatabase/data/analysis_data.hdf5
+This may be due to another instance of this program running or a corrupted HDF5 file.
+ Make sure this is the only running instance and regenerate HDF5 if neccesary.
+</pre></div></div>
 </div>
 <p>An output database must also be defined. This is to store matching
 results and synthesis results generated later. Note that an analysis
@@ -328,7 +361,7 @@ perform matching. The rematch argument can be set to discard any
 previously found matches from pre-existing HDF5 files, otherwise
 previously found matches will cause the program to terminate for their
 preservation.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
 In [6]:
 </pre></div>
@@ -344,11 +377,28 @@ In [6]:
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast container">
+<div class="container">
+</div>
+<div class="container">
+<div class="highlight"><pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">NameError</span>                                 Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-6-a85bd403c2df&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">      1</span> matcher = Matcher(
+<span class="ansigreen">      2</span>     source_database<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">----&gt; 3</span><span class="ansired">     </span>target_database<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">      4</span>     output_db<span class="ansiblue">=</span>output_database<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">      5</span>     config<span class="ansiblue">=</span>matching_config<span class="ansiblue">,</span><span class="ansiblue"></span>
+
+<span class="ansired">NameError</span>: name &apos;target_database&apos; is not defined
+</pre></div></div>
+</div>
 <p>The matching is then run using the brute force matcher method. Other
 methods are not currently available.</p>
 <p>Warnings may be produced during this process. These will be silenced in
 a future revision but do not affect results.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="highlight-none"><div class="highlight"><pre>
 In [7]:
 </pre></div>
@@ -359,6 +409,21 @@ In [7]:
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast container">
+<div class="container">
+</div>
+<div class="container">
+<div class="highlight"><pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">NameError</span>                                 Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-7-f0cece17161b&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">----&gt; 1</span><span class="ansired"> matcher.match(
+</span><span class="ansigreen">      2</span>     matcher<span class="ansiblue">.</span>kdtree_matcher<span class="ansiblue">,</span><span class="ansiblue"></span>
+<span class="ansigreen">      3</span> )
+
+<span class="ansired">NameError</span>: name &apos;matcher&apos; is not defined
+</pre></div></div>
 </div>
 <p>The output database will now contain a HDF5 file containing matching
 data for the two databases. This can be used to synthesize results.</p>

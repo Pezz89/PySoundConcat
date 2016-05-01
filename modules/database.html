@@ -601,11 +601,25 @@ div.nboutput  > :nth-child(2).stderr {
             <span class="n">length</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">samps_to_ms</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
             <span class="n">hop_size</span> <span class="o">=</span> <span class="n">grain_length</span> <span class="o">/</span> <span class="n">overlap</span>
             <span class="n">grain_indexes</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">hop_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">grain_indexes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">grain_indexes</span>
 
     <span class="k">def</span> <span class="nf">kdtree_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">):</span>
+        <span class="n">invalid_inds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">invalid_inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">invalid_inds</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">invalid_inds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">invalid_inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">invalid_inds</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="c"># Count grains of the source database</span>
         <span class="n">source_sample_indexes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_grains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="p">,</span> <span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -621,6 +635,10 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="k">else</span><span class="p">:</span>
             <span class="n">weightings</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="mf">1.</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">}</span>
 
+
+        <span class="c"># Create an imputer object for handeling Nan values.</span>
+        <span class="n">imp</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">&#39;median&#39;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">tind</span><span class="p">,</span> <span class="n">target_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
             <span class="c"># Check if match data already exists and use it rather than</span>
             <span class="c"># regenerating if it does.</span>
@@ -631,7 +649,7 @@ div.nboutput  > :nth-child(2).stderr {
                 <span class="k">continue</span>
 
             <span class="c"># Create an array of grain times for target sample</span>
-            <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">times</span>
             <span class="n">x_size</span> <span class="o">=</span> <span class="n">target_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">match_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
             <span class="n">match_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">x_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">))</span>
@@ -644,27 +662,40 @@ div.nboutput  > :nth-child(2).stderr {
                 <span class="n">analysis_formatting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
 
                 <span class="n">target_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+                <span class="n">target_data</span> <span class="o">*=</span> <span class="n">weightings</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
                 <span class="n">all_target_analyses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_data</span>
 
-            <span class="n">imp</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">nan_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">all_target_analyses</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">all_target_analyses</span><span class="p">[:,</span> <span class="n">nan_columns</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
             <span class="c"># Impute values for Nans</span>
             <span class="n">all_target_analyses</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">all_target_analyses</span><span class="p">)</span>
+            <span class="c"># all_target_analyses[np.isnan(all_target_analyses)] = np.inf</span>
 
             <span class="k">for</span> <span class="n">sind</span><span class="p">,</span> <span class="n">source_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;K-d Tree Matching: {0} to {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
                 <span class="c"># Create an array of grain times for source sample</span>
-                <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">grain_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">times</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">source_times</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
                 <span class="n">all_source_analyses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">),</span> <span class="n">source_times</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
 
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matcher_analyses</span><span class="p">):</span>
                     <span class="n">analysis_formatting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_dict</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
 
                     <span class="n">source_data</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">source_entry</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">analysis_formatting</span><span class="p">)</span>
+                    <span class="n">source_data</span> <span class="o">*=</span> <span class="n">weightings</span><span class="p">[</span><span class="n">analysis</span><span class="p">]</span>
                     <span class="n">all_source_analyses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_data</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;K-d Tree Matching: {0} to {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_entry</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
                 <span class="c"># Impute values for Nans</span>
+                <span class="n">nan_columns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">all_source_analyses</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">all_source_analyses</span><span class="p">[:,</span> <span class="n">nan_columns</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
                 <span class="n">all_source_analyses</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">all_source_analyses</span><span class="p">)</span>
+
+                <span class="c"># all_source_analyses[np.isnan(all_source_analyses)] = np.inf</span>
 
                 <span class="n">source_tree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">all_source_analyses</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">leafsize</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
                 <span class="n">results_vals</span><span class="p">,</span> <span class="n">results_inds</span> <span class="o">=</span> <span class="n">source_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">all_target_analyses</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">match_quantity</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -929,12 +960,22 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">        grain, a dimension for each match of said grain and a dimension</span>
 <span class="sd">        containing database sample index and the sample&#39;s grain index.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># source_sample_indexes = source_sample_indexes[source_sample_indexes[:, 1] != 0.]</span>
+
         <span class="n">mi_shape</span> <span class="o">=</span> <span class="n">match_indexes</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">match_indexes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="c"># Find indexes within the range of each source sample index.</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">source_sample_indexes</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
             <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">source_sample_indexes</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Not all match indexes have a corresponding sample index. This shouldn&#39;t happen...</span><span class="se">\n</span><span class="s">&quot;</span>
+                             <span class="s">&quot;Check that all database path arguments are correct then try re-running with the --rematch and --reanalyse flags.</span><span class="se">\n</span><span class="s">&quot;</span>
+                             <span class="s">&quot;If this does&#39;nt work, delete the audio and data directories in all databases and try again...&quot;</span><span class="p">)</span>
+
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mi_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mi_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
@@ -964,10 +1005,10 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enforce_rms&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity_bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enforce_intensity&quot;</span><span class="p">]</span>
         <span class="c"># Key word arguments overwrite config file.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;enforce_rms&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="ow">or</span> <span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity_bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;enforce_intensity&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity_bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="ow">or</span> <span class="s">&quot;rms&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;BLARGHHH&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enforce_f0&quot;</span><span class="p">]</span>
@@ -976,7 +1017,7 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;f0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="o">.</span><span class="n">analysis_list</span> <span class="ow">or</span> <span class="s">&quot;f0&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysis_list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;F0 enforcement cannot be enabled if both databases do not have F0 analyses.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Target database must be provided if rms or F0 enforcement is enabled.&quot;</span><span class="p">)</span>
 
@@ -1015,8 +1056,8 @@ div.nboutput  > :nth-child(2).stderr {
                 <span class="n">channels</span><span class="o">=</span><span class="n">output_config</span><span class="p">[</span><span class="s">&quot;channels&quot;</span><span class="p">]</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
                 <span class="n">hop_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">grain_size</span> <span class="o">/</span> <span class="n">overlap</span><span class="p">)</span> <span class="o">*</span> <span class="n">output</span><span class="o">.</span><span class="n">samplerate</span><span class="o">/</span><span class="mi">1000</span>
-                <span class="n">_grain_size</span> <span class="o">*=</span> <span class="n">output</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mi">1000</span>
-                <span class="n">output_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">_grain_size</span> <span class="o">+</span> <span class="p">(</span><span class="n">hop_size</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">_grain_size</span> <span class="o">*=</span> <span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+                <span class="n">output_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">_grain_size</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hop_size</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">))))</span>
                 <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">target_grain_ind</span><span class="p">,</span> <span class="n">matches</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">):</span>
                     <span class="c"># If there are multiple matches, choose a match at random</span>
@@ -1024,12 +1065,27 @@ div.nboutput  > :nth-child(2).stderr {
                     <span class="n">match_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">match_db_ind</span><span class="p">,</span> <span class="n">match_grain_ind</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="n">match_index</span><span class="p">]</span>
                     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_db</span><span class="o">.</span><span class="n">analysed_audio</span><span class="p">[</span><span class="n">match_db_ind</span><span class="p">]</span> <span class="k">as</span> <span class="n">match_sample</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Synthesizing grain:</span><span class="se">\n</span><span class="s">&quot;</span>
+                            <span class="s">&quot;Source sample: {0}</span><span class="se">\n</span><span class="s">&quot;</span>
+                            <span class="s">&quot;Source grain index: {1}</span><span class="se">\n</span><span class="s">&quot;</span>
+                            <span class="s">&quot;Target output: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
+                            <span class="s">&quot;Target grain index: {3} out of {4}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="n">match_sample</span><span class="p">,</span>
+                                <span class="n">match_grain_ind</span><span class="p">,</span>
+                                <span class="n">output_name</span><span class="p">,</span>
+                                <span class="n">target_grain_ind</span><span class="p">,</span>
+                                <span class="nb">len</span><span class="p">(</span><span class="n">grain_matches</span><span class="p">)</span>
+                            <span class="p">))</span>
                         <span class="n">match_sample</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">match_grain_size</span><span class="p">,</span> <span class="n">match_overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
                         <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
-                        <span class="n">match_grain</span> <span class="o">=</span> <span class="n">match_sample</span><span class="p">[</span><span class="n">match_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">match_grain</span> <span class="o">=</span> <span class="n">match_sample</span><span class="p">[</span><span class="n">match_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
 
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms_bool</span><span class="p">:</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity_bool</span><span class="p">:</span>
                             <span class="c"># Get the target sample from the database</span>
                             <span class="n">target_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_db</span><span class="p">[</span><span class="n">job_ind</span><span class="p">]</span>
 
@@ -1037,7 +1093,7 @@ div.nboutput  > :nth-child(2).stderr {
                             <span class="c"># indexing.</span>
                             <span class="n">target_sample</span><span class="o">.</span><span class="n">generate_grain_times</span><span class="p">(</span><span class="n">match_grain_size</span><span class="p">,</span> <span class="n">match_overlap</span><span class="p">,</span> <span class="n">save_times</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-                            <span class="n">match_grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_rms</span><span class="p">(</span><span class="n">match_grain</span><span class="p">,</span> <span class="n">match_sample</span><span class="p">,</span> <span class="n">match_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">)</span>
+                            <span class="n">match_grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_intensity</span><span class="p">(</span><span class="n">match_grain</span><span class="p">,</span> <span class="n">match_sample</span><span class="p">,</span> <span class="n">match_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">)</span>
 
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_f0_bool</span><span class="p">:</span>
                             <span class="c"># Get the target sample from the database</span>
@@ -1049,8 +1105,12 @@ div.nboutput  > :nth-child(2).stderr {
 
                             <span class="n">match_grain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enforce_pitch</span><span class="p">(</span><span class="n">match_grain</span><span class="p">,</span> <span class="n">match_sample</span><span class="p">,</span> <span class="n">match_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">)</span>
 
+                        <span class="c"># Apply hanning window to grain</span>
                         <span class="n">match_grain</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">match_grain</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-                        <span class="n">output_frames</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">match_grain</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">+=</span> <span class="n">match_grain</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">output_frames</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">match_grain</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">+=</span> <span class="n">match_grain</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
                     <span class="n">offset</span> <span class="o">+=</span> <span class="n">hop_size</span>
                 <span class="c"># If output normalization is active, normalize output.</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;normalize&quot;</span><span class="p">]:</span>
@@ -1068,6 +1128,10 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
         <span class="n">target_times</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">target_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
+        <span class="c"># Get mean harmonic ratio of f0 frames in time range specified.</span>
+        <span class="n">target_harmonic_ratio</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;harm_ratio&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
         <span class="c"># Get mean of f0 frames in time range specified.</span>
         <span class="n">target_f0</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;f0&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;median&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
@@ -1075,55 +1139,48 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
         <span class="n">source_times</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">source_grain_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
+        <span class="c"># Get mean harmonic ratio of f0 frames in time range specified.</span>
+        <span class="n">source_harmonic_ratio</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;harm_ratio&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hr_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">source_harmonic_ratio</span><span class="p">,</span> <span class="n">target_harmonic_ratio</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">hr_array</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">grain</span><span class="o">*</span><span class="mi">0</span>
+
         <span class="c"># Get mean of f0 frames in time range specified.</span>
         <span class="n">source_f0</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;f0&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;median&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">target_f0</span> <span class="o">/</span> <span class="n">source_f0</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio_difference</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">grain</span>
+            <span class="k">return</span> <span class="n">grain</span><span class="o">*</span><span class="mi">0</span>
 
         <span class="c"># If the ratio difference is within the limits</span>
         <span class="n">ratio_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enf_f0_ratio_limit&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">ratio_difference</span> <span class="o">&gt;</span> <span class="n">ratio_limit</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large({0}), enforcing f0 at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large({0}), enforcing f0 at limit ({1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                     <span class="n">ratio_difference</span><span class="p">,</span>
                                     <span class="n">ratio_limit</span><span class="p">,</span>
-                                    <span class="n">source_sample</span><span class="p">,</span>
-                                    <span class="n">source_grain_ind</span><span class="p">,</span>
-                                    <span class="n">target_sample</span><span class="p">,</span>
-                                    <span class="n">target_grain_ind</span>
                                 <span class="p">))</span>
             <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">ratio_limit</span>
         <span class="k">elif</span> <span class="n">ratio_difference</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain f0 ratio too large ({0}), enforcing f0 at limit ({1})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                     <span class="n">ratio_difference</span><span class="p">,</span>
                                     <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span><span class="p">,</span>
-                                    <span class="n">source_sample</span><span class="p">,</span>
-                                    <span class="n">source_grain_ind</span><span class="p">,</span>
-                                    <span class="n">target_sample</span><span class="p">,</span>
-                                    <span class="n">target_grain_ind</span>
                                 <span class="p">))</span>
             <span class="n">ratio_difference</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span>
 
         <span class="n">grain</span> <span class="o">=</span> <span class="n">pitch_shift</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">grain</span><span class="p">,</span> <span class="n">ratio_difference</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ratio_difference</span> <span class="o">&gt;</span> <span class="n">ratio_limit</span> <span class="ow">or</span> <span class="n">ratio_difference</span> <span class="o">&lt;</span> <span class="mf">1.</span><span class="o">/</span><span class="n">ratio_limit</span><span class="p">:</span>
+            <span class="n">grain</span> <span class="o">*=</span> <span class="mi">0</span>
 
         <span class="k">return</span> <span class="n">grain</span>
 
-    <span class="k">def</span> <span class="nf">enforce_rms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">,</span> <span class="n">source_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">enforce_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grain</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">,</span> <span class="n">source_grain_ind</span><span class="p">,</span> <span class="n">target_sample</span><span class="p">,</span> <span class="n">target_grain_ind</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Scales the amplitude of the grain by the difference between it&#39;s rms and the rms of the grain specified.</span>
+<span class="sd">        Scales the amplitude of the grain by the difference between it&#39;s intensity and the intensity of the grain specified.</span>
 
-<span class="sd">        This method will fail if either AnalysedAudioFile object does not have an rms analysis.</span>
+<span class="sd">        This method will fail if either AnalysedAudioFile object does not have any intensity analyses.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
@@ -1132,6 +1189,9 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="c"># Get mean of RMS frames in time range specified.</span>
         <span class="n">target_rms</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;rms&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">target_peak</span> <span class="o">=</span> <span class="n">target_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">target_times</span><span class="p">,</span> <span class="s">&quot;peak&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">target_intensity_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">target_rms</span><span class="p">,</span> <span class="n">target_peak</span><span class="p">])</span>
 
         <span class="c"># Get grain start and finish range to retreive analysis frames from.</span>
         <span class="c"># TODO: Make proper fix for grain index offset of 1</span>
@@ -1139,29 +1199,27 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="c"># Get mean of RMS frames in time range specified.</span>
         <span class="n">source_rms</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;rms&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">source_peak</span> <span class="o">=</span> <span class="n">source_sample</span><span class="o">.</span><span class="n">analysis_data_grains</span><span class="p">(</span><span class="n">source_times</span><span class="p">,</span> <span class="s">&quot;peak&quot;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&quot;mean&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">target_rms</span> <span class="o">/</span> <span class="n">source_rms</span>
+        <span class="n">source_intensity_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">source_rms</span><span class="p">,</span> <span class="n">source_peak</span><span class="p">])</span>
+
+        <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">target_intensity_value</span> <span class="o">/</span> <span class="n">source_intensity_value</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio_difference</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">grain</span>
         <span class="c"># If the ratio difference is within the limits</span>
-        <span class="n">ratio_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enf_rms_ratio_limit&quot;</span><span class="p">]</span>
+        <span class="n">ratio_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">synthesizer</span><span class="p">[</span><span class="s">&quot;enf_intensity_ratio_limit&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">ratio_difference</span> <span class="o">&gt;</span> <span class="n">ratio_limit</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Grain RMS ratio too large({0}), enforcing RMS at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source sample: {2}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Source grain index: {3}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target sample: {4}</span><span class="se">\n</span><span class="s">&quot;</span>
-                                <span class="s">&quot;Target grain index: {5}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                                    <span class="n">ratio_difference</span><span class="p">,</span>
-                                    <span class="n">ratio_limit</span><span class="p">,</span>
-                                    <span class="n">source_sample</span><span class="p">,</span>
-                                    <span class="n">source_grain_ind</span><span class="p">,</span>
-                                    <span class="n">target_sample</span><span class="p">,</span>
-                                    <span class="n">target_grain_ind</span>
-                                <span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s">&quot;Grain RMS ratio too large({0}), enforcing RMS at limit ({1})</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">ratio_difference</span><span class="p">,</span>
+                <span class="n">ratio_limit</span><span class="p">,</span>
+            <span class="p">))</span>
             <span class="n">ratio_difference</span> <span class="o">=</span> <span class="n">ratio_limit</span>
 
         <span class="n">grain</span> <span class="o">*=</span> <span class="n">ratio_difference</span>
+
 
         <span class="k">return</span> <span class="n">grain</span>
 

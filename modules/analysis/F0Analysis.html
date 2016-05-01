@@ -243,6 +243,7 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="kn">from</span> <span class="nn">Analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
 <span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">fft</span><span class="p">,</span> <span class="n">ifft</span><span class="p">,</span> <span class="n">fftshift</span>
+<span class="kn">from</span> <span class="nn">sppysound</span> <span class="kn">import</span> <span class="n">multirate</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">polyfit</span><span class="p">,</span> <span class="n">arange</span>
@@ -265,19 +266,33 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">    - config: The configuration module used to configure the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">F0Analysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;F0&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AnalysedAudioFile</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">F0Analysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">AnalysedAudioFile</span><span class="p">,</span><span class="n">frames</span><span class="p">,</span> <span class="n">analysis_group</span><span class="p">,</span> <span class="s">&#39;F0&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="o">+</span><span class="s">&#39;.{0}Analysis&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="c"># Store reference to the file to be analysed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span> <span class="o">=</span> <span class="n">AnalysedAudioFile</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span> <span class="o">/</span> <span class="mf">2.</span>
 
+        <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">f0</span><span class="p">[</span><span class="s">&quot;window_size&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">config</span><span class="o">.</span><span class="n">f0</span><span class="p">[</span><span class="s">&quot;overlap&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">f0</span><span class="p">[</span><span class="s">&quot;ratio_threshold&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="o">=</span><span class="mi">512</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">=</span> <span class="mf">0.5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis_group</span> <span class="o">=</span> <span class="n">analysis_group</span>
-        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">read_grain</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating F0 analysis for {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_analysis</span><span class="p">(</span>
+            <span class="n">frames</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span><span class="p">,</span>
+            <span class="n">window_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="n">overlapFac</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overlap</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">f0</span><span class="p">[</span><span class="s">&quot;ratio_threshold&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_analysis_grains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -291,8 +306,15 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">/</span> <span class="mi">1000</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">/</span> <span class="mi">1000</span>
         <span class="n">vtimes</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">nan_inds</span> <span class="o">=</span> <span class="n">hr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+        <span class="n">hr</span><span class="p">[</span><span class="n">nan_inds</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">frames</span><span class="p">[</span><span class="n">nan_inds</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
         <span class="n">selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">vtimes</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">vtimes</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selection</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">frame_center</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
+            <span class="n">closest_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vtimes</span><span class="o">-</span><span class="n">frame_center</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">selection</span><span class="p">[</span><span class="n">closest_frames</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
         <span class="k">return</span> <span class="p">((</span><span class="n">frames</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">hr</span><span class="p">),</span> <span class="n">selection</span><span class="p">)</span>
 
@@ -302,6 +324,7 @@ div.nboutput  > :nth-child(2).stderr {
         <span class="n">samplerate</span><span class="p">,</span>
         <span class="n">window_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
         <span class="n">overlapFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">m0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
         <span class="n">M</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -311,8 +334,11 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">        Calculate the frequency and harmonic ratio values of windowed segments</span>
 <span class="sd">        of the audio file and save to disk.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">frames</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span><span class="p">:</span>
-            <span class="n">M</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="mf">0.016</span><span class="o">*</span><span class="n">samplerate</span><span class="p">)</span>
+            <span class="n">M</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">0.016</span><span class="o">*</span><span class="n">samplerate</span><span class="p">))</span>
+
 
         <span class="n">hopSize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">window_size</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">overlapFac</span> <span class="o">*</span> <span class="n">window_size</span><span class="p">))</span>
 
@@ -337,21 +363,6 @@ div.nboutput  > :nth-child(2).stderr {
             <span class="n">window2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">window2</span><span class="p">)))</span>
             <span class="k">return</span> <span class="n">Z</span>
-
-        <span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            FFT based autocorrelation function, which is faster than numpy.correlate</span>
-<span class="sd">            Operates on muti-dimensional arrays on a per element basis.</span>
-
-<span class="sd">            Ref: http://stackoverflow.com/questions/4503325/autocorrelation-of-a-multidimensional-array-in-numpy</span>
-
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="c"># x is supposed to be an array of sequences, of shape (totalelements, length)</span>
-            <span class="n">fftx</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="n">length</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="n">fftx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">fftx</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ret</span>
 
         <span class="k">def</span> <span class="nf">parabolic</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
@@ -390,7 +401,8 @@ div.nboutput  > :nth-child(2).stderr {
                 <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="k">return</span> <span class="n">f0</span><span class="p">,</span> <span class="n">HR</span>
 
-            <span class="n">R</span><span class="o">=</span><span class="n">autocorr</span><span class="p">([</span><span class="n">frames</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c">#R=autocorr([frames])[0]</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;full&#39;</span><span class="p">)</span>
             <span class="n">g</span><span class="o">=</span><span class="n">R</span><span class="p">[</span><span class="n">frames</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
 
             <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">[</span><span class="n">frames</span><span class="o">.</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
@@ -412,25 +424,20 @@ div.nboutput  > :nth-child(2).stderr {
                 <span class="k">except</span> <span class="ne">Warning</span><span class="p">:</span>
                     <span class="k">pass</span>
 
-            <span class="n">Z</span> <span class="o">=</span> <span class="n">feature_zcr</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">Z</span> <span class="o">&gt;</span> <span class="mf">0.15</span><span class="p">:</span>
+            <span class="c"># compute T0 and harmonic ratio:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c"># compute T0 and harmonic ratio:</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                    <span class="n">HR</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">blag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span>
+                <span class="n">HR</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">[</span><span class="n">blag</span><span class="p">]</span>
+                <span class="n">interp</span><span class="p">,</span> <span class="n">HR</span> <span class="o">=</span> <span class="n">parabolic</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">blag</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">interp</span><span class="p">:</span>
                     <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">blag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span>
-                    <span class="n">HR</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">[</span><span class="n">blag</span><span class="p">]</span>
-                    <span class="n">interp</span><span class="p">,</span> <span class="n">HR</span> <span class="o">=</span> <span class="n">parabolic</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">blag</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">interp</span><span class="p">:</span>
-                        <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                        <span class="n">HR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="c"># get fundamental frequency:</span>
-                        <span class="n">f0</span> <span class="o">=</span> <span class="n">samplerate</span> <span class="o">/</span> <span class="n">interp</span>
+                    <span class="c"># get fundamental frequency:</span>
+                    <span class="n">f0</span> <span class="o">=</span> <span class="n">samplerate</span> <span class="o">/</span> <span class="n">interp</span>
             <span class="k">if</span> <span class="n">f0</span> <span class="o">&gt;</span> <span class="n">samplerate</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;F0 value ({0}) is above the nyquist rate &quot;</span>
                                  <span class="s">&quot;({1}). This shouldn&#39;t happen...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span>
@@ -451,10 +458,13 @@ div.nboutput  > :nth-child(2).stderr {
 <span class="sd">        Formats the output from the analysis method to save to the HDF5 file.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">samplerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AnalysedAudioFile</span><span class="o">.</span><span class="n">samplerate</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_f0_analysis</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c"># frames = multirate.interp(frames, 4)</span>
+        <span class="n">samplerate</span> <span class="o">*=</span> <span class="mi">1</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_f0_analysis</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">f0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">harmonic_ratio</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">f0_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_f0_frame_times</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">samplerate</span><span class="p">)</span>
+        <span class="n">f0_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_f0_frame_times</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">samplerate</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">({</span><span class="s">&#39;frames&#39;</span><span class="p">:</span> <span class="n">f0</span><span class="p">,</span> <span class="s">&#39;harmonic_ratio&#39;</span><span class="p">:</span> <span class="n">harmonic_ratio</span><span class="p">,</span> <span class="s">&#39;times&#39;</span><span class="p">:</span> <span class="n">f0_times</span><span class="p">},</span> <span class="p">{})</span>
 
     <span class="nd">@staticmethod</span>
@@ -462,6 +472,8 @@ div.nboutput  > :nth-child(2).stderr {
 
         <span class="sd">&quot;&quot;&quot;Calculate times for frames using sample size and samplerate.&quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sample_frames</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="n">sample_frames</span> <span class="o">=</span> <span class="n">sample_frames</span><span class="p">()</span>
         <span class="c"># Get number of frames for time and frequency</span>
         <span class="n">timebins</span> <span class="o">=</span> <span class="n">f0frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c"># Create array ranging from 0 to number of time frames</span>
@@ -486,18 +498,24 @@ div.nboutput  > :nth-child(2).stderr {
             <span class="s">&#39;log2_median&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">log2_median</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="c"># For debugging apply along axis:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selection</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="c"># TODO: Add warning here</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
         <span class="c">#for ind, i in enumerate(selection):</span>
         <span class="c">#    output[ind] = self.formatter_func(i, frames, valid_inds, harm_ratio, formatter=format_style_dict[format])</span>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">formatter_func</span><span class="p">,</span>
-            <span class="mi">1</span><span class="p">,</span>
-            <span class="n">selection</span><span class="p">,</span>
-            <span class="n">frames</span><span class="p">,</span>
-            <span class="n">valid_inds</span><span class="p">,</span>
-            <span class="n">formatter</span><span class="o">=</span><span class="n">format_style_dict</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
-        <span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">formatter_func</span><span class="p">,</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="n">selection</span><span class="p">,</span>
+                <span class="n">frames</span><span class="p">,</span>
+                <span class="n">valid_inds</span><span class="p">,</span>
+                <span class="n">formatter</span><span class="o">=</span><span class="n">format_style_dict</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nyquist_rate</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">output</span>
 
