@@ -78,6 +78,8 @@ class AudioFile(object):
         # TODO: If a name isn't provided then create a default name based on
         # the file name without an extension
         self.name = name
+        if not self.name:
+            self.name = os.path.basename(os.path.splitext(self.filepath)[0])
         self.mode = mode
         self.samplerate = samplerate
         self.format = format
