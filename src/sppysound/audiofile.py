@@ -14,6 +14,8 @@ import multiprocessing as mp
 from collections import namedtuple, defaultdict
 import gc
 from functools import wraps
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 from fileops import pathops
 import analysis.RMSAnalysis as RMSAnalysis
@@ -79,7 +81,7 @@ class AudioFile(object):
         # the file name without an extension
         self.name = name
         if not self.name:
-            self.name = os.path.basename(os.path.splitext(self.filepath)[0])
+            self.name = os.path.basename(os.path.splitext(self.filepath)[0]).encode('utf-8')
         self.mode = mode
         self.samplerate = samplerate
         self.format = format
