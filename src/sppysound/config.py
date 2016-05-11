@@ -57,7 +57,7 @@ matcher_weightings = {
     "zerox" : 1.,
     "rms" : 0.1,
     "peak": 0.1,
-    "centroid": 0.5.,
+    "centroid": 0.5,
     "kurtosis": 2.,
     "skewness": 2.,
     "variance": 0.,
