@@ -1,4 +1,4 @@
-# Pysound
+# PySoundConcat
 
 A python script for generating granular synthesis driven representations of
 audio files based on audio database analysis.
@@ -21,4 +21,4 @@ similar segments. From this, the most perceptually similar matches can be taken
 and joined using granular synthesis techniques in order to achieve the final
 result.
 
-Full documentation can be found at: http://pezz89.github.io/pysound/index.html
+Full documentation can be found at: http://pezz89.github.io/PySoundConcat/index.html

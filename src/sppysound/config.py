@@ -3,34 +3,34 @@ rms = {
     # Analysis window sizes can be changed for each analysis individually.
     # These do not need to match the grain size of the matcher or synthesis.
     "window_size": 100,
-    "overlap": 8,
+    "overlap": 4,
 }
 
 f0 = {
     "window_size": 4096,
-    "overlap": 8,
+    "overlap": 4,
     # Currently all frames below this ratio are digaurded and left as silence.
     # Different databases will require different values for the best results.
     # Noisier databases will need lower values than more tonal databases.
-    "ratio_threshold": 0.45
+    "ratio_threshold": 0.81
 }
 
 # Specify analysis parameters for variance analysis.
 variance = {
     "window_size": 100,
-    "overlap": 8
+    "overlap": 4
 }
 
 # Specify analysis parameters for temporal kurtosis analysis.
 kurtosis = {
     "window_size": 100,
-    "overlap": 8
+    "overlap": 4
 }
 
 # Specify analysis parameters for temporal skewness analysis.
 skewness = {
     "window_size": 100,
-    "overlap": 8
+    "overlap": 4
 }
 
 # Specify analysis parameters for FFT analysis.
@@ -48,7 +48,7 @@ database = {
 # Sets the weighting for each analysis. a higher weighting gives an analysis
 # higher presendence when finding the best matches.
 matcher_weightings = {
-    "f0" : 0.5,
+    "f0" : 8,
     "spccntr" : 1.,
     "spcsprd" : 1.,
     "spcflux" : 3.,
@@ -70,7 +70,7 @@ matcher_weightings = {
 analysis_dict = {
     # log2_median formats using mel scale. This is useful for analyses such as
     # F0.
-    "f0": "log2_median",
+    "f0": "median",
     "rms": "mean",
     "zerox": "mean",
     "spccntr": "median",
@@ -100,10 +100,10 @@ matcher = {
     # speeding up or slowing down of the resulting file in relation to the
     # original.
     "grain_size": 100,
-    "overlap": 8,
+    "overlap": 4,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 5,
+    "match_quantity": 2,
     # Choose the algorithm used to perform matching. kdtree is recommended for
     # larger datasets.
     "method": 'kdtree'
@@ -119,15 +119,15 @@ synthesizer = {
     # source and target.
     "enforce_f0": True,
     # Specify the ratio limit that is the grain can be modified by.
-    "enf_f0_ratio_limit": 10.,
+    "enf_f0_ratio_limit": 1.,
     "grain_size": 100,
-    "overlap": 8,
+    "overlap": 4,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.
-    "normalize" : True,
+    "normalize" : False,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
-    "match_quantity": 5
+    "match_quantity": 2
 }
 
 # Specifies the format for the output file. Changing this has not been tested
