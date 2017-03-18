@@ -7,7 +7,7 @@ from numpy.lib import stride_tricks
 from Analysis import Analysis
 from scipy import signal
 from numpy.fft import fft, ifft, fftshift
-from sppysound import multirate
+import multirate
 import warnings
 
 from numpy import polyfit, arange
