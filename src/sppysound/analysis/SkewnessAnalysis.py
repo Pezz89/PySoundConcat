@@ -37,7 +37,7 @@ class SkewnessAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.skewness["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.window_size = config.skewness["window_size"]
             self.overlap = 1. / config.skewness["overlap"]
 
         try:
@@ -125,5 +125,4 @@ class SkewnessAnalysis(Analysis):
         # multiply by the frame numbers.
         skewness_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        skewness_times = skewness_times / samplerate
         return skewness_times

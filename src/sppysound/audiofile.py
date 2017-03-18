@@ -693,8 +693,8 @@ class AudioFile(object):
 
         - overlap: the factor by which grains overlap (integer)
         """
-        length = self.samps_to_ms(self.frames)
-        hop_size = grain_length / overlap
+        length = self.frames
+        hop_size = int(np.floor(grain_length / overlap))
         grain_count = int(length / hop_size) - 1
         times = np.arange(grain_count).reshape(-1, 1)
         times = np.hstack((times, times)).astype(np.dtype('float64'))
@@ -715,7 +715,6 @@ class AudioFile(object):
                              "AnalysedAudioFile.generate_grain_times(grain_size, "
                                                                     "overlap, save_times=True)")
         grain_times = self.times[key].copy()
-        grain_times *= (self.samplerate / 1000)
         return self.read_grain(start_index=grain_times[0], grain_size=grain_times[1]-grain_times[0])
 
 

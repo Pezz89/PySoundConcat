@@ -127,7 +127,6 @@ def parse_arguments():
             "variance",
             "kurtosis",
             "skewness",
-            "harm_ratio"
         ]
 
     parser.add_argument(

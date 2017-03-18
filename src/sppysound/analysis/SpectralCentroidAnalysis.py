@@ -97,6 +97,5 @@ class SpectralCentroidAnalysis(Analysis):
         # multiply by the frame numbers.
         spccntr_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        spccntr_times = spccntr_times / samplerate
         return spccntr_times
 

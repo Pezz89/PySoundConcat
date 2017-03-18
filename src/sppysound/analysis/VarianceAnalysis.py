@@ -39,7 +39,7 @@ class VarianceAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.variance["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.window_size = config.variance["window_size"]
             self.overlap = 1. / config.variance["overlap"]
 
         self.analysis_group = analysis_group
@@ -110,5 +110,4 @@ class VarianceAnalysis(Analysis):
         # multiply by the frame numbers.
         variance_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        variance_times = variance_times / samplerate
         return variance_times

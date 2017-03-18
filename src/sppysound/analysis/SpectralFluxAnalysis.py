@@ -92,7 +92,6 @@ class SpectralFluxAnalysis(Analysis):
         # multiply by the frame numbers.
         spcflux_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        spcflux_times = spcflux_times / samplerate
         return spcflux_times
 
     def mean_formatter(self, data):

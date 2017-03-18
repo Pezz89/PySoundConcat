@@ -77,8 +77,6 @@ class FFTAnalysis(Analysis):
         size containing frames for these times.
         """
         times = self.analysis_group["FFT"]["times"][:]
-        start = start / 1000
-        end = end / 1000
         vtimes = times.reshape(-1, 1)
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))
@@ -230,7 +228,6 @@ class FFTAnalysis(Analysis):
         # multiply by the frame numbers.
         fft_times = (sample_frames.shape[0]/timebins) * scale[:-1]
         # Divide by the samplerate to give times in seconds
-        fft_times = fft_times / samplerate
         return fft_times
 
 

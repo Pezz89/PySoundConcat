@@ -1,11 +1,11 @@
 import numpy as np
 
 def gen_wave(
-    size, 
-    freq, 
-    wave_type, 
-    phase = 0.0, 
-    amplitude = 1.0, 
+    size,
+    freq,
+    wave_type,
+    phase = 0.0,
+    amplitude = 1.0,
     samplerate = 44100
 ):
     """
@@ -18,10 +18,10 @@ def gen_wave(
     def sine():
         samples = np.arange(0, size, 1. / samplerate)
         return amplitude * np.sin(2.0*np.pi*freq*samples)
-    
+
     def square():
         return amplitude * np.sign(sine())
-    
+
     def triangle():
         samples = np.arange(0, size, 1. / samplerate)
         return amplitude - (2 * np.abs(samples * (2 * freq) % (2*amplitude) - amplitude))
@@ -29,11 +29,11 @@ def gen_wave(
     def sawtooth():
         samples = np.arange(0, size, 1. / samplerate)
         return amplitude - (2 * np.abs((samples * freq) % amplitude - amplitude))
-    
+
     def reverse_saw():
         samples = np.arange(0, size, 1. / samplerate)
         return amplitude - (2 * np.abs(((samples * freq) % amplitude)))
-    
+
     options = {
         "sine" : sine,
         "square" : square,

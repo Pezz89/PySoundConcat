@@ -37,7 +37,7 @@ class KurtosisAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.kurtosis["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.window_size = config.kurtosis["window_size"]
             self.overlap = 1. / config.kurtosis["overlap"]
 
         try:
@@ -90,7 +90,10 @@ class KurtosisAnalysis(Analysis):
 
         if window:
             win = window(window_size)
-            frames *= win
+            try:
+                frames *= win
+            except:
+                pdb.set_trace()
 
         frame_mean = np.mean(frames, axis=1)
 
@@ -126,5 +129,4 @@ class KurtosisAnalysis(Analysis):
         # multiply by the frame numbers.
         kurtosis_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        kurtosis_times = kurtosis_times / samplerate
         return kurtosis_times

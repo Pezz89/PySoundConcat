@@ -88,7 +88,6 @@ class SpectralCrestFactorAnalysis(Analysis):
         # multiply by the frame numbers.
         spccf_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        spccf_times = spccf_times / samplerate
         return spccf_times
 
     def mean_formatter(self, data):

@@ -91,7 +91,6 @@ class SpectralFlatnessAnalysis(Analysis):
         # multiply by the frame numbers.
         spcflatness_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        spcflatness_times = spcflatness_times / samplerate
         return spcflatness_times
 
     def mean_formatter(self, data):

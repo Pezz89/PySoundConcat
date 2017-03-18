@@ -82,7 +82,6 @@ class ZeroXAnalysis(Analysis):
         # multiply by the frame numbers.
         zerox_times = (sample_frames.shape[0]/timebins) * scale[:-1]
         # Divide by the samplerate to give times in seconds
-        zerox_times = zerox_times / samplerate
         return zerox_times
 
     def hdf5_dataset_formatter(self, *args, **kwargs):

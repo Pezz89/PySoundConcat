@@ -107,7 +107,6 @@ class SpectralSpreadAnalysis(Analysis):
         # multiply by the frame numbers.
         spcsprd_times = (float(sample_frame_count)/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        spcsprd_times = spcsprd_times / samplerate
         return spcsprd_times
 
     def mean_formatter(self, data):

@@ -82,7 +82,6 @@ class AudioDatabase:
             'variance',
             'kurtosis',
             'skewness',
-            'harm_ratio'
         }
         for analysis in analysis_list:
             if analysis not in valid_analyses:
@@ -362,7 +361,7 @@ class Matcher:
         grain_indexes = np.empty((entry_count, 2))
 
         for ind, entry in enumerate(database.analysed_audio):
-            length = entry.samps_to_ms(entry.frames)
+            length = entry.frames
             hop_size = grain_length / overlap
             grain_indexes[ind][0] = int(length / hop_size) - 1
         grain_indexes[:, 1] = np.cumsum(grain_indexes[:, 0]).astype(int)
@@ -819,8 +818,7 @@ class Synthesizer:
                 format=output_config["format"],
                 channels=output_config["channels"]
             ) as output:
-                hop_size = (grain_size / overlap) * output.samplerate/1000
-                _grain_size *= int(output.samplerate / 1000)
+                hop_size = int(np.floor(grain_size / overlap))
                 output_frames = np.zeros(_grain_size*2 + (int(hop_size*len(grain_matches))))
                 offset = 0
                 for target_grain_ind, matches in enumerate(grain_matches):
@@ -892,10 +890,6 @@ class Synthesizer:
         # TODO: Make proper fix for grain index offset of 1
         target_times = target_sample.times[target_grain_ind-1]
 
-        # Get mean harmonic ratio of f0 frames in time range specified.
-        target_harmonic_ratio = target_sample.analysis_data_grains(target_times, "harm_ratio", format="mean")[0][0]
-
-
         # Get mean of f0 frames in time range specified.
         target_f0 = target_sample.analysis_data_grains(target_times, "f0", format="median")[0][0]
 
@@ -903,16 +897,14 @@ class Synthesizer:
         # TODO: Make proper fix for grain index offset of 1
         source_times = source_sample.times[source_grain_ind-1]
 
-        # Get mean harmonic ratio of f0 frames in time range specified.
-        source_harmonic_ratio = source_sample.analysis_data_grains(source_times, "harm_ratio", format="mean")[0][0]
-        hr_array = np.array([source_harmonic_ratio, target_harmonic_ratio])
 
-        if np.any(np.isnan(hr_array)):
-            return grain*0
 
         # Get mean of f0 frames in time range specified.
         source_f0 = source_sample.analysis_data_grains(source_times, "f0", format="median")[0][0]
 
+        f0_array = np.array([source_f0, target_f0])
+        if np.any(np.isnan(f0_array)):
+            return grain*0
         ratio_difference = target_f0 / source_f0
 
         if not np.isfinite(ratio_difference):
@@ -935,8 +927,10 @@ class Synthesizer:
             ratio_difference = 1./ratio_limit
 
         grain = pitch_shift.shift(grain, ratio_difference)
+        '''
         if ratio_difference > ratio_limit or ratio_difference < 1./ratio_limit:
             grain *= 0
+        '''
 
         return grain
 

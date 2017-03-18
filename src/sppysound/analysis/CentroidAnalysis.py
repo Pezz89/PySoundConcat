@@ -112,5 +112,4 @@ class CentroidAnalysis(Analysis):
         # multiply by the frame numbers.
         centroid_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        centroid_times = centroid_times / samplerate
         return centroid_times

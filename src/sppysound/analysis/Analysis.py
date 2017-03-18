@@ -86,8 +86,7 @@ class Analysis(object):
         size containing frames for these times.
         """
         times = self.analysis_group[self.name]["times"][:]
-        start = start / 1000
-        end = end / 1000
+        # Seconds to milliseconds
         vtimes = times.reshape(-1, 1)
 
         selection = np.transpose((vtimes >= start) & (vtimes <= end))

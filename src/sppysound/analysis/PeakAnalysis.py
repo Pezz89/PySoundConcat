@@ -104,5 +104,4 @@ class PeakAnalysis(Analysis):
         # multiply by the frame numbers.
         peak_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        peak_times = peak_times / samplerate
         return peak_times

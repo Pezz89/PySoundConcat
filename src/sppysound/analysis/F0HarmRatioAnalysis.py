@@ -46,8 +46,6 @@ class F0HarmRatioAnalysis(Analysis):
         """
         times = self.analysis_group["F0"]["times"][:]
         hr = self.analysis_group["F0"]["harmonic_ratio"][:]
-        start = start / 1000
-        end = end / 1000
         vtimes = times.reshape(-1, 1)
 
         nan_inds = hr < self.threshold
@@ -65,7 +63,6 @@ class F0HarmRatioAnalysis(Analysis):
     def calc_F0HarmRatio_frame_times(F0HarmRatioframes, sample_frames, samplerate):
 
         """Calculate times for frames using sample size and samplerate."""
-        samplerate *= 1
 
         if hasattr(sample_frames, '__call__'):
             sample_frames = sample_frames()
@@ -77,7 +74,6 @@ class F0HarmRatioAnalysis(Analysis):
         # multiply by the frame numbers.
         F0HarmRatio_times = (sample_frames.shape[0]/timebins) * scale[:-1]
         # Divide by the samplerate to give times in seconds
-        F0HarmRatio_times = F0HarmRatio_times / samplerate
         return F0HarmRatio_times
 
     def analysis_formatter(self, data, selection, format):

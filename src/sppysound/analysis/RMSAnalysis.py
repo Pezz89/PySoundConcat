@@ -40,7 +40,7 @@ class RMSAnalysis(Analysis):
         self.AnalysedAudioFile = AnalysedAudioFile
 
         if config:
-            self.window_size = config.rms["window_size"] * self.AnalysedAudioFile.samplerate / 1000
+            self.window_size = config.rms["window_size"]
             self.overlap = 1. / config.rms["overlap"]
         else:
             self.window_size=512
@@ -133,5 +133,4 @@ class RMSAnalysis(Analysis):
         # multiply by the frame numbers.
         rms_times = (float(sample_frames.shape[0])/float(timebins)) * scale[:-1].astype(float)
         # Divide by the samplerate to give times in seconds
-        rms_times = rms_times / samplerate
         return rms_times

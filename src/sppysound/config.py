@@ -2,13 +2,13 @@
 rms = {
     # Analysis window sizes can be changed for each analysis individually.
     # These do not need to match the grain size of the matcher or synthesis.
-    "window_size": 100,
+    "window_size": 1024,
     "overlap": 4,
 }
 
 f0 = {
-    "window_size": 4096,
-    "overlap": 4,
+    "window_size": 2048,
+    "overlap": 2,
     # Currently all frames below this ratio are digaurded and left as silence.
     # Different databases will require different values for the best results.
     # Noisier databases will need lower values than more tonal databases.
@@ -17,26 +17,26 @@ f0 = {
 
 # Specify analysis parameters for variance analysis.
 variance = {
-    "window_size": 100,
+    "window_size": 1024,
     "overlap": 4
 }
 
 # Specify analysis parameters for temporal kurtosis analysis.
 kurtosis = {
-    "window_size": 100,
+    "window_size": 1024,
     "overlap": 4
 }
 
 # Specify analysis parameters for temporal skewness analysis.
 skewness = {
-    "window_size": 100,
+    "window_size": 1024,
     "overlap": 4
 }
 
 # Specify analysis parameters for FFT analysis.
 fft = {
     # The FFT window size determines the window size for all spectral analyses.
-    "window_size": 4096
+    "window_size": 2048
 }
 
 database = {
@@ -99,8 +99,8 @@ matcher = {
     # This value must be the same as the synthesis grain size to avoid the
     # speeding up or slowing down of the resulting file in relation to the
     # original.
-    "grain_size": 100,
-    "overlap": 4,
+    "grain_size": 1024,
+    "overlap": 2,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
     "match_quantity": 2,
@@ -117,10 +117,10 @@ synthesizer = {
     "enf_intensity_ratio_limit": 1000.,
     # Artificially modify the pitch by the difference in f0 values between
     # source and target.
-    "enforce_f0": True,
+    "enforce_f0": False,
     # Specify the ratio limit that is the grain can be modified by.
     "enf_f0_ratio_limit": 1.,
-    "grain_size": 100,
+    "grain_size": 1024,
     "overlap": 4,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.
