@@ -48,14 +48,14 @@ database = {
 # Sets the weighting for each analysis. a higher weighting gives an analysis
 # higher presendence when finding the best matches.
 matcher_weightings = {
-    "f0" : 8,
+    "f0" : 2,
     "spccntr" : 1.,
     "spcsprd" : 1.,
     "spcflux" : 3.,
     "spccf" : 3.,
-    "spcflatness": 3.,
+    "spcflatness": 1.,
     "zerox" : 1.,
-    "rms" : 0.1,
+    "rms" : 3,
     "peak": 0.1,
     "centroid": 0.5,
     "kurtosis": 2.,
@@ -114,20 +114,20 @@ synthesizer = {
     # between source and target.
     "enforce_intensity": True,
     # Specify the ratio limit that is the grain can be scaled by.
-    "enf_intensity_ratio_limit": 1000.,
+    "enf_intensity_ratio_limit": 30.,
     # Artificially modify the pitch by the difference in f0 values between
     # source and target.
     "enforce_f0": False,
     # Specify the ratio limit that is the grain can be modified by.
     "enf_f0_ratio_limit": 1.,
     "grain_size": 1024,
-    "overlap": 4,
+    "overlap": 2,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.
     "normalize" : False,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
-    "match_quantity": 2
+    "match_quantity": 1
 }
 
 # Specifies the format for the output file. Changing this has not been tested

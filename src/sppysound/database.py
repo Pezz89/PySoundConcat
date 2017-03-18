@@ -947,9 +947,8 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         target_rms = target_sample.analysis_data_grains(target_times, "rms", format="mean")[0][0]
-        target_peak = target_sample.analysis_data_grains(target_times, "peak", format="mean")[0][0]
 
-        target_intensity_value = np.mean([target_rms, target_peak])
+        target_intensity_value = target_rms
 
         # Get grain start and finish range to retreive analysis frames from.
         # TODO: Make proper fix for grain index offset of 1
@@ -957,9 +956,8 @@ class Synthesizer:
 
         # Get mean of RMS frames in time range specified.
         source_rms = source_sample.analysis_data_grains(source_times, "rms", format="mean")[0][0]
-        source_peak = source_sample.analysis_data_grains(source_times, "peak", format="mean")[0][0]
 
-        source_intensity_value = np.mean([source_rms, source_peak])
+        source_intensity_value = np.mean(source_rms)
 
         ratio_difference = target_intensity_value / source_intensity_value
 
