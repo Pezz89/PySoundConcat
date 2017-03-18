@@ -1,0 +1,8 @@
+-e git://github.com/Pezz89/SPFileOps@9bab7f59c339443903dea6cf42873a335f966d28#egg=spfileops
+h5py==2.6.0
+matplotlib==1.5.3
+numpy==1.11.2
+pysndfile==0.2.11
+scipy==0.18.1
+sphinx_bootstrap_theme==0.4.12
+scikit_learn==0.18.1

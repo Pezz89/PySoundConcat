@@ -1,8 +1,18 @@
 """A set of unit tests to check the correct operation of the pysound module."""
 import unittest
 import numpy as np
+import sys
+
+######
+# Import sppysound module from directory above current one
+from inspect import getsourcefile
+import os.path as path, sys
+current_dir = path.dirname(path.abspath(getsourcefile(lambda:0)))
+sys.path.insert(0, current_dir[:current_dir.rfind(path.sep)])
 from sppysound import AudioFile, analysis
 from sppysound.database import AudioDatabase, Matcher
+######
+
 import subprocess
 from scipy import signal
 

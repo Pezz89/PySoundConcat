@@ -5,6 +5,7 @@
 Session.vim
 pip-selfcheck.json
 .DS_Store
+src/spfileops/
 
 bin/
 # Compiled Object files
