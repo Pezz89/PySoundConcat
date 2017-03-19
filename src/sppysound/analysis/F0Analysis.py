@@ -120,7 +120,7 @@ class F0Analysis(Analysis):
             samples,
             shape=(cols, window_size),
             strides=(samples.strides[0]*self.hopSize, samples.strides[0])
-        ).copy()
+        )
 
         for ind, frame in enumerate(frames):
             fs = self.pYinInst.process(frame)

@@ -414,7 +414,7 @@ class Matcher:
             # Create an array of grain times for target sample
             target_times = target_entry.times
             x_size = target_times.shape[0]
-            match_indexes = np.empty((x_size, self.match_quantity))
+            match_indexes = np.empty((x_size, self.match_quantity), dtype=int)
             match_vals = np.empty((x_size, self.match_quantity))
             match_vals.fill(np.inf)
 
@@ -469,7 +469,7 @@ class Matcher:
 
                 vals_append = np.append(match_vals, results_vals, axis=1)
                 vals_sort = np.argsort(vals_append)
-                inds_append = np.append(match_indexes, results_inds+source_sample_indexes[sind][0], axis=1)
+                inds_append = np.append(match_indexes, results_inds+int(source_sample_indexes[sind][0]), axis=1)
 
                 m = np.arange(len(vals_append))[:, np.newaxis]
                 best_match_inds = inds_append[m, vals_sort]
@@ -477,6 +477,15 @@ class Matcher:
                 best_match_vals = vals_append[m, vals_sort]
                 match_vals = best_match_vals[:, :self.match_quantity]
 
+            ###################################################################
+            # Find optimum continuity between selection of best matches per
+            # grain
+            ###################################################################
+
+            pdb.set_trace()
+            #self.match_db.analysed_audio[match_db_ind]
+
+            ###################################################################
             match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
 
             datafile_path = ''.join(("match/", target_entry.name))

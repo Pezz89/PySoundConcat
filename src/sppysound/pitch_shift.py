@@ -31,3 +31,6 @@ def shift(sigin, pitch):
         # Read result
         result = shift_output.read_grain()
     return result
+
+def shift2():
+    print "To implement..."
