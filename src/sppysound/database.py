@@ -452,7 +452,6 @@ class Matcher:
                     source_data *= weightings[analysis]
                     all_source_analyses[i] = source_data
 
-
                 # Impute values for Nans
                 nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
                 all_source_analyses[:, nan_columns] = 0.
@@ -469,7 +468,7 @@ class Matcher:
 
                 vals_append = np.append(match_vals, results_vals, axis=1)
                 vals_sort = np.argsort(vals_append)
-                inds_append = np.append(match_indexes, results_inds+int(source_sample_indexes[sind][0]), axis=1)
+                inds_append = np.append(match_indexes, results_inds+int(source_sample_indexes[sind][0])-1, axis=1)
 
                 m = np.arange(len(vals_append))[:, np.newaxis]
                 best_match_inds = inds_append[m, vals_sort]
@@ -477,16 +476,75 @@ class Matcher:
                 best_match_vals = vals_append[m, vals_sort]
                 match_vals = best_match_vals[:, :self.match_quantity]
 
+            match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
+
             ###################################################################
             # Find optimum continuity between selection of best matches per
             # grain
             ###################################################################
 
-            pdb.set_trace()
-            #self.match_db.analysed_audio[match_db_ind]
+            # For every match found
+            for h, match_indexes in enumerate(match_grain_inds[:-2]):
+                # Get all analysis data for each match
+                all_source_analyses = np.zeros((len(self.matcher_analyses), self.match_quantity))
+                for i, analysis in enumerate(self.matcher_analyses):
+                    analysis_formatting = self.analysis_dict[analysis]
+
+                    for j, (db_ind, grain_ind) in enumerate(match_indexes):
+                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind]
+                        analysis_val, s = self.source_db.analysed_audio[db_ind].analysis_data_grains(grain_time, analysis, format=analysis_formatting)
+                        analysis_val *= weightings[analysis]
+                        all_source_analyses[i][j] = analysis_val
+
+                # get the next grain's match indexes...
+                match_indexes = match_grain_inds[h+1]
+                # Get all analysis data for each match
+                next_grain_analyses = np.zeros((len(self.matcher_analyses), self.match_quantity))
+                for i, analysis in enumerate(self.matcher_analyses):
+                    analysis_formatting = self.analysis_dict[analysis]
+
+                    for j, (db_ind, grain_ind) in enumerate(match_indexes):
+                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind]
+                        analysis_val, s = self.source_db.analysed_audio[db_ind].analysis_data_grains(grain_time, analysis, format=analysis_formatting)
+                        analysis_val *= weightings[analysis]
+                        next_grain_analyses[i][j] = analysis_val
+
+
+                # Impute values for Nans
+                nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
+                all_source_analyses[:, nan_columns] = 0.
+                all_source_analyses = imp.fit_transform(all_source_analyses)
+                # Impute values for Nans
+                nan_columns = np.all(np.isnan(next_grain_analyses), axis=0)
+                next_grain_analyses[:, nan_columns] = 0.
+                next_grain_analyses = imp.fit_transform(next_grain_analyses)
+
+                source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
+                results_vals, results_inds = source_tree.query(next_grain_analyses.T, k=self.match_quantity, p=2)
+                pdb.set_trace()
+                # For each analysis in current match and previous match...
+                # build kd tree for all grains of current analysis in current match
+
+                # Calculate distance between all previous grains and current
+                # grains
+
+                # Accumulate distance array with distance multiplied by
+                # weighting
+
+            '''
+                #self.match_db.analysed_audio[match_db_ind]
+                all_source_analyses = np.empty((len(self.matcher_analyses), source_times.shape[0]))
+
+
+                for i, analysis in enumerate(self.matcher_analyses):
+                    analysis_formatting = self.analysis_dict[analysis]
+
+                    source_data, s = source_entry.analysis_data_grains(source_times, analysis, format=analysis_formatting)
+                    source_data *= weightings[analysis]
+                    all_source_analyses[i] = source_data
+            '''
 
             ###################################################################
-            match_grain_inds = self.calculate_db_inds(match_indexes, source_sample_indexes)
 
             datafile_path = ''.join(("match/", target_entry.name))
             try:
@@ -746,7 +804,7 @@ class Matcher:
         if not np.all(np.any(x, axis=1)):
             raise ValueError("Not all match indexes have a corresponding sample index. This shouldn't happen...\n"
                              "Check that all database path arguments are correct then try re-running with the --rematch and --reanalyse flags.\n"
-                             "If this does'nt work, delete the audio and data directories in all databases and try again...")
+                             "If this doesn't work, delete the audio and data directories in all databases and try again...")
 
         x = x.reshape(mi_shape[0], mi_shape[1], x.shape[1])
         x = np.argmax(x, axis=2)
