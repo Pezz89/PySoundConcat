@@ -468,7 +468,8 @@ class Matcher:
 
                 vals_append = np.append(match_vals, results_vals, axis=1)
                 vals_sort = np.argsort(vals_append)
-                inds_append = np.append(match_indexes, results_inds+int(source_sample_indexes[sind][0])-1, axis=1)
+                #TODO: Check that this minus 1 should be there...
+                inds_append = np.append(match_indexes, results_inds+int(source_sample_indexes[sind][0]), axis=1)
 
                 m = np.arange(len(vals_append))[:, np.newaxis]
                 best_match_inds = inds_append[m, vals_sort]
@@ -483,32 +484,33 @@ class Matcher:
             # grain
             ###################################################################
 
+            final_indexes = np.array([])
             # For every match found
-            for h, match_indexes in enumerate(match_grain_inds[:-2]):
+            for h, match_indexes in enumerate(match_grain_inds[:-1]):
+                self.logger.info("Calculating grain distances for grain: {0} of {1}".format(h, match_grain_inds.shape[0]))
                 # Get all analysis data for each match
                 all_source_analyses = np.zeros((len(self.matcher_analyses), self.match_quantity))
                 for i, analysis in enumerate(self.matcher_analyses):
                     analysis_formatting = self.analysis_dict[analysis]
 
                     for j, (db_ind, grain_ind) in enumerate(match_indexes):
-                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind]
+                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind-1]
                         analysis_val, s = self.source_db.analysed_audio[db_ind].analysis_data_grains(grain_time, analysis, format=analysis_formatting)
                         analysis_val *= weightings[analysis]
                         all_source_analyses[i][j] = analysis_val
 
                 # get the next grain's match indexes...
-                match_indexes = match_grain_inds[h+1]
+                next_grain_indexes = match_grain_inds[h+1]
                 # Get all analysis data for each match
                 next_grain_analyses = np.zeros((len(self.matcher_analyses), self.match_quantity))
                 for i, analysis in enumerate(self.matcher_analyses):
                     analysis_formatting = self.analysis_dict[analysis]
 
-                    for j, (db_ind, grain_ind) in enumerate(match_indexes):
-                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind]
+                    for j, (db_ind, grain_ind) in enumerate(next_grain_indexes):
+                        grain_time = self.source_db.analysed_audio[db_ind].times[grain_ind-1]
                         analysis_val, s = self.source_db.analysed_audio[db_ind].analysis_data_grains(grain_time, analysis, format=analysis_formatting)
                         analysis_val *= weightings[analysis]
                         next_grain_analyses[i][j] = analysis_val
-
 
                 # Impute values for Nans
                 nan_columns = np.all(np.isnan(all_source_analyses), axis=0)
@@ -520,8 +522,24 @@ class Matcher:
                 next_grain_analyses = imp.fit_transform(next_grain_analyses)
 
                 source_tree = spatial.cKDTree(all_source_analyses.T, leafsize=100)
-                results_vals, results_inds = source_tree.query(next_grain_analyses.T, k=self.match_quantity, p=2)
-                pdb.set_trace()
+                # Return array of distances and indexes for matches in the next
+                # grain that are closest to matches in the current grains.
+                results_vals, results_inds = source_tree.query(next_grain_analyses.T, k=1, p=2)
+
+                if len(results_vals.shape) < 2:
+                    results_vals = np.array([results_vals]).T
+                    results_inds = np.array([results_inds]).T
+
+                if not final_indexes.size:
+                    a = np.argmax(results_vals)
+                    final_indexes = np.vstack((match_indexes[a], match_indexes[results_inds[a]]))
+                else:
+                    a = np.argmax(results_vals)
+                    final_indexes = np.append(final_indexes, match_indexes[results_inds[a]], axis=0)
+
+
+
+            match_grain_inds = final_indexes
                 # For each analysis in current match and previous match...
                 # build kd tree for all grains of current analysis in current match
 
@@ -891,8 +909,8 @@ class Synthesizer:
                 for target_grain_ind, matches in enumerate(grain_matches):
                     # If there are multiple matches, choose a match at random
                     # from available matches.
-                    match_index = np.random.randint(matches.shape[0])
-                    match_db_ind, match_grain_ind = matches[match_index]
+                    #match_index = np.random.randint(matches.shape[0])
+                    match_db_ind, match_grain_ind = matches
                     with self.match_db.analysed_audio[match_db_ind] as match_sample:
                         self.logger.info("Synthesizing grain:\n"
                             "Source sample: {0}\n"

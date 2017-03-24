@@ -103,7 +103,7 @@ matcher = {
     "overlap": 2,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 2,
+    "match_quantity": 30,
     # Choose the algorithm used to perform matching. kdtree is recommended for
     # larger datasets.
     "method": 'kdtree'
