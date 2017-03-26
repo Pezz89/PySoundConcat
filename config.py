@@ -1,1 +1,0 @@
-./src/sppysound/config.py
