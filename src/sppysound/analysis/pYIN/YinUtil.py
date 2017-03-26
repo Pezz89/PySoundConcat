@@ -190,7 +190,7 @@ def parabolicInterpolation(yinBuffer, tau, yinBufferSize):
 
         betterTau = tau + adjustment
     else:
-        print "WARNING: can't do interpolation at the edge (tau = " + str(tau) + "), will return un-interpolated value.\n"
+        #print "WARNING: can't do interpolation at the edge (tau = " + str(tau) + "), will return un-interpolated value.\n"
         betterTau = tau
 
     return betterTau

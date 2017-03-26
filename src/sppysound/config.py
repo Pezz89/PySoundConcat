@@ -48,7 +48,7 @@ database = {
 # Sets the weighting for each analysis. a higher weighting gives an analysis
 # higher presendence when finding the best matches.
 matcher_weightings = {
-    "f0" : 2,
+    "f0" : 6,
     "spccntr" : 1.,
     "spcsprd" : 1.,
     "spcflux" : 3.,
@@ -99,11 +99,11 @@ matcher = {
     # This value must be the same as the synthesis grain size to avoid the
     # speeding up or slowing down of the resulting file in relation to the
     # original.
-    "grain_size": 1024,
+    "grain_size": 2048,
     "overlap": 2,
     # Defines the number of matches to keep for synthesis. Note that this must
     # also be specified in the synthesis config
-    "match_quantity": 30,
+    "match_quantity": 10,
     # Choose the algorithm used to perform matching. kdtree is recommended for
     # larger datasets.
     "method": 'kdtree'
@@ -114,20 +114,22 @@ synthesizer = {
     # between source and target.
     "enforce_intensity": True,
     # Specify the ratio limit that is the grain can be scaled by.
-    "enf_intensity_ratio_limit": 30.,
+    "enf_intensity_ratio_limit": 50.,
     # Artificially modify the pitch by the difference in f0 values between
     # source and target.
-    "enforce_f0": False,
+    "enforce_f0": True,
     # Specify the ratio limit that is the grain can be modified by.
-    "enf_f0_ratio_limit": 1.,
-    "grain_size": 1024,
+    "enf_f0_ratio_limit": 10.,
+    "grain_size": 2048,
     "overlap": 2,
     # Normalize output, avoid clipping of final output by scaling the final
     # frames.
     "normalize" : False,
     # Defines the number of potential grains to choose from matches when
     # synthesizing output.
-    "match_quantity": 1
+    "match_quantity": 1,
+
+    "silence_inharmonics": False
 }
 
 # Specifies the format for the output file. Changing this has not been tested

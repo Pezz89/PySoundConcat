@@ -55,7 +55,7 @@ class F0Analysis(Analysis):
         self.hopSize = int(np.floor(self.overlap * self.window_size))
         self.pYinInst = pYINmain.PyinMain()
         self.pYinInst.initialise(channels = 1, inputSampleRate = self.AnalysedAudioFile.samplerate, stepSize = self.hopSize, blockSize = self.window_size,
-                    lowAmp = 0.00, onsetSensitivity = 0.9, pruneThresh = 0.0)
+                    lowAmp = 0.00, onsetSensitivity = 0.5, pruneThresh = 0.0)
 
         self.create_analysis(
             frames,
