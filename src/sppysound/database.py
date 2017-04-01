@@ -930,6 +930,9 @@ class Synthesizer:
                         except:
                             pdb.set_trace()
 
+                        ###################################################################
+                        # Adjust current grain overlap to correlate with previous grain
+                        ###################################################################
 
                         if self.enforce_intensity_bool:
                             # Get the target sample from the database
@@ -988,11 +991,18 @@ class Synthesizer:
 
         f0_array = np.array([source_f0, target_f0])
         if np.any(np.isnan(f0_array)):
-            return grain*0
+            if not self.config.synthesizer["enf_f0_ratio_limit"]:
+                return grain
+            else:
+                return grain*0
+
         ratio_difference = target_f0 / source_f0
 
         if not np.isfinite(ratio_difference):
-            return grain*0
+            if not self.config.synthesizer["enf_f0_ratio_limit"]:
+                return grain
+            else:
+                return grain*0
 
         # If the ratio difference is within the limits
         ratio_limit = self.config.synthesizer["enf_f0_ratio_limit"]
