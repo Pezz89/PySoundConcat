@@ -925,10 +925,9 @@ class Synthesizer:
                         match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                         # TODO: Make proper fix for grain index offset of 1
-                        try:
-                            match_grain = match_sample[match_grain_ind-1]
-                        except:
-                            pdb.set_trace()
+                        # match_grain = match_sample[match_grain_ind-1]
+                        extra_length = match_sample.get_samplerate()
+                        match_grain = match_sample.read_extended_grain(match_grain_ind-1, extra_length=extra_length)
 
                         ###################################################################
                         # Adjust current grain overlap to correlate with previous grain
@@ -953,6 +952,7 @@ class Synthesizer:
                             target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
                             match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
+                            match_grain = match_grain[extra_length:]
 
                         # Apply hanning window to grain
                         match_grain *= np.hanning(match_grain.size)

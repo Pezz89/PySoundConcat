@@ -717,6 +717,30 @@ class AudioFile(object):
         grain_times = self.times[key].copy()
         return self.read_grain(start_index=grain_times[0], grain_size=grain_times[1]-grain_times[0])
 
+    def read_extended_grain(self, key, extra_length=0):
+        """
+        Allow for grains to be retreived by indexing with zero padding after grain times have been generated.
+        """
+        if self.times == None:
+            raise IndexError("AudioFile object grain times must be generated "
+                             "before grains can be accesed by index. Try running "
+                             "AnalysedAudioFile.generate_grain_times(grain_size, "
+                                                                    "overlap, save_times=True)")
+        grain_times = self.times[key].copy()
+        start = int(grain_times[0]-extra_length)
+        zpad = 0
+        if start < 0:
+            zpad = abs(start)
+        grain_size = (grain_times[1]-grain_times[0])+extra_length
+        grain = self.read_grain(start_index=start, grain_size=grain_size, padding=True)
+        grain = np.pad(
+            grain,
+            (zpad, 0),
+            'constant',
+            constant_values=(0, 0)
+        )
+        return grain
+
 
     @staticmethod
     def gen_window(window_type, window_size, sym=True):
