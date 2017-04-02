@@ -125,11 +125,12 @@ class F0Analysis(Analysis):
         for ind, frame in enumerate(frames):
             fs = self.pYinInst.process(frame)
         output = self.pYinInst.getSmoothedPitchTrack()
-        output[output < 0] = np.nan
-        '''
-        if self.AnalysedAudioFile.name == 'human.002.001.wav':
-            pdb.set_trace()
-        '''
+        # TODO: Create proper fix for this
+        try:
+            output[output < 0] = np.nan
+        except:
+            output = np.array([np.nan])
+
 
         return output
 
