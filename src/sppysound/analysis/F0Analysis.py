@@ -118,7 +118,7 @@ class F0Analysis(Analysis):
 
         frames = stride_tricks.as_strided(
             samples,
-            shape=(cols, window_size),
+            shape=(int(cols), window_size),
             strides=(samples.strides[0]*self.hopSize, samples.strides[0])
         )
 

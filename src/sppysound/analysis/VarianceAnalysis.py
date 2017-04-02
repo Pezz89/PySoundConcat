@@ -68,7 +68,7 @@ class VarianceAnalysis(Analysis):
         hopSize = int(window_size - np.floor(overlapFac * window_size))
 
         # zeros at beginning (thus center of 1st window should be for sample nr. 0)
-        samples = np.append(np.zeros(np.floor(window_size/2.0)), frames)
+        samples = np.append(np.zeros(int(window_size/2.0)), frames)
 
         # cols for windowing
         cols = np.ceil((len(samples) - window_size) / float(hopSize)) + 1
@@ -77,7 +77,7 @@ class VarianceAnalysis(Analysis):
 
         frames = stride_tricks.as_strided(
             samples,
-            shape=(cols, window_size),
+            shape=(int(cols), window_size),
             strides=(samples.strides[0]*hopSize, samples.strides[0])
         ).copy()
 

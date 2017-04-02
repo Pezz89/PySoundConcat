@@ -125,8 +125,8 @@ class FFTAnalysis(Analysis):
 
         frames = stride_tricks.as_strided(
             samples,
-            shape=(cols, frameSize),
-            strides=(samples.strides[0]*hopSize, samples.strides[0])
+            shape=(int(cols), frameSize),
+            strides=(int(samples.strides[0]*hopSize), samples.strides[0])
         ).copy()
 
         frames *= win
