@@ -396,7 +396,10 @@ class AudioFile(object):
         grain_size = int(grain_size)
         position = self.get_seek_position()
         # Read grain
-        index = self.pysndfile_object.seek(start_index, 0)
+        try:
+            index = self.pysndfile_object.seek(start_index, 0)
+        except:
+            pdb.set_trace()
         if index + grain_size > self.get_frames():
             grain = self.read_frames(self.get_frames() - index)
             if padding:
@@ -731,7 +734,8 @@ class AudioFile(object):
         zpad = 0
         if start < 0:
             zpad = abs(start)
-        grain_size = (grain_times[1]-grain_times[0])+extra_length
+            start = 0
+        grain_size = (grain_times[1]-start)+extra_length
         grain = self.read_grain(start_index=start, grain_size=grain_size, padding=True)
         grain = np.pad(
             grain,

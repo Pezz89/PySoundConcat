@@ -951,8 +951,10 @@ class Synthesizer:
                             # indexing.
                             target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
+                            # TODO: Fix occasional output of grain size one
+                            # sample larger than it should be
                             match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
-                            match_grain = match_grain[extra_length:]
+                            match_grain = match_grain[extra_length:-extra_length]
 
                         # Apply hanning window to grain
                         match_grain *= np.hanning(match_grain.size)
