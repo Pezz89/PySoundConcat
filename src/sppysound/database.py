@@ -910,59 +910,62 @@ class Synthesizer:
                     # from available matches.
                     #match_index = np.random.randint(matches.shape[0])
                     match_db_ind, match_grain_ind = matches
-                    with self.match_db.analysed_audio[match_db_ind] as match_sample:
-                        self.logger.info("Synthesizing grain:\n"
-                            "Source sample: {0}\n"
-                            "Source grain index: {1}\n"
-                            "Target output: {2}\n"
-                            "Target grain index: {3} out of {4}".format(
-                                match_sample,
-                                match_grain_ind,
-                                output_name,
-                                target_grain_ind,
-                                len(grain_matches)
-                            ))
-                        match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
+                    try:
+                        with self.match_db.analysed_audio[match_db_ind] as match_sample:
+                            self.logger.info("Synthesizing grain:\n"
+                                "Source sample: {0}\n"
+                                "Source grain index: {1}\n"
+                                "Target output: {2}\n"
+                                "Target grain index: {3} out of {4}".format(
+                                    match_sample,
+                                    match_grain_ind,
+                                    output_name,
+                                    target_grain_ind,
+                                    len(grain_matches)
+                                ))
+                            match_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
-                        # TODO: Make proper fix for grain index offset of 1
-                        # match_grain = match_sample[match_grain_ind-1]
-                        extra_length = match_sample.get_samplerate()
-                        match_grain = match_sample.read_extended_grain(match_grain_ind-1, extra_length=extra_length)
+                            # TODO: Make proper fix for grain index offset of 1
+                            # match_grain = match_sample[match_grain_ind-1]
+                            extra_length = match_sample.get_samplerate()
+                            match_grain = match_sample.read_extended_grain(match_grain_ind-1, extra_length=extra_length)
 
-                        ###################################################################
-                        # Adjust current grain overlap to correlate with previous grain
-                        ###################################################################
+                            ###################################################################
+                            # Adjust current grain overlap to correlate with previous grain
+                            ###################################################################
 
-                        if self.enforce_intensity_bool:
-                            # Get the target sample from the database
-                            target_sample = self.target_db[job_ind]
+                            if self.enforce_intensity_bool:
+                                # Get the target sample from the database
+                                target_sample = self.target_db[job_ind]
 
-                            # Calculate garin times for sample to allow for
-                            # indexing.
-                            target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
+                                # Calculate garin times for sample to allow for
+                                # indexing.
+                                target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
-                            match_grain = self.enforce_intensity(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
+                                match_grain = self.enforce_intensity(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
 
-                        if self.enforce_f0_bool:
-                            # Get the target sample from the database
-                            target_sample = self.target_db[job_ind]
+                            if self.enforce_f0_bool:
+                                # Get the target sample from the database
+                                target_sample = self.target_db[job_ind]
 
-                            # Calculate grain times for sample to allow for
-                            # indexing.
-                            target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
+                                # Calculate grain times for sample to allow for
+                                # indexing.
+                                target_sample.generate_grain_times(match_grain_size, match_overlap, save_times=True)
 
-                            # TODO: Fix occasional output of grain size one
-                            # sample larger than it should be
-                            match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
+                                # TODO: Fix occasional output of grain size one
+                                # sample larger than it should be
+                                match_grain = self.enforce_pitch(match_grain, match_sample, match_grain_ind, target_sample, target_grain_ind)
                             match_grain = match_grain[extra_length:-extra_length]
 
-                        # Apply hanning window to grain
-                        match_grain *= np.hanning(match_grain.size)
-                        try:
-                            output_frames[offset:offset+match_grain.size] += match_grain
-                        except:
-                            pass
-                    offset += hop_size
+                            # Apply hanning window to grain
+                            match_grain *= np.hanning(match_grain.size)
+                            try:
+                                output_frames[offset:offset+match_grain.size] += match_grain
+                            except:
+                                pass
+                        offset += hop_size
+                    except:
+                        pdb.set_trace()
                 # If output normalization is active, normalize output.
                 if self.config.synthesizer["normalize"]:
                     output_frames = (output_frames / np.max(np.abs(output_frames))) * 0.9
@@ -993,7 +996,7 @@ class Synthesizer:
 
         f0_array = np.array([source_f0, target_f0])
         if np.any(np.isnan(f0_array)):
-            if not self.config.synthesizer["enf_f0_ratio_limit"]:
+            if not self.config.synthesizer["silence_inharmonics"]:
                 return grain
             else:
                 return grain*0
@@ -1001,7 +1004,7 @@ class Synthesizer:
         ratio_difference = target_f0 / source_f0
 
         if not np.isfinite(ratio_difference):
-            if not self.config.synthesizer["enf_f0_ratio_limit"]:
+            if not self.config.synthesizer["silence_inharmonics"]:
                 return grain
             else:
                 return grain*0
