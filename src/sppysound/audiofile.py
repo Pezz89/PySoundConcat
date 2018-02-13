@@ -88,6 +88,7 @@ class AudioFile(object):
         self.channels = channels
         self.frames = None
         self.times = None
+        jhsbdcjhsbdc
 
     def __enter__(self):
         """Allow AudioFile object to be opened by 'with' statements"""

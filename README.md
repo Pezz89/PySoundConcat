@@ -1,5 +1,9 @@
 # PySoundConcat
 
+WARNING: There are a currently a number of problems with the synthesis stage of
+this project that may result in less than ideal results. These will hopefully
+be fixed in the near future.
+
 A python script for generating granular synthesis driven representations of
 audio files based on audio database analysis.
 
